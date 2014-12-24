@@ -1,0 +1,4 @@
+{
+  "name": "xhr-mock",
+  "scripts": ["index.js", "lib/MockXMLHttpRequest.js"]
+}
