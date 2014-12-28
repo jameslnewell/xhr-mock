@@ -3,7 +3,12 @@ var MockXMLHttpRequest  = require('./lib/MockXMLHttpRequest');
 var real                = window.XMLHttpRequest;
 var mock                = MockXMLHttpRequest;
 
+/**
+ * Mock utility
+ */
 module.exports = {
+
+	XMLHttpRequest: MockXMLHttpRequest,
 
   /**
    * Replace the native XHR with the mocked XHR
@@ -11,6 +16,7 @@ module.exports = {
    */
   setup: function() {
     window.XMLHttpRequest = mock;
+	  MockXMLHttpRequest.handlers = [];
     return this;
   },
 
@@ -19,8 +25,8 @@ module.exports = {
    * @returns {exports}
    */
   teardown: function() {
+	  MockXMLHttpRequest.handlers = [];
     window.XMLHttpRequest = real;
-    MockXMLHttpRequest.handlers = [];
     return this;
   },
 
@@ -29,27 +35,51 @@ module.exports = {
    * @param   {Function} fn
    * @returns {exports}
    */
-  mock: function(fn) {
-    MockXMLHttpRequest.addHandler(fn);
+  mock: function(method, url, fn) {
+	  var handler = fn;
+
+	  if (arguments.length === 3) {
+		  handler = function(request) {
+			  if (request.method == method && request.url == url) {
+				  fn(request);
+				  return true;
+			  }
+		  };
+	  }
+
+    MockXMLHttpRequest.addHandler(handler);
+
     return this;
   },
 
   /**
-   * Mock a request
+   * Mock a GET request
    * @param   {String}    url
    * @param   {Function}  fn
    * @returns {exports}
    */
   get: function(url, fn) {
-    var method = 'GET';
-    MockXMLHttpRequest.addHandler(function(request) {
-      if (request.method == method && request.url == url) {
-        fn(request);
-        return true;
-      }
-    });
-    return this;
-  }
+    return this.mock('GET', url, fn);
+  },
 
+	/**
+	 * Mock a POST request
+	 * @param   {String}    url
+	 * @param   {Function}  fn
+	 * @returns {exports}
+	 */
+	post: function(url, fn) {
+		return this.mock('POST', url, fn);
+	},
+
+	/**
+	 * Mock a PUT request
+	 * @param   {String}    url
+	 * @param   {Function}  fn
+	 * @returns {exports}
+	 */
+	put: function(url, fn) {
+		return this.mock('PUT', url, fn);
+	}
 
 };

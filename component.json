@@ -1,4 +1,9 @@
 {
   "name": "xhr-mock",
-  "scripts": ["index.js", "lib/MockXMLHttpRequest.js"]
+  "scripts": ["index.js", "lib/MockXMLHttpRequest.js"],
+	"development": {
+		"dependencies": {
+			"component/assert": "*"
+		}
+	}
 }
