@@ -2,13 +2,14 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Native Example &mdash; xhr-mock</title>
+    <title>Superagent Example &mdash; xhr-mock</title>
 </head>
 <body>
 
     <h1>xhr-mock</h1>
-    <h2>Native Example</h2>
+    <h2>Superagent Example</h2>
 
+    <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
     <script src="../build/build.js"></script>
     <script>
 
@@ -24,19 +25,11 @@
 
         // ---------
 
-        var xhr = new XMLHttpRequest();
-
-        xhr.open('GET', 'http://google.com/');
-
-        xhr.onload = function() {
-          console.log('loaded', this.responseText);
-        };
-
-        xhr.onerror = function() {
-            console.log('error');
-        };
-
-        xhr.send();
+        var superagent = require('superagent');
+        superagent.get('http://google.com/', function(err, res) {
+            if (err) return console.log('ERROR', arguments);
+            console.log('loaded', res.text);
+        });
 
         // ---------
 

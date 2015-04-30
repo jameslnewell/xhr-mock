@@ -1,9 +1,15 @@
 {
   "name": "xhr-mock",
-  "scripts": ["index.js", "lib/MockXMLHttpRequest.js"],
-	"development": {
-		"dependencies": {
-			"component/assert": "*"
-		}
-	}
+  "scripts": [
+	"index.js",
+	"lib/Request.js",
+	"lib/Response.js",
+	"lib/MockXMLHttpRequest.js"
+  ],
+  "development": {
+	  "dependencies": {
+		  "component/assert": "*",
+		  "visionmedia/superagent": "~1.2.0"
+	  }
+  }
 }
