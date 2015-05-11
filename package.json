@@ -1,6 +1,6 @@
 {
   "name": "xhr-mock",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/jameslnewell/xhr-mock.git"

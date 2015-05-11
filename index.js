@@ -32,11 +32,13 @@ module.exports = {
 
 	/**
 	 * Mock a request
-	 * @param   {Function} fn
+	 * @param   {string}    [method]
+	 * @param   {string}    [url]
+	 * @param   {Function}  fn
 	 * @returns {exports}
 	 */
 	mock: function(method, url, fn) {
-		var handler = fn;
+		var handler;
 		if (arguments.length === 3) {
 			handler = function(req, res) {
 				if (req.method() === method && req.url() === url) {
@@ -44,6 +46,8 @@ module.exports = {
 				}
 				return false;
 			};
+		} else {
+			handler = method;
 		}
 
 		MockXMLHttpRequest.addHandler(handler);
