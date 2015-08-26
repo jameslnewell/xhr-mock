@@ -32,6 +32,7 @@ describe('MockXMLHttpRequest', function() {
   describe('.send()', function() {
 
     it('should time out after 100ms', function (done) {
+      var start, end;
 
       MockXMLHttpRequest.addHandler(function (req, res) {
         return res.timeout(true);
@@ -41,9 +42,33 @@ describe('MockXMLHttpRequest', function() {
       xhr.timeout = 100;
       xhr.open('/');
       xhr.ontimeout = function () {
+        end = Date.now();
+        assert(end-start >= 100);
         assert(xhr.readyState === 4);
         done();
       };
+      start = Date.now();
+      xhr.send();
+
+    });
+
+    it('should time out after 100ms even though the timeout is set to timeout after 10ms', function (done) {
+      var start, end;
+
+      MockXMLHttpRequest.addHandler(function (req, res) {
+        return res.timeout(100);
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.timeout = 10;
+      xhr.open('/');
+      xhr.ontimeout = function() {
+        end = Date.now();
+        assert(end-start >= 100);
+        assert(xhr.readyState === 4);
+        done();
+      };
+      start = Date.now();
       xhr.send();
 
     });
@@ -84,7 +109,7 @@ describe('MockXMLHttpRequest', function() {
       var xhr = new MockXMLHttpRequest();
       xhr.open('/');
       xhr.onload = function() {
-        assert.equal(xhr.getAllResponseHeaders(), 'content-type: application/json, x-powered-by: SecretSauce');
+        assert.equal(xhr.getAllResponseHeaders(), 'content-type: application/json\r\nx-powered-by: SecretSauce\r\n');
         done();
       };
       xhr.send();

@@ -152,13 +152,13 @@ Get the response body.
 
 Set the response body.
 
-#### .timeout() : bool
+#### .timeout() : bool|number
 
 Get whether the response will trigger a time out.
 
-#### .timeout(timeout : bool)
+#### .timeout(timeout : bool|number)
 
-Set whether the response will trigger a time out.
+Set whether the response will trigger a time out. `timeout` defaults to the value set on the XHR object.
 
 ## ToDo
 
