@@ -2,8 +2,8 @@
   "name": "xhr-mock",
   "scripts": [
 	"index.js",
-	"lib/Request.js",
-	"lib/Response.js",
+	"lib/MockRequest.js",
+	"lib/MockResponse.js",
 	"lib/MockXMLHttpRequest.js"
   ],
   "development": {

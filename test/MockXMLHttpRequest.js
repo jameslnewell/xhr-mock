@@ -1,57 +1,53 @@
-var assert  = require('assert');
-var mock    = require('xhr-mock');
+var assert              = require('assert');
+var MockXMLHttpRequest  = require('../lib/MockXMLHttpRequest');
 
-describe('xhr-mock', function() {
+describe('MockXMLHttpRequest', function() {
 
-	describe('.setup() and teardown()', function() {
+  beforeEach(function() {
+    MockXMLHttpRequest.handlers = [];
+  });
 
-		it('should setup and teardown the mock XMLHttpRequest class', function() {
+  afterEach(function() {
+    MockXMLHttpRequest.handlers = [];
+  });
 
-			var xhr = window.XMLHttpRequest;
-			mock.setup();
-			assert.notEqual(window.XMLHttpRequest, xhr);
-			mock.teardown();
-			assert.equal(window.XMLHttpRequest, xhr);
+  describe('.setRequestHeader()', function() {
 
-		});
+    it('should set a header', function(done) {
 
-		it('should remove any handlers', function() {
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        assert.equal(req.header('content-type'), 'application/json');
+        done();
+      });
 
-			mock.get('http://www.google.com/', function() {});
-			mock.setup();
-			assert.equal(mock.XMLHttpRequest.handlers.length, 0);
-			mock.get('http://www.google.com/', function() {});
-			mock.teardown();
-			assert.equal(mock.XMLHttpRequest.handlers.length, 0);
+      var xhr = new MockXMLHttpRequest();
+      xhr.open('/');
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send();
 
-		});
+    });
 
-	});
+  });
 
-	describe('.setRequestHeader()', function() {
+  describe('.send()', function() {
 
-		beforeEach(function() {
-			mock.setup();
-		});
+    it('should time out after 100ms', function(done) {
 
-		afterEach(function() {
-			mock.teardown();
-		});
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res.timeout(true);
+      });
 
-		it('should set a header', function(done) {
+      var xhr = new MockXMLHttpRequest();
+      xhr.timeout = 100;
+      xhr.open('/');
+      xhr.ontimeout = function() {
+        assert(xhr.readyState === 4);
+        done();
+      };
+      xhr.send();
 
-			mock.mock(function(req, res) {
-				assert.equal(req.header('content-type'), 'application/json');
-				done();
-			});
+    });
 
-			var xhr = new XMLHttpRequest();
-			xhr.open('/');
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			xhr.send();
-
-		});
-
-	})
+  });
 
 });

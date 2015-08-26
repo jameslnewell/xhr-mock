@@ -1,9 +1,9 @@
 {
   "name": "xhr-mock",
-  "version": "1.1.1",
-  "description": "A utility for mocking XMLHttpRequests in the browser. Useful for unit testing and doesn't require changes to your code.",
+  "version": "1.2.0",
+  "description": "Utility for mocking XMLHttpRequests in the browser.",
   "keywords": [
-    "mock", "xhr", "test", "fake", "request", "ajax", "browser", "xmlhttprequest"
+    "mock", "xhr", "test", "fake", "request", "ajax", "browser", "xmlhttprequest", "jquery", "superagent"
   ],
   "repository": {
     "type": "git",

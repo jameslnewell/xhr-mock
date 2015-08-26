@@ -1,6 +1,8 @@
 # xhr-mock
 
-A utility for mocking XMLHttpRequests in the browser. Useful for unit testing and doesn't require changes to your code.
+Utility for mocking XMLHttpRequests in the browser. 
+
+Useful for unit testing and doesn't require you to inject a mocked object into your code.
 
 ## Installation
 
@@ -19,66 +21,147 @@ A utility for mocking XMLHttpRequests in the browser. Useful for unit testing an
     //replace the real XHR object with the mock XHR object
     mock.setup();
 
-    //create a mock response for all GET requests to http://google.com/
-    mock.get('http://google.com/', function(req, res) {
-        return res
-            .status(200)
-            .body('<h1>Google</h1>')
-        ;
+    //create a mock response for all GET requests with the URL http://localhost/api/user
+    mock.put('http://localhost/api/user', function(req, res) {
+
+      //return null;              //simulate an error
+      //return res.timeout(true); //simulate a timeout
+      
+      return res
+        .status(201)
+        .header('Content-Type', 'application/json')
+        .body(JSON.stringify({data: {
+          first_name: 'John', last_name: 'Smith'
+        }))
+      ;
+      
     });
 
     //create an instance of the (mock) XHR object and use as per normal
     var xhr = new XMLHttpRequest();
     ...
 
-    //when you're finished put the real XHR object back
-    mock.teardown();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+    
+        //when you're finished put the real XHR object back
+        mock.teardown();
+          
+      }
+    }
 
 ## Examples
 
-Examples of xhr-mock working with various frameworks:
+Examples of using `xhr-mock` with various frameworks:
 
 - [Superagent](./example/superagent.html)
 - [jQuery](./example/jquery.html)
 - [XMLHttpRequest](./example/native.html)
 
-***note:*** requires building with browserify or component first.
-
 ## API
 
-### Mock.setup()
+### xhr-mock
 
-Replace the native XHR object with a mock one.
+#### .setup()
 
-### Mock.teardown()
+Replace the global `XMLHttpRequest` object with the `MockXMLHttpRequest`.
 
-Restore the native XHR object.
+#### .teardown()
 
-### Mock.mock(fn)
+Restore the global `XMLHttpRequest` object to its original state.
 
-Register a mock response for all requests.
+#### .get(url, fn)
 
-### Mock.get(url, fn)
+Register a factory function to create mock responses for each GET request to a specific URL.
 
-Register a mock response for all GET requests to a URL.
+#### .post(url, fn)
 
-### Mock.post(url, fn)
+Register a factory function to create mock responses for each POST request to a specific URL.
 
-Register a mock response for all POST requests to a URL.
+#### .put(url, fn)
 
-### Mock.put(url, fn)
+Register a factory function to create mock responses for each PUT request to a specific URL.
 
-Register a mock response for all PUT requests to a URL.
+#### .delete(url, fn)
 
-### Mock.delete(url, fn)
+Register a factory function to create mock responses for each DELETE request to a specific URL.
 
-Register a mock response for all DELETE requests to a URL.
+#### .mock(method, url, fn)
 
-### Mock.mock(method, url, fn)
+Register a factory function to create mock responses for each request to a specific URL.
 
-Register a mock response for all requests to a URL.
+#### .mock(fn)
+
+Register a factory function to create mock responses for every request.
+
+### MockXMLHttpRequest
+
+### MockRequest
+
+#### .method() : string
+
+Get the request method.
+
+#### .url() : string
+
+Get the request URL.
+
+#### .header(name : string) : string
+
+Get a request header.
+
+#### .headers() : object
+
+Get the request headers.
+
+#### .body() : string
+
+Get the request body.
+
+### MockResponse
+
+#### .status() : number
+
+Get the response status.
+
+#### .status(code : number)
+
+Set the response status.
+
+#### .header(name : string, value: string)
+
+Set a response header.
+
+#### .header(name : string) : string
+
+Get a response header.
+
+#### .headers() : object
+
+Get the response headers.
+
+#### .headers(headers : object)
+
+Set the response headers.
+
+#### .body() : string
+
+Get the response body.
+
+#### .body(body : string)
+
+Set the response body.
+
+#### .timeout() : bool
+
+Get whether the response will trigger a time out.
+
+#### .timeout(timeout : bool)
+
+Set whether the response will trigger a time out.
 
 ## ToDo
 
 - Ability to return mocked responses asynchronously
 - Ability to provide a simple object response instead of a function
+- Handle JSON and XML response types
