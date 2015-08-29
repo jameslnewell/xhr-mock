@@ -34,21 +34,20 @@ describe('MockXMLHttpRequest', function() {
     it('should have a request body', function (done) {
 
       MockXMLHttpRequest.addHandler(function(req, res) {
-        assert.equals(req.body(), 'Hello World!');
+        assert.equal(req.body(), 'Hello World!');
         done();
       });
 
       var xhr = new MockXMLHttpRequest();
       xhr.open('/');
-      xhr.send();
+      xhr.send('Hello World!');
 
     });
 
     it('should not have a request body', function (done) {
 
       MockXMLHttpRequest.addHandler(function(req, res) {
-        console.log(req.body());
-        assert.equals(req.body(), null);
+        assert.equal(req.body(), null);
         done();
       });
 
