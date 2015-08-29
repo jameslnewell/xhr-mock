@@ -31,6 +31,33 @@ describe('MockXMLHttpRequest', function() {
 
   describe('.send()', function() {
 
+    it('should have a request body', function (done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        assert.equals(req.body(), 'Hello World!');
+        done();
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.open('/');
+      xhr.send();
+
+    });
+
+    it('should not have a request body', function (done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        console.log(req.body());
+        assert.equals(req.body(), null);
+        done();
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.open('/');
+      xhr.send();
+
+    });
+
     it('should time out after 100ms', function (done) {
       var start, end;
 
