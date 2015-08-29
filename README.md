@@ -32,7 +32,7 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
         .header('Content-Type', 'application/json')
         .body(JSON.stringify({data: {
           first_name: 'John', last_name: 'Smith'
-        }))
+        }}))
       ;
       
     });
