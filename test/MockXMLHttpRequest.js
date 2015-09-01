@@ -99,6 +99,33 @@ describe('MockXMLHttpRequest', function() {
 
     });
 
+    it('should not time out after 100ms when the request has been aborted', function (done) {
+      var aborted = false, timedout = false;
+
+      MockXMLHttpRequest.addHandler(function (req, res) {
+        return res.timeout(100);
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.open('/');
+      xhr.ontimeout = function() {
+        timedout = true;
+      };
+      xhr.onabort = function() {
+        aborted = true;
+      };
+      xhr.send();
+
+      xhr.abort();
+
+      setTimeout(function() {
+        assert(aborted);
+        assert(!timedout);
+        done();
+      }, 110)
+
+    });
+
   });
 
   describe('.getResponseHeader()', function() {
