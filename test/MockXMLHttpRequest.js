@@ -29,6 +29,19 @@ describe('MockXMLHttpRequest', function() {
 
   });
 
+  describe('.open()', function() {
+
+    it('should be OPENED', function() {
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.open('/');
+
+      assert.equal(xhr.readyState, MockXMLHttpRequest.STATE_OPENED);
+
+    });
+
+  });
+
   describe('.send()', function() {
 
     it('should have a request body', function (done) {
