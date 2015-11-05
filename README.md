@@ -1,5 +1,7 @@
 # xhr-mock
 
+[![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
+
 Utility for mocking XMLHttpRequests in the browser. 
 
 Useful for unit testing and doesn't require you to inject a mocked object into your code.
