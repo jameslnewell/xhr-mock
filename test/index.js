@@ -1,3 +1,4 @@
+var window  = require('global');
 var assert  = require('assert');
 var mock    = require('..');
 
