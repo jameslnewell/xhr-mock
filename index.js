@@ -1,4 +1,4 @@
-
+var window = require('global');
 var MockXMLHttpRequest  = require('./lib/MockXMLHttpRequest');
 var real                = window.XMLHttpRequest;
 var mock                = MockXMLHttpRequest;
