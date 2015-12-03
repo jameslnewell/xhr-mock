@@ -18,39 +18,41 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 
 ## Usage
 
-    var mock = require('xhr-mock');
+```javascript
+var mock = require('xhr-mock');
 
-    //replace the real XHR object with the mock XHR object
-    mock.setup();
+//replace the real XHR object with the mock XHR object
+mock.setup();
 
-    //create a mock response for all GET requests with the URL http://localhost/api/user
-    mock.put('http://localhost/api/user', function(req, res) {
+//create a mock response for all GET requests with the URL http://localhost/api/user
+mock.put('http://localhost/api/user', function(req, res) {
 
-      //return null;              //simulate an error
-      //return res.timeout(true); //simulate a timeout
+  //return null;              //simulate an error
+  //return res.timeout(true); //simulate a timeout
 
-      return res
-        .status(201)
-        .header('Content-Type', 'application/json')
-        .body(JSON.stringify({data: {
-          first_name: 'John', last_name: 'Smith'
-        }}))
-      ;
+  return res
+    .status(201)
+    .header('Content-Type', 'application/json')
+    .body(JSON.stringify({data: {
+      first_name: 'John', last_name: 'Smith'
+    }}))
+  ;
 
-    });
+});
 
-    //create an instance of the (mock) XHR object and use as per normal
-    var xhr = new XMLHttpRequest();
-    ...
+//create an instance of the (mock) XHR object and use as per normal
+var xhr = new XMLHttpRequest();
+...
 
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4) {
+xhr.onreadystatechange = function() {
+  if (xhr.readyState == 4) {
 
-        //when you're finished put the real XHR object back
-        mock.teardown();
+    //when you're finished put the real XHR object back
+    mock.teardown();
 
-      }
-    }
+  }
+}
+```
 
 ## Examples
 
