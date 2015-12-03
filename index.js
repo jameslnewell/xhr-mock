@@ -83,6 +83,26 @@ module.exports = {
 	 */
 	put: function(url, fn) {
 		return this.mock('PUT', url, fn);
+	},
+
+	/**
+	 * Mock a PATCH request
+	 * @param   {String}    url
+	 * @param   {Function}  fn
+	 * @returns {exports}
+	 */
+	patch: function(url, fn) {
+		return this.mock('PATCH', url, fn);
+	},
+
+	/**
+	 * Mock a DELETE request
+	 * @param   {String}    url
+	 * @param   {Function}  fn
+	 * @returns {exports}
+	 */
+	delete: function(url, fn) {
+		return this.mock('DELETE', url, fn);
 	}
 
 };
