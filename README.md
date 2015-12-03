@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
 
-Utility for mocking XMLHttpRequests in the browser. 
+Utility for mocking XMLHttpRequests in the browser.
 
 Useful for unit testing and doesn't require you to inject a mocked object into your code.
 
@@ -28,7 +28,7 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 
       //return null;              //simulate an error
       //return res.timeout(true); //simulate a timeout
-      
+
       return res
         .status(201)
         .header('Content-Type', 'application/json')
@@ -36,7 +36,7 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
           first_name: 'John', last_name: 'Smith'
         }}))
       ;
-      
+
     });
 
     //create an instance of the (mock) XHR object and use as per normal
@@ -45,10 +45,10 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 
     xhr.onreadystatechange = function() {
       if (xhr.readyState == 4) {
-    
+
         //when you're finished put the real XHR object back
         mock.teardown();
-          
+
       }
     }
 
@@ -83,6 +83,10 @@ Register a factory function to create mock responses for each POST request to a 
 #### .put(url, fn)
 
 Register a factory function to create mock responses for each PUT request to a specific URL.
+
+#### .patch(url, fn)
+
+Register a factory function to create mock responses for each PATCH request to a specific URL.
 
 #### .delete(url, fn)
 
