@@ -205,6 +205,28 @@ describe('MockXMLHttpRequest', function() {
       };
       xhr.send();
     });
+
+    it('when a response returns a promise that is rejected', function(done){
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return new Promise(function(success, failure){
+          failure(
+            res
+              .status(500)
+              .body('An error occured on the server')
+          );
+        });
+      })
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.open('/');
+      xhr.onerror = function() {
+        assert.equal(xhr.status, 500);
+        assert.equal(xhr.response, 'An error occured on the server');
+
+        done();
+      };
+      xhr.send();
+    });
   });
 
 });
