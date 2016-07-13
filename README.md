@@ -25,7 +25,7 @@ var mock = require('xhr-mock');
 mock.setup();
 
 //create a mock response for all GET requests with the URL http://localhost/api/user
-mock.put('http://localhost/api/user', function(req, res) {
+mock.get('http://localhost/api/user', function(req, res) {
 
   //return null;              //simulate an error
   //return res.timeout(true); //simulate a timeout
