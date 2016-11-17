@@ -184,4 +184,62 @@ describe('MockXMLHttpRequest', function() {
 
   });
 
+  describe('.addEventListener()', function() {
+
+    it('should allow registering load event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.addEventListener('load', function(event) {
+        assert.equal(event.currentTarget, xhr);
+        assert.equal(this, xhr);
+        done();
+      });
+      xhr.open('/');
+      xhr.send();
+
+    });
+
+    it('should allow registering abort event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.addEventListener('abort', function(event) {
+        assert.equal(event.currentTarget, xhr);
+        assert.equal(this, xhr);
+        done();
+      });
+      xhr.open('/');
+      xhr.send();
+      xhr.abort();
+
+    });
+
+    it('should allow registering progress event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.addEventListener('progress', function(event) {
+        assert.equal(event.lengthComputable, true);
+        assert.equal(event.loaded, 50);
+        assert.equal(event.total, 100);
+        done();
+      });
+      xhr.open('/');
+      xhr.send();
+      xhr.progress(50, 100)
+
+    });
+
+  });
+
 });

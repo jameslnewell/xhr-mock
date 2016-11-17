@@ -104,6 +104,15 @@ Register a factory function to create mock responses for every request.
 
 ### MockXMLHttpRequest
 
+#### .abort()
+
+Call abort directly after send to trigger abort behavior.
+
+#### .progress(loaded, total, lengthComputable)
+
+Call progress directly after send to trigger a progress event. Pass in loaded size, total and if event is
+lengthComputable.
+
 ### MockRequest
 
 #### .method() : string
