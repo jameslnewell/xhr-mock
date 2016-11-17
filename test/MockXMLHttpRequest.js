@@ -224,6 +224,8 @@ describe('MockXMLHttpRequest', function() {
     it('should allow registering progress event listener', function(done) {
 
       MockXMLHttpRequest.addHandler(function(req, res) {
+        req.progress(50, 100)
+
         return res
       });
 
@@ -236,7 +238,6 @@ describe('MockXMLHttpRequest', function() {
       });
       xhr.open('/');
       xhr.send();
-      xhr.progress(50, 100)
 
     });
 
@@ -255,7 +256,6 @@ describe('MockXMLHttpRequest', function() {
       xhr.removeEventListener('load', removeLoadFunction);
       xhr.open('/');
       xhr.send();
-      xhr.progress(50, 100)
 
     });
 
