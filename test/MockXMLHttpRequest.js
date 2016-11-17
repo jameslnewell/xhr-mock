@@ -240,6 +240,25 @@ describe('MockXMLHttpRequest', function() {
 
     });
 
+    it('should allow unregistering event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      var removeLoadFunction = function () { done() }
+      xhr.addEventListener('load', function(event) {
+        done();
+      });
+      xhr.addEventListener('load', removeLoadFunction);
+      xhr.removeEventListener('load', removeLoadFunction);
+      xhr.open('/');
+      xhr.send();
+      xhr.progress(50, 100)
+
+    });
+
   });
 
 });
