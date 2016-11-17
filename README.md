@@ -104,15 +104,6 @@ Register a factory function to create mock responses for every request.
 
 ### MockXMLHttpRequest
 
-#### .abort()
-
-Call abort directly after send to trigger abort behavior.
-
-#### .progress(loaded, total, lengthComputable)
-
-Call progress directly after send to trigger a progress event. Pass in loaded size, total and if event is
-lengthComputable.
-
 ### MockRequest
 
 #### .method() : string
@@ -176,6 +167,10 @@ Get whether the response will trigger a time out.
 #### .timeout(timeout : bool|number)
 
 Set whether the response will trigger a time out. `timeout` defaults to the value set on the XHR object.
+
+#### .progress(loaded : number, total : number, lengthComputable : bool)
+
+Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 ## ToDo
 

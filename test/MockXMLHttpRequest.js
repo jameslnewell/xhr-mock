@@ -195,6 +195,7 @@ describe('MockXMLHttpRequest', function() {
       var xhr = new MockXMLHttpRequest();
       xhr.addEventListener('load', function(event) {
         assert.equal(event.currentTarget, xhr);
+        assert.equal(event.type, 'load');
         assert.equal(this, xhr);
         done();
       });
