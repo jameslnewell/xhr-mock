@@ -172,6 +172,11 @@ Set whether the response will trigger a time out. `timeout` defaults to the valu
 
 Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
+## Change log
+### 1.7.0
+
+- added support for `addEventListener` ([#15](https://github.com/jameslnewell/xhr-mock/pull/15))
+
 ## ToDo
 
 - Ability to return mocked responses asynchronously
