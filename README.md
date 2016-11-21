@@ -168,6 +168,10 @@ Get whether the response will trigger a time out.
 
 Set whether the response will trigger a time out. `timeout` defaults to the value set on the XHR object.
 
+#### .progress(loaded : number, total : number, lengthComputable : bool)
+
+Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
+
 ## ToDo
 
 - Ability to return mocked responses asynchronously
