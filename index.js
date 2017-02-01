@@ -38,10 +38,18 @@ module.exports = {
 	 * @returns {exports}
 	 */
 	mock: function(method, url, fn) {
-		var handler;
+		var handler, matcher;
 		if (arguments.length === 3) {
+			matcher = function(req) {
+				if (req.method() !== method) return false;
+				var reqUrl = req.url();
+				// allow regexp urls matcher
+				if (url instanceof RegExp) return url.test(reqUrl);
+				// otherwise assume the url is a string
+				return url === reqUrl;
+			}
 			handler = function(req, res) {
-				if (req.method() === method && req.url() === url) {
+				if (matcher(req)) {
 					return fn(req, res);
 				}
 				return false;

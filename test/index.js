@@ -29,4 +29,73 @@ describe('xhr-mock', function() {
 
 	});
 
+	describe('.mock()', function() {
+		it('should allow registering the handler', function(done) {
+			mock.setup();
+
+			mock.mock(function(req, res) {
+				return res
+					.status(200)
+					.body('OK')
+				;
+			});
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', '/');
+			xhr.onload = function() {
+				assert.equal(xhr.responseText, 'OK');
+				mock.teardown();
+				done();
+			};
+			xhr.send();
+		})
+		
+		it('should allow registering a specific URL handler', function(done) {
+			mock.setup();
+
+			mock.mock('GET', '/a', function(req, res) {
+				return res
+					.status(200)
+					.body('A')
+				;
+			});
+			
+			mock.mock('GET', '/b', function(req, res) {
+				return res
+					.status(200)
+					.body('B')
+				;
+			});
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', '/a');
+			xhr.onload = function() {
+				assert.equal(xhr.responseText, 'A');
+				mock.teardown();
+				done();
+			};
+			xhr.send();
+		})
+		
+		it('should allow registering a handler with URL regexp', function(done) {
+			mock.setup();
+
+			mock.mock('POST', /\/a\/\d+/, function(req, res) {
+				return res
+					.status(200)
+					.body(req.url().split('/')[2])
+				;
+			});
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', '/a/123');
+			xhr.onload = function() {
+				assert.equal(xhr.responseText, '123');
+				mock.teardown();
+				done();
+			};
+			xhr.send();
+		})
+	});
+
 });
