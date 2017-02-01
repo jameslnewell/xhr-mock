@@ -1,8 +1,13 @@
 var window              = require('global');
+var url 				= require('url');
 var MockXMLHttpRequest  = require('./lib/MockXMLHttpRequest');
 var real                = window.XMLHttpRequest;
 var mock                = MockXMLHttpRequest;
 
+function _getBaseUrl(urlToParse) {
+	var parsedUrl = url.parse(urlToParse);
+    return [parsedUrl.protocol, "/", parsedUrl.host, parsedUrl.path.replace(/\?.*/, "")].join("/");
+}
 /**
  * Mock utility
  */
@@ -41,7 +46,7 @@ module.exports = {
 		var handler;
 		if (arguments.length === 3) {
 			handler = function(req, res) {
-				if (req.method() === method && req.url() === url) {
+				if (req.method() === method && req.url() === _getBaseUrl(url)) {
 					return fn(req, res);
 				}
 				return false;
