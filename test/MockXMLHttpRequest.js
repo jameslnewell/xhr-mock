@@ -120,7 +120,7 @@ describe('MockXMLHttpRequest', function() {
       });
 
       var xhr = new MockXMLHttpRequest();
-      xhr.open('/');
+      xhr.open("GET", '/', true);
       xhr.ontimeout = function() {
         timedout = true;
       };
