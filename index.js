@@ -1,11 +1,11 @@
 var window              = require('global');
-var url 				= require('url');
+var URL                 = require('url');
 var MockXMLHttpRequest  = require('./lib/MockXMLHttpRequest');
 var real                = window.XMLHttpRequest;
 var mock                = MockXMLHttpRequest;
 
 function _getBaseUrl(urlToParse) {
-	var parsedUrl = url.parse(urlToParse);
+	var parsedUrl = URL.parse(urlToParse);
     return [parsedUrl.protocol, "/", parsedUrl.host, parsedUrl.path.replace(/\?.*/, "")].join("/");
 }
 /**
