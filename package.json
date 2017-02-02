@@ -19,7 +19,8 @@
     "url": "git://github.com/jameslnewell/xhr-mock.git"
   },
   "dependencies": {
-    "global": "^4.3.0"
+    "global": "^4.3.0",
+    "url-parse": "^1.1.7"
   },
   "devDependencies": {
     "browserify": "^14.0.0",
