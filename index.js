@@ -31,6 +31,15 @@ module.exports = {
 	},
 
 	/**
+	 * Remove any handlers
+	 * @returns {exports}
+	 */
+	reset: function() {
+		MockXMLHttpRequest.handlers = [];
+		return this;
+	},
+
+	/**
 	 * Mock a request
 	 * @param   {string}    [method]
 	 * @param   {string}    [url]
