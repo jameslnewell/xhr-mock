@@ -16,8 +16,7 @@ module.exports = {
 	 */
 	setup: function() {
 		window.XMLHttpRequest = mock;
-		MockXMLHttpRequest.handlers = [];
-		return this;
+		return this.reset();
 	},
 
 	/**
@@ -25,9 +24,8 @@ module.exports = {
 	 * @returns {exports}
 	 */
 	teardown: function() {
-		MockXMLHttpRequest.handlers = [];
 		window.XMLHttpRequest = real;
-		return this;
+    return this.reset();
 	},
 
 	/**
@@ -35,7 +33,7 @@ module.exports = {
 	 * @returns {exports}
 	 */
 	reset: function() {
-		MockXMLHttpRequest.handlers = [];
+		MockXMLHttpRequest.reset();
 		return this;
 	},
 

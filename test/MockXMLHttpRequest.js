@@ -4,11 +4,11 @@ var MockXMLHttpRequest  = require('../lib/MockXMLHttpRequest');
 describe('MockXMLHttpRequest', function() {
 
   beforeEach(function() {
-    MockXMLHttpRequest.handlers = [];
+    MockXMLHttpRequest.reset();
   });
 
   afterEach(function() {
-    MockXMLHttpRequest.handlers = [];
+    MockXMLHttpRequest.reset();
   });
 
   describe('.setRequestHeader()', function() {

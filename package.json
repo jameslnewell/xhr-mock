@@ -29,7 +29,7 @@
   },
   "scripts": {
     "test": "mochify",
-    "example.build": "mkdir build && browserify -r superagent -r ./index.js:xhr-mock -o build/build.js"
+    "example.build": "mkdir -p build && browserify -r superagent -r ./index.js:xhr-mock -o build/build.js"
   },
   "license": "MIT"
 }
