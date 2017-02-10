@@ -9,7 +9,7 @@
     <h1>xhr-mock</h1>
     <h2>Superagent Example</h2>
 
-    <script src="../build/build.js"></script>
+    <script src="../dist/xhr-mock.js"></script>
     <script>
 
         var mock = require('xhr-mock');
@@ -18,8 +18,7 @@
         mock.get('http://google.com/', function(req, res) {
             return res
                 .status(200)
-                .body('<h1>Google</h1>')
-            ;
+                .body('<h1>Google</h1>');
         });
 
         // ---------

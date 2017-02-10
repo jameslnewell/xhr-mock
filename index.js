@@ -1,7 +1,10 @@
-var window              = require('global');
-var MockXMLHttpRequest  = require('./lib/MockXMLHttpRequest');
-var real                = window.XMLHttpRequest;
-var mock                = MockXMLHttpRequest;
+var Promise                 = require('lie');
+var window                  = require('global');
+var MockXMLHttpRequest      = require('./lib/MockXMLHttpRequest');
+var real                    = window.XMLHttpRequest;
+var mock                    = MockXMLHttpRequest;
+
+window.xhrMockProxyHandler  = require('./lib/xhr-mock-proxy-handler');
 
 /**
  * Mock utility
@@ -39,9 +42,15 @@ module.exports = {
 	 */
 	mock: function(method, url, fn) {
 		var handler;
+
+		function match(string, pattern) {
+			return new RegExp(pattern).test(string);
+		}
+
 		if (arguments.length === 3) {
 			handler = function(req, res) {
-				if (req.method() === method && req.url() === url) {
+				if (match(req.method(), method)
+					&& match(req.url(), url)) {
 					return fn(req, res);
 				}
 				return false;
@@ -53,6 +62,10 @@ module.exports = {
 		MockXMLHttpRequest.addHandler(handler);
 
 		return this;
+	},
+
+	any: function(fn) {
+		return this.mock('.*', '.*', fn);
 	},
 
 	/**

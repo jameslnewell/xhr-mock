@@ -4,7 +4,8 @@
 	"index.js",
 	"lib/MockRequest.js",
 	"lib/MockResponse.js",
-	"lib/MockXMLHttpRequest.js"
+	"lib/MockXMLHttpRequest.js",
+	"lib/xhr-mock-proxy-handler.js"
   ],
   "development": {
 	  "dependencies": {
