@@ -8,9 +8,9 @@
 	"lib/xhr-mock-proxy-handler.js"
   ],
   "development": {
-	  "dependencies": {
-		  "component/assert": "*",
-		  "visionmedia/superagent": "~1.2.0"
-	  }
+    "dependencies": {
+      "component/assert": "*",
+      "visionmedia/superagent": "~1.2.0"
+    }
   }
 }

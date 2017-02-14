@@ -1,4 +1,6 @@
 .idea
+.vscode
 dist/
 components/
 node_modules/
+*.log

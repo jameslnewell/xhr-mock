@@ -74,23 +74,27 @@ Replace the global `XMLHttpRequest` object with the `MockXMLHttpRequest`.
 
 Restore the global `XMLHttpRequest` object to its original state.
 
-#### .get(url, fn)
+#### .reset()
+
+Forget all the request handlers.
+
+#### .get(url | regex, fn)
 
 Register a factory function to create mock responses for each GET request to a specific URL.
 
-#### .post(url, fn)
+#### .post(url | regex, fn)
 
 Register a factory function to create mock responses for each POST request to a specific URL.
 
-#### .put(url, fn)
+#### .put(url | regex, fn)
 
 Register a factory function to create mock responses for each PUT request to a specific URL.
 
-#### .patch(url, fn)
+#### .patch(url | regex, fn)
 
 Register a factory function to create mock responses for each PATCH request to a specific URL.
 
-#### .delete(url, fn)
+#### .delete(url | regex, fn)
 
 Register a factory function to create mock responses for each DELETE request to a specific URL.
 
@@ -98,7 +102,7 @@ Register a factory function to create mock responses for each DELETE request to 
 
 Register a factory function to create mock responses for **any** method request to **any** URL.
 
-#### .mock(method, url, fn)
+#### .mock(method | regex, url | regex, fn)
 
 Register a factory function to create mock responses for each request to a specific URL. Method and URL could be specified with regular expressions.
 
@@ -117,6 +121,10 @@ Get the request method.
 #### .url() : string
 
 Get the request URL.
+
+#### .query() : object
+
+Get the parsed query part of the request URL.
 
 #### .header(name : string) : string
 
@@ -177,6 +185,11 @@ Set whether the response will trigger a time out. `timeout` defaults to the valu
 Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 ## Change log
+- added support for regexes instead of URLs in all the mock methods
+- added the `.query()` method to the request object
+- added the `.reset()` method to `mock` and `MockXMLHttpRequest`
+- added `withCredentials` to the mocked XHR objects (used by some libraries to test for "real" XHR support)
+
 ### 1.7.0
 
 - added support for `addEventListener` ([#15](https://github.com/jameslnewell/xhr-mock/pull/15))
