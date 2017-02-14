@@ -19,19 +19,20 @@
     "url": "git://github.com/jameslnewell/xhr-mock.git"
   },
   "dependencies": {
+    "browserify": "^11.0.1",
     "global": "^4.3.0",
-    "lie": "^3.1.1"
-  },
-  "devDependencies": {
-    "browserify": "^11.0.1",    
-    "mochify": "^2.13.0",
-    "superagent": "^3.4.1",
+    "lie": "^3.1.1",
     "uglify-js": "^2.7.5",
     "url-parse": "^1.1.7"
   },
+  "devDependencies": {
+    "mochify": "^2.13.0",
+    "superagent": "^3.4.1"
+  },
   "scripts": {
     "test": "mochify",
-    "build": "mkdir -p dist && browserify -r lie -r superagent -r ./index.js:xhr-mock -o dist/xhr-mock.js",
+    "build": "mkdir -p dist && browserify -r lie -r ./index.js:xhr-mock -o dist/xhr-mock.js",
+    "build:example": "browserify -r lie -r superagent -r ./index.js:xhr-mock -o example/xhr-mock.js",
     "minify": "uglifyjs dist/xhr-mock.js --output dist/xhr-mock.min.js",
     "postinstall": "npm run build && npm run minify"
   },
