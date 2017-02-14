@@ -23,16 +23,16 @@
     "lie": "^3.1.1"
   },
   "devDependencies": {
-    "browserify": "^11.0.1",
-    "minifier": "^0.8.1",
+    "browserify": "^11.0.1",    
     "mochify": "^2.13.0",
     "superagent": "^3.4.1",
+    "uglify-js": "^2.7.5",
     "url-parse": "^1.1.7"
   },
   "scripts": {
     "test": "mochify",
     "build": "mkdir -p dist && browserify -r lie -r superagent -r ./index.js:xhr-mock -o dist/xhr-mock.js",
-    "minify": "minify --output dist/xhr-mock.min.js dist/xhr-mock.js",
+    "minify": "uglifyjs dist/xhr-mock.js --output dist/xhr-mock.min.js",
     "postinstall": "npm run build && npm run minify"
   },
   "license": "MIT"
