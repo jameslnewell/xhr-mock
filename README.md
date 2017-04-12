@@ -98,9 +98,13 @@ Register a factory function to create mock responses for each PATCH request to a
 
 Register a factory function to create mock responses for each DELETE request to a specific URL.
 
-#### .mock(method, url | regex, fn)
+#### .any(fn)
 
-Register a factory function to create mock responses for each request to a specific URL.
+Register a factory function to create mock responses for **any** method request to **any** URL.
+
+#### .mock(method | regex, url | regex, fn)
+
+Register a factory function to create mock responses for each request to a specific URL. Method and URL could be specified with regular expressions.
 
 #### .mock(fn)
 
