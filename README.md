@@ -189,6 +189,13 @@ Set whether the response will trigger a time out. `timeout` defaults to the valu
 Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 ## Change log
+
+### 1.9.0
+
+- added `Response.statusText()` for setting the status text
+
+### 1.8.0
+
 - added support for regexes instead of URLs in all the mock methods
 - added the `.query()` method to the request object
 - added the `.reset()` method to `mock` and `MockXMLHttpRequest`
