@@ -144,6 +144,14 @@ Get the response status.
 
 Set the response status.
 
+#### .statusText() : string
+
+Get the response statusText.
+
+#### .statusText(statusText : string)
+
+Set the response statusText.
+
 #### .header(name : string, value: string)
 
 Set a response header.
