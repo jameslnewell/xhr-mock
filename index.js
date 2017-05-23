@@ -1,13 +1,12 @@
-var window              = require('global');
-var MockXMLHttpRequest  = require('./lib/MockXMLHttpRequest');
-var real                = window.XMLHttpRequest;
-var mock                = MockXMLHttpRequest;
+var window = require('global');
+var MockXMLHttpRequest = require('./lib/MockXMLHttpRequest');
+var real = window.XMLHttpRequest;
+var mock = MockXMLHttpRequest;
 
 /**
  * Mock utility
  */
 module.exports = {
-
   XMLHttpRequest: MockXMLHttpRequest,
 
   /**
@@ -54,7 +53,7 @@ module.exports = {
         if (url instanceof RegExp) return url.test(reqUrl);
         // otherwise assume the url is a string
         return url === reqUrl;
-      }
+      };
       handler = function(req, res) {
         if (matcher(req)) {
           return fn(req, res);
@@ -119,5 +118,4 @@ module.exports = {
   delete: function(url, fn) {
     return this.mock('DELETE', url, fn);
   }
-
 };
