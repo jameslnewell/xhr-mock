@@ -8,13 +8,7 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 
 ## Installation
 
-### Browserify
-
-    npm install --save xhr-mock
-
-### Component
-
-    component install jameslnewell/xhr-mock
+    npm install --save-dev xhr-mock
 
 ## Usage
 
@@ -190,6 +184,10 @@ Set whether the response will trigger a time out. `timeout` defaults to the valu
 Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 ## Change log
+
+### 2.0.0
+
+- removed: support for [`component`](https://github.com/componentjs/component)
 
 ### 1.9.0
 
