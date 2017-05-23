@@ -1,0 +1,19 @@
+{
+  "name": "example",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.16.1",
+    "jquery": "^3.2.1",
+    "superagent": "^3.5.2",
+    "xhr-mock": "file:.."
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^4.0.1",
+    "linklocal": "^2.8.0",
+    "webpack": "^2.6.0"
+  },
+  "scripts": {
+    "build": "webpack",
+    "postinstall": "linklocal"
+  }
+}

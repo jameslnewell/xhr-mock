@@ -58,9 +58,10 @@ xhr.onreadystatechange = function() {
 
 Examples of using `xhr-mock` with various frameworks:
 
-- [Superagent](./example/superagent.html)
-- [jQuery](./example/jquery.html)
-- [XMLHttpRequest](./example/native.html)
+- [Axios](example/src/axios/index.js)
+- [Superagent](example/src/superagent/index.js)
+- [jQuery](example/src/jquery/index.js)
+- [XMLHttpRequest](example/src/native/index.js)
 
 ## API
 

@@ -14,25 +14,19 @@
     "jquery",
     "superagent"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/jameslnewell/xhr-mock.git"
-  },
+  "repository": "jameslnewell/xhr-mock",
   "dependencies": {
     "global": "^4.3.0",
     "url-parse": "^1.1.7"
   },
   "devDependencies": {
-    "browserify": "^14.0.0",
     "husky": "^0.13.3",
     "lint-staged": "^3.4.2",
     "mochify": "^2.13.0",
-    "prettier": "^1.3.1",
-    "superagent": "^3.4.1"
+    "prettier": "^1.3.1"
   },
   "scripts": {
     "test": "mochify",
-    "example.build": "mkdir -p build && browserify -r superagent -r ./index.js:xhr-mock -o build/build.js",
     "precommit": "lint-staged"
   },
   "lint-staged": {
