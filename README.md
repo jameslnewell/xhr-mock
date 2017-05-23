@@ -6,6 +6,10 @@ Utility for mocking XMLHttpRequests in the browser.
 
 Useful for unit testing and doesn't require you to inject a mocked object into your code.
 
+Features:
+- run your tests in real browsers, headless browsers or even nodejs
+
+
 ## Installation
 
     npm install --save-dev xhr-mock
@@ -191,7 +195,9 @@ Set whether the response will trigger a time out. `timeout` defaults to the valu
 
 ### 2.0.0
 
-- removed: support for [`component`](https://github.com/componentjs/component)
+- added support for upload progress
+- break: moved `MockRequest.progress()` to `MockResponse.progress()`
+- break: removed support for [`component`](https://github.com/componentjs/component)
 
 ### 1.9.0
 
