@@ -131,10 +131,6 @@ Get the request body.
 
 #### .progress(loaded : number, total : number, lengthComputable : bool)
 
-Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
-
-#### .uploadProgress(loaded : number, total : number, lengthComputable : bool)
-
 Trigger progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
 
 ### MockResponse
@@ -178,6 +174,10 @@ Get the response body.
 #### .body(body : string)
 
 Set the response body.
+
+#### .progress(loaded : number, total : number, lengthComputable : bool)
+
+Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 #### .timeout() : bool|number
 

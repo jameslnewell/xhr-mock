@@ -222,10 +222,10 @@ describe('MockXMLHttpRequest', function() {
 
     });
 
-    it('should allow registering progress event listener', function(done) {
+    it('should allow registering response progress event listener', function(done) {
 
       MockXMLHttpRequest.addHandler(function(req, res) {
-        req.progress(50, 100)
+        res.progress(50, 100)
 
         return res
       });
@@ -300,10 +300,10 @@ describe('MockXMLHttpRequest', function() {
 
     });
 
-    it('should allow registering progress event listener', function(done) {
+    it('should allow registering request progress event listener', function(done) {
 
       MockXMLHttpRequest.addHandler(function(req, res) {
-        req.uploadProgress(50, 100);
+        req.progress(50, 100);
 
         return res
       });
