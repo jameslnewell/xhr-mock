@@ -135,6 +135,14 @@ Get the request headers.
 
 Get the request body.
 
+#### .progress(loaded : number, total : number, lengthComputable : bool)
+
+Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
+
+#### .uploadProgress(loaded : number, total : number, lengthComputable : bool)
+
+Trigger progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
+
 ### MockResponse
 
 #### .status() : number
@@ -184,10 +192,6 @@ Get whether the response will trigger a time out.
 #### .timeout(timeout : bool|number)
 
 Set whether the response will trigger a time out. `timeout` defaults to the value set on the XHR object.
-
-#### .progress(loaded : number, total : number, lengthComputable : bool)
-
-Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 ## Change log
 

@@ -262,4 +262,82 @@ describe('MockXMLHttpRequest', function() {
 
   });
 
+  describe('upload.addEventListener()', function() {
+
+    it('should allow registering load event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.upload.addEventListener('load', function(event) {
+        assert.equal(event.currentTarget, xhr.upload);
+        assert.equal(event.type, 'load');
+        assert.equal(this, xhr.upload);
+        done();
+      });
+      xhr.open('/');
+      xhr.send();
+
+    });
+
+    it('should allow registering abort event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.upload.addEventListener('abort', function(event) {
+        assert.equal(event.currentTarget, xhr.upload);
+        assert.equal(this, xhr.upload);
+        done();
+      });
+      xhr.open('/');
+      xhr.send();
+      xhr.abort();
+
+    });
+
+    it('should allow registering progress event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        req.uploadProgress(50, 100);
+
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      xhr.upload.addEventListener('progress', function(event) {
+        assert.equal(event.lengthComputable, true);
+        assert.equal(event.loaded, 50);
+        assert.equal(event.total, 100);
+        done();
+      });
+      xhr.open('/');
+      xhr.send();
+
+    });
+
+    it('should allow unregistering event listener', function(done) {
+
+      MockXMLHttpRequest.addHandler(function(req, res) {
+        return res
+      });
+
+      var xhr = new MockXMLHttpRequest();
+      var removeLoadFunction = function () { done() }
+      xhr.upload.addEventListener('load', function(event) {
+        done();
+      });
+      xhr.upload.addEventListener('load', removeLoadFunction);
+      xhr.upload.removeEventListener('load', removeLoadFunction);
+      xhr.open('/');
+      xhr.send();
+
+    });
+
+  })
+
 });
