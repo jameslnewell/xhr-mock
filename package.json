@@ -24,12 +24,22 @@
   },
   "devDependencies": {
     "browserify": "^14.0.0",
+    "husky": "^0.13.3",
+    "lint-staged": "^3.4.2",
     "mochify": "^2.13.0",
+    "prettier": "^1.3.1",
     "superagent": "^3.4.1"
   },
   "scripts": {
     "test": "mochify",
-    "example.build": "mkdir -p build && browserify -r superagent -r ./index.js:xhr-mock -o build/build.js"
+    "example.build": "mkdir -p build && browserify -r superagent -r ./index.js:xhr-mock -o build/build.js",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write --tab-width 2 --single-quote true --trailing-comma none --bracket-spacing false --jsx-bracket-same-line false --semi true",
+      "git add"
+    ]
   },
   "license": "MIT"
 }
