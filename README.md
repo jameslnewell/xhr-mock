@@ -13,13 +13,13 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 ## Usage
 
 ```javascript
-var mock = require('xhr-mock');
+import mock from 'xhr-mock';
 
 //replace the real XHR object with the mock XHR object
 mock.setup();
 
 //create a mock response for all POST requests with the URL http://localhost/api/user
-mock.post('http://localhost/api/user', function(req, res) {
+mock.post('http://localhost/api/user', (req, res) => {
 
   //return null;              //simulate an error
   //return res.timeout(true); //simulate a timeout
@@ -35,7 +35,7 @@ mock.post('http://localhost/api/user', function(req, res) {
 });
 
 //create an instance of the (mock) XHR object and use as per normal
-var xhr = new XMLHttpRequest();
+const xhr = new XMLHttpRequest();
 ...
 
 xhr.onreadystatechange = function() {
