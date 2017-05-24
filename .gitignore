@@ -1,5 +1,11 @@
-.idea
-.vscode
-components/
+
+# package manager files
 node_modules/
 *.log
+
+# IDE files
+.idea
+.vscode
+
+# project files
+lib
