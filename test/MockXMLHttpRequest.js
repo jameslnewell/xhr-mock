@@ -207,7 +207,7 @@ describe('MockXMLHttpRequest', function() {
     it('should allow registering abort event listener', function(done) {
 
       MockXMLHttpRequest.addHandler(function(req, res) {
-        return res
+        return res.timeout(1);
       });
 
       var xhr = new MockXMLHttpRequest();
