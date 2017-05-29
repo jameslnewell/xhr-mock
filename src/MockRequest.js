@@ -1,104 +1,115 @@
-var URL = require('url-parse');
+import URL from 'url-parse';
 
-/**
- * The mocked request data
- * @constructor
- */
-function MockRequest(xhr) {
-  this._xhr = xhr;
-  this._method = xhr.method;
-  this._url = xhr.url;
-  this._headers = {};
-  this.headers(xhr._requestHeaders);
-  this.body(xhr.data);
-}
+export default class MockRequest {
+  /** @private */
+  _method = '';
 
-/**
- * Get/set the HTTP method
- * @returns {string}
- */
-MockRequest.prototype.method = function() {
-  return this._method;
-};
+  /** @private */
+  _url = null;
 
-/**
- * Get/set the HTTP URL
- * @returns {string}
- */
-MockRequest.prototype.url = function() {
-  return this._url;
-};
+  /** @private */
+  _headers = {};
 
-/**
- * Get/set the parsed URL query
- * @returns {Object}
- */
-MockRequest.prototype.query = function() {
-  var url = new URL(this._url, true);
-  return url.query;
-};
+  /** @private */
+  _body = null;
 
-/**
- * Get/set a HTTP header
- * @param   {string} name
- * @param   {string} [value]
- * @returns {string|undefined|MockRequest}
- */
-MockRequest.prototype.header = function(name, value) {
-  if (arguments.length === 2) {
-    this._headers[name.toLowerCase()] = value;
-    return this;
-  } else {
-    return this._headers[name.toLowerCase()] || null;
+  /** @private */
+  _events = null;
+
+  constructor(events) {
+    this._events = events;
   }
-};
 
-/**
- * Get/set all of the HTTP headers
- * @param   {Object} [headers]
- * @returns {Object|MockRequest}
- */
-MockRequest.prototype.headers = function(headers) {
-  if (arguments.length) {
-    for (var name in headers) {
-      if (headers.hasOwnProperty(name)) {
-        this.header(name, headers[name]);
-      }
+  /**
+   * Get/set the HTTP method
+   * @param string [method]
+   * @returns {MockRequest|string}
+   */
+  method(method) {
+    if (arguments.length) {
+      this._method = method;
+      return this;
+    } else {
+      return this._method;
     }
-    return this;
-  } else {
-    return this._headers;
   }
-};
 
-/**
- * Get/set the HTTP body
- * @param   {string} [body]
- * @returns {string|MockRequest}
- */
-MockRequest.prototype.body = function(body) {
-  if (arguments.length) {
-    this._body = body;
-    return this;
-  } else {
-    return this._body;
+  /**
+   * Get/set the HTTP URL
+   * @param string [url]
+   * @returns {MockRequest|URL|null}
+   */
+  url(url) {
+    if (arguments.length) {
+      this._url = url ? new URL(url, {protocol: ''}, true) : null;
+      return this;
+    } else {
+      return this._url;
+    }
   }
-};
 
-/**
- * Trigger upload progress event
- * @param   {number} [loaded]
- * @param   {number} [total]
- * @param   {boolean} [lengthComputable]
- * @returns {MockResponse}
- */
-MockRequest.prototype.progress = function(loaded, total, lengthComputable) {
-  this._xhr.upload.trigger('progress', {
-    lengthComputable: lengthComputable || true,
-    loaded: loaded,
-    total: total
-  });
-  return this;
-};
+  /**
+   * Get/set a HTTP header
+   * @param   {string} name
+   * @param   {string} [value]
+   * @returns {MockRequest|string|null}
+   */
+  header(name, value) {
+    if (arguments.length === 2) {
+      this._headers[name.toLowerCase()] = value;
+      return this;
+    } else {
+      return this._headers[name.toLowerCase()] || null;
+    }
+  }
 
-module.exports = MockRequest;
+  /**
+   * Get/set all of the HTTP headers
+   * @param   {object} [headers]
+   * @returns {MockRequest|object}
+   */
+  headers(headers) {
+    if (arguments.length) {
+      for (let name in headers) {
+        if (headers.hasOwnProperty(name)) {
+          this.header(name, headers[name]);
+        }
+      }
+      return this;
+    } else {
+      return this._headers;
+    }
+  }
+
+  /**
+   * Get/set the HTTP body
+   * @param   {*} [body]
+   * @returns {MockRequest|*}
+   */
+  body(body) {
+    if (arguments.length) {
+      this._body = body;
+      return this;
+    } else {
+      return this._body;
+    }
+  }
+
+  /**
+   * Trigger request progress event
+   * @param   {number} [loaded]
+   * @param   {number} [total]
+   * @param   {boolean} [lengthComputable]
+   * @returns {MockResponse}
+   */
+  progress(loaded, total, lengthComputable) {
+    //TODO: consider this signature (put lengthComputable first?)
+    this._events.dispatchEvent({
+      type: 'progress',
+      lengthComputable: lengthComputable || true,
+      loaded: loaded || 0,
+      total: total || 0
+    });
+    return this;
+  }
+}

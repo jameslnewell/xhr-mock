@@ -42,7 +42,7 @@ mock.post('http://localhost/api/user', (req, res) => {
 const xhr = new XMLHttpRequest();
 ...
 
-xhr.onreadystatechange = function() {
+xhr.onreadystatechange = () => {
   if (xhr.readyState == 4) {
 
     //when you're finished put the real XHR object back
@@ -113,7 +113,7 @@ Register a factory function to create mock responses for every request.
 
 Get the request method.
 
-#### .url() : string
+#### .url() : URL
 
 Get the request URL.
 
@@ -121,7 +121,7 @@ Get the request URL.
 
 Get the parsed query part of the request URL.
 
-#### .header(name : string) : string
+#### .header(name : string) : string | null
 
 Get a request header.
 
@@ -135,7 +135,7 @@ Get the request body.
 
 #### .progress(loaded : number, total : number, lengthComputable : bool)
 
-Trigger progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
+Dispatch a progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
 
 ### MockResponse
 
@@ -147,19 +147,19 @@ Get the response status.
 
 Set the response status.
 
-#### .statusText() : string
+#### .reason() : string
 
-Get the response statusText.
+Get the response reason.
 
-#### .statusText(statusText : string)
+#### .reason(phrase : string)
 
-Set the response statusText.
+Set the response reason.
 
 #### .header(name : string, value: string)
 
 Set a response header.
 
-#### .header(name : string) : string
+#### .header(name : string) : string | null
 
 Get a response header.
 
@@ -181,21 +181,16 @@ Set the response body.
 
 #### .progress(loaded : number, total : number, lengthComputable : bool)
 
-Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
-
-#### .timeout() : bool|number
-
-Get whether the response will trigger a time out.
-
-#### .timeout(timeout : bool|number)
-
-Set whether the response will trigger a time out. `timeout` defaults to the value set on the XHR object.
+Dispatch a progress event. Pass in loaded size, total size and if event is lengthComputable.
 
 ## Change log
 
 ### 2.0.0
 
 - added support for upload progress
+- break: renamed `MockResponse.statusText()` to `MockResponse.reason()`
+- break: removed `MockRequest.query()` and changed `MockRequest.url()` to return a URL object (with a `.toString()` method)
+- break: removed `MockResponse.timeout()` - return a promise that never resolves instead
 - break: moved `MockRequest.progress()` to `MockResponse.progress()`
 - break: removed support for [`component`](https://github.com/componentjs/component)
 

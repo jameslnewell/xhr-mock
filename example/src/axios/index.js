@@ -10,7 +10,7 @@ mock.get('http://google.com/', function(req, res) {
 var axios = require('axios');
 axios.get('http://google.com/').then(
   function(res) {
-    console.log('loaded', res.data);
+    console.log('loaded', res._requestBody);
   },
   function(error) {
     console.log('ERROR', error);

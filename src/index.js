@@ -1,38 +1,37 @@
-var window = require('global');
-var MockXMLHttpRequest = require('./MockXMLHttpRequest');
-var real = window.XMLHttpRequest;
-var mock = MockXMLHttpRequest;
+import window from 'global';
+import createHandler from './createHandler';
+import MockXMLHttpRequest from './MockXMLHttpRequest';
 
-/**
- * Mock utility
- */
-module.exports = {
-  XMLHttpRequest: MockXMLHttpRequest,
+const realXHR = window.XMLHttpRequest;
+const mockXHR = MockXMLHttpRequest;
 
+const XHRMock = {
   /**
-   * Replace the native XHR with the mocked XHR
-   * @returns {exports}
+   * Replace the native XHR with the mock XHR and remove any handlers
+   * @returns {XHRMock}
    */
-  setup: function() {
-    window.XMLHttpRequest = mock;
-    return this.reset();
+  setup() {
+    window.XMLHttpRequest = mockXHR;
+    this.reset();
+    return this;
   },
 
   /**
-   * Replace the mocked XHR with the native XHR and remove any handlers
-   * @returns {exports}
+   * Restore the native XHR and remove any handlers
+   * @returns {XHRMock}
    */
-  teardown: function() {
-    window.XMLHttpRequest = real;
-    return this.reset();
+  teardown() {
+    this.reset();
+    window.XMLHttpRequest = realXHR;
+    return this;
   },
 
   /**
    * Remove any handlers
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  reset: function() {
-    MockXMLHttpRequest.reset();
+  reset() {
+    MockXMLHttpRequest.removeAllHandlers();
     return this;
   },
 
@@ -41,31 +40,13 @@ module.exports = {
    * @param   {string}    [method]
    * @param   {string}    [url]
    * @param   {Function}  fn
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  mock: function(method, url, fn) {
-    var handler, matcher;
-    if (arguments.length === 3) {
-      matcher = function(req) {
-        if (req.method() !== method) return false;
-        var reqUrl = req.url();
-        // allow regexp urls matcher
-        if (url instanceof RegExp) return url.test(reqUrl);
-        // otherwise assume the url is a string
-        return url === reqUrl;
-      };
-      handler = function(req, res) {
-        if (matcher(req)) {
-          return fn(req, res);
-        }
-        return false;
-      };
-    } else {
-      handler = method;
-    }
-
+  mock(method, url, fn) {
+    const handler = arguments.length === 3
+      ? createHandler(method, url, fn)
+      : method;
     MockXMLHttpRequest.addHandler(handler);
-
     return this;
   },
 
@@ -73,9 +54,9 @@ module.exports = {
    * Mock a GET request
    * @param   {String}    url
    * @param   {Function}  fn
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  get: function(url, fn) {
+  get(url, fn) {
     return this.mock('GET', url, fn);
   },
 
@@ -83,9 +64,9 @@ module.exports = {
    * Mock a POST request
    * @param   {String}    url
    * @param   {Function}  fn
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  post: function(url, fn) {
+  post(url, fn) {
     return this.mock('POST', url, fn);
   },
 
@@ -93,9 +74,9 @@ module.exports = {
    * Mock a PUT request
    * @param   {String}    url
    * @param   {Function}  fn
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  put: function(url, fn) {
+  put(url, fn) {
     return this.mock('PUT', url, fn);
   },
 
@@ -103,9 +84,9 @@ module.exports = {
    * Mock a PATCH request
    * @param   {String}    url
    * @param   {Function}  fn
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  patch: function(url, fn) {
+  patch(url, fn) {
     return this.mock('PATCH', url, fn);
   },
 
@@ -113,9 +94,11 @@ module.exports = {
    * Mock a DELETE request
    * @param   {String}    url
    * @param   {Function}  fn
-   * @returns {exports}
+   * @returns {XHRMock}
    */
-  delete: function(url, fn) {
+  delete(url, fn) {
     return this.mock('DELETE', url, fn);
   }
 };
+
+export default XHRMock;

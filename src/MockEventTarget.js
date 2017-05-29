@@ -1,51 +1,53 @@
-/**
- * An EventTarget object
- * @constructor
- */
-function MockEventTarget() {
-  this._eventListeners = [];
+class MockEvent {
+  constructor(type) {
+    this.type = type;
+  }
 }
 
-/**
- * Trigger an event
- * @param   {String} event
- * @param   {Object} eventDetails
- * @returns {MockEventTarget}
- */
-MockEventTarget.prototype.trigger = function(event, eventDetails) {
-  //TODO: adhere to dispatchEvent() https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
-  for (var x = 0; x < this._eventListeners.length; x++) {
-    var eventListener = this._eventListeners[x];
+export default class MockEventTarget {
+  _listeners = {};
 
-    if (eventListener.event === event) {
-      var eventListenerDetails = eventDetails || {};
-      eventListenerDetails.currentTarget = this;
-      eventListenerDetails.type = event;
-      eventListener.listener.call(this, eventListenerDetails);
+  addEventListener(type, listener) {
+    //TODO: support once
+
+    if (!this._listeners[type]) {
+      this._listeners[type] = [];
+    }
+
+    if (this._listeners[type].indexOf(listener) === -1) {
+      this._listeners[type].push(listener);
     }
   }
 
-  return this;
-};
+  removeEventListener(type, listener) {
+    if (!this._listeners[type]) {
+      return;
+    }
 
-MockEventTarget.prototype.addEventListener = function(event, listener) {
-  this._eventListeners.push({
-    event: event,
-    listener: listener
-  });
-};
-
-MockEventTarget.prototype.removeEventListener = function(event, listener) {
-  var currentIndex = 0;
-
-  while (currentIndex < this._eventListeners.length) {
-    var eventListener = this._eventListeners[currentIndex];
-    if (eventListener.event === event && eventListener.listener === listener) {
-      this._eventListeners.splice(currentIndex, 1);
-    } else {
-      currentIndex++;
+    const index = this._listeners[type].indexOf(listener);
+    if (index !== -1) {
+      this._listeners[type].splice(index, 1);
     }
   }
-};
 
-module.exports = MockEventTarget;
+  dispatchEvent(event) {
+    if (typeof event === 'string') {
+      event = {type: event};
+    }
+
+    //set the event target
+    event.target = this;
+    event.currentTarget = this;
+
+    //call any built-in listeners
+    if (this[`on${event.type}`]) {
+      this[`on${event.type}`](event);
+    }
+
+    if (!this._listeners[event.type]) {
+      return;
+    }
+
+    this._listeners[event.type].forEach(listener => listener.call(this, event));
+  }
+}
