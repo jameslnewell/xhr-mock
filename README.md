@@ -191,6 +191,10 @@ Trigger progress event. Pass in loaded size, total size and if event is lengthCo
 
 ## Change log
 
+### 1.9.1
+
+- fixed [#30](https://github.com/jameslnewell/xhr-mock/issues/30)
+
 ### 1.9.0
 
 - added `Response.statusText()` for setting the status text
