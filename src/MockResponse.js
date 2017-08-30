@@ -46,6 +46,13 @@ export default class MockResponse {
     }
   }
 
+  statusText(reason) {
+    console.warn(
+      'xhr-mock: MockResponse.statusText() has been deprecated. Use MockResponse.reason() instead.'
+    );
+    return this.reason(reason);
+  }
+
   /**
    * Get/set a HTTP header
    * @param   {string} name

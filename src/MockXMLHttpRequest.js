@@ -82,6 +82,9 @@ export default class MockXMLHttpRequest extends MockEventTarget {
     this._request = new MockRequest(this.upload);
     this._response = new MockResponse(this);
     this._readyState = MockXMLHttpRequest.UNSENT;
+
+    this._sending = false;
+    this._aborting = false;
   }
 
   get readyState() {
@@ -155,7 +158,10 @@ export default class MockXMLHttpRequest extends MockEventTarget {
 
     this._reset();
     this._async = async;
-    this._request.method(method).url(fullURL).header('accept', '*/*');
+    this._request
+      .method(method)
+      .url(fullURL)
+      .header('accept', '*/*');
 
     this.readyState = MockXMLHttpRequest.OPENED;
   }
@@ -192,6 +198,8 @@ export default class MockXMLHttpRequest extends MockEventTarget {
       throw new Error('xhr-mock: Please call .open() before .send().');
     }
 
+    this._sending = true;
+
     //body is ignored for GET and HEAD requests
     if (this._request.method() === 'get' || this._request.method() === 'head') {
       body = null;
@@ -219,13 +227,12 @@ export default class MockXMLHttpRequest extends MockEventTarget {
 
     //indicate request progress
     if (body) {
-      const lengthComputable = true;
-      const total = body ? body.length : 0;
+      const requestTotal = body ? body.length : 0;
       this.upload.dispatchEvent({
         type: 'progress',
-        lengthComputable,
+        lengthComputable: true,
         loaded: 0,
-        total
+        total: requestTotal
       });
     }
 
@@ -235,14 +242,17 @@ export default class MockXMLHttpRequest extends MockEventTarget {
         clearTimeout(this._timeoutTimer);
 
         //TODO: check if we've been aborted
+        if (this._aborting) {
+          return;
+        }
 
         //indicate the request body has been fully sent
         if (body) {
           this.upload.dispatchEvent({
             type: 'progress',
-            lengthComputable,
-            loaded: total,
-            total
+            lengthComputable: true,
+            loaded: responseTotal,
+            responseTotal
           });
           this.upload.dispatchEvent('load');
           this.upload.dispatchEvent('loadend');
@@ -262,20 +272,20 @@ export default class MockXMLHttpRequest extends MockEventTarget {
 
         //indicate response progress
         //FIXME: response.progress() shouldn't be called before here
-        const lengthComputable = Boolean(res.header('content-length'));
-        const total = res.header('content-length') || 0;
+        const responseLengthComputable = Boolean(res.header('content-length'));
+        const responseTotal = res.header('content-length') || 0;
         this.dispatchEvent({
           type: 'progress',
-          lengthComputable,
+          lengthComputable: responseLengthComputable,
           loaded: 0,
-          total
+          total: responseTotal
         });
         //FIXME: allow user to specify custom progress here
         this.dispatchEvent({
           type: 'progress',
-          lengthComputable,
+          lengthComputable: responseLengthComputable,
           loaded: res.body() ? res.body().length : 0,
-          total
+          total: responseTotal
         });
 
         //indicate the response has been fully received
@@ -299,13 +309,25 @@ export default class MockXMLHttpRequest extends MockEventTarget {
     //we've cancelling the response before the timeout period so we don't want to timeout
     clearTimeout(this._timeoutTimer);
 
-    if (
-      this.readyState > MockXMLHttpRequest.OPENED &&
-      this.readyState < MockXMLHttpRequest.DONE
-    ) {
-      // this.readyState = MockXMLHttpRequest.UNSENT; //FIXME
-      this.upload.dispatchEvent('abort');
+    if (this._sending) {
+      this.readyState = MockXMLHttpRequest.DONE;
+      if (this._request.body()) {
+        this.upload.dispatchEvent('progress');
+      }
+      this.dispatchEvent('progress');
       this.dispatchEvent('abort');
+      this.dispatchEvent('loadend');
     }
+
+    //TODO: check spec
+    if (this.readyState === MockXMLHttpRequest.DONE) {
+      this._readyState = MockXMLHttpRequest.UNSENT;
+      this.status = 0;
+      this.statusText = '';
+      this.responseType = 'error';
+    }
+
+    this._sending = false;
+    this._aborting = true;
   }
 }

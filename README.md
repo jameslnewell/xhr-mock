@@ -7,6 +7,7 @@ Utility for mocking XMLHttpRequests in the browser.
 Useful for unit testing and doesn't require you to inject a mocked object into your code.
 
 Features:
+- todo
 - run your tests in real browsers, headless browsers or even nodejs
 
 
@@ -182,35 +183,3 @@ Set the response body.
 #### .progress(loaded : number, total : number, lengthComputable : bool)
 
 Dispatch a progress event. Pass in loaded size, total size and if event is lengthComputable.
-
-## Change log
-
-### 2.0.0
-
-- added support for upload progress
-- break: renamed `MockResponse.statusText()` to `MockResponse.reason()`
-- break: removed `MockRequest.query()` and changed `MockRequest.url()` to return a URL object (with a `.toString()` method)
-- break: removed `MockResponse.timeout()` - return a promise that never resolves instead
-- break: moved `MockRequest.progress()` to `MockResponse.progress()`
-- break: removed support for [`component`](https://github.com/componentjs/component)
-
-### 1.9.0
-
-- added `Response.statusText()` for setting the status text
-
-### 1.8.0
-
-- added support for regexes instead of URLs in all the mock methods
-- added the `.query()` method to the request object
-- added the `.reset()` method to `mock` and `MockXMLHttpRequest`
-- added `withCredentials` to the mocked XHR objects (used by some libraries to test for "real" XHR support)
-
-### 1.7.0
-
-- added support for `addEventListener` ([#15](https://github.com/jameslnewell/xhr-mock/pull/15))
-
-## ToDo
-
-- Ability to return mocked responses asynchronously
-- Ability to provide a simple object response instead of a function
-- Handle JSON and XML response types

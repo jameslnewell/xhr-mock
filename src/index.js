@@ -43,9 +43,8 @@ const XHRMock = {
    * @returns {XHRMock}
    */
   mock(method, url, fn) {
-    const handler = arguments.length === 3
-      ? createHandler(method, url, fn)
-      : method;
+    const handler =
+      arguments.length === 3 ? createHandler(method, url, fn) : method;
     MockXMLHttpRequest.addHandler(handler);
     return this;
   },

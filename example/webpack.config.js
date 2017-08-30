@@ -5,10 +5,10 @@ module.exports = {
   context: path.resolve('src'),
 
   entry: {
-    native: './native/index.test.js',
-    axios: './axios/index.test.js',
-    jquery: './native/index.test.js',
-    superagent: './superagent/index.test.js'
+    native: './native/index.js',
+    axios: './axios/index.js',
+    jquery: './native/index.js',
+    superagent: './superagent/index.js'
   },
 
   output: {

@@ -41,6 +41,7 @@ export default class MockEventTarget {
 
     //call any built-in listeners
     if (this[`on${event.type}`]) {
+      //FIXME: should be added on set
       this[`on${event.type}`](event);
     }
 

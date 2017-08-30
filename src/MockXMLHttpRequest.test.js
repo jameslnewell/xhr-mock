@@ -86,6 +86,7 @@ describe('MockXMLHttpRequest', () => {
     });
 
     it('should not time out when the request was aborted', done => {
+      debugger;
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
       const xhr = new MockXMLHttpRequest();
       xhr.timeout = 100;
@@ -184,79 +185,70 @@ describe('MockXMLHttpRequest', () => {
       expect(() => xhr.send()).toThrow();
     });
 
-    it('should dispatch events', done => {
+    const addListeners = (xhr, events) => {
+      const pushEvent = event => events.push(`xhr:${event.type}`);
+      xhr.addEventListener('readystatechange', pushEvent);
+      xhr.addEventListener('loadstart', pushEvent);
+      xhr.addEventListener('progress', pushEvent);
+      xhr.addEventListener('load', pushEvent);
+      xhr.addEventListener('loadend', pushEvent);
+
+      const uploadPushEvent = event => events.push(`upload:${event.type}`);
+      xhr.upload.addEventListener('loadstart', uploadPushEvent);
+      xhr.upload.addEventListener('progress', uploadPushEvent);
+      xhr.upload.addEventListener('load', uploadPushEvent);
+      xhr.upload.addEventListener('loadend', uploadPushEvent);
+    };
+
+    it('should dispatch events in order when request does not have a body', done => {
       MockXMLHttpRequest.addHandler((req, res) => res);
 
       const events = [];
       const xhr = new MockXMLHttpRequest();
       xhr.open('get', '/');
-      xhr.addEventListener('readystatechange', event =>
-        events.push(event.type)
-      );
-      xhr.addEventListener('loadstart', event => events.push(event.type));
-      xhr.addEventListener('progress', event => events.push(event.type));
-      xhr.addEventListener('load', event => events.push(event.type));
-      xhr.addEventListener('loadend', event => events.push(event.type));
-      xhr.addEventListener('loadend', () => {
+      addListeners(xhr, events);
+      xhr.onloadend = () => {
         expect(events).toEqual([
-          'loadstart',
-          'readystatechange', //HEADERS_RECEIVED
-          'readystatechange', //LOADING
-          'progress',
-          'progress',
-          'readystatechange', //DONE
-          'load',
-          'loadend'
+          'xhr:loadstart',
+          'xhr:readystatechange', //HEADERS_RECEIVED
+          'xhr:readystatechange', //LOADING
+          'xhr:progress',
+          'xhr:progress',
+          'xhr:readystatechange', //DONE
+          'xhr:load'
         ]);
         done();
-      });
+      };
       xhr.send();
     });
 
-    it.only('should dispatch events for upload', done => {
+    it('should dispatch events in order when request has a body', done => {
       MockXMLHttpRequest.addHandler((req, res) => res);
 
       const events = [];
       const xhr = new MockXMLHttpRequest();
       xhr.open('put', '/');
-      xhr.addEventListener('readystatechange', event =>
-        events.push(event.type)
-      );
-      xhr.addEventListener('loadstart', event => events.push(event.type));
-      xhr.addEventListener('progress', event => events.push(event.type));
-      xhr.addEventListener('load', event => events.push(event.type));
-      xhr.addEventListener('loadend', event => events.push(event.type));
-      xhr.upload.addEventListener('loadstart', event =>
-        events.push(`upload:${event.type}`)
-      );
-      xhr.upload.addEventListener('progress', event =>
-        events.push(`upload:${event.type}`)
-      );
-      xhr.upload.addEventListener('load', event =>
-        events.push(`upload:${event.type}`)
-      );
-      xhr.upload.addEventListener('loadend', event =>
-        events.push(`upload:${event.type}`)
-      );
-      xhr.addEventListener('loadend', () => {
+      addListeners(xhr, events);
+      xhr.onloadend = () => {
         expect(events).toEqual([
-          'loadstart',
+          'xhr:loadstart',
           'upload:loadstart',
           'upload:progress',
           'upload:progress',
           'upload:load',
           'upload:loadend',
-          'readystatechange', //HEADERS_RECEIVED
-          'readystatechange', //LOADING
-          'progress',
-          'progress',
-          'readystatechange', //DONE
-          'load',
-          'loadend'
+          'xhr:readystatechange', //HEADERS_RECEIVED
+          'xhr:readystatechange', //LOADING
+          'xhr:progress',
+          'xhr:progress',
+          'xhr:readystatechange', //DONE
+          'xhr:load'
         ]);
         done();
-      });
+      };
       xhr.send('hello world!');
     });
+
+    //TODO: check values of all events
   });
 });
