@@ -1,15 +1,12 @@
 # xhr-mock
 
+[![npm (tag)](https://img.shields.io/npm/v/npm/next.svg)]()
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
+[![npm](https://img.shields.io/npm/dm/localeval.svg)]()
 
 Utility for mocking XMLHttpRequests in the browser.
 
 Useful for unit testing and doesn't require you to inject a mocked object into your code.
-
-Features:
-- todo
-- run your tests in real browsers, headless browsers or even nodejs
-
 
 ## Installation
 
@@ -20,33 +17,31 @@ Features:
 ```javascript
 import mock from 'xhr-mock';
 
-//replace the real XHR object with the mock XHR object
+// replace the real XHR object with the mock XHR object
 mock.setup();
 
-//create a mock response for all POST requests with the URL http://localhost/api/user
+// create a mock response for all POST requests with the URL http://localhost/api/user
 mock.post('http://localhost/api/user', (req, res) => {
-
-  //return null;              //simulate an error
-  //return res.timeout(true); //simulate a timeout
-
   return res
     .status(201)
     .header('Content-Type', 'application/json')
-    .body(JSON.stringify({data: {
-      first_name: 'John', last_name: 'Smith'
-    }}))
+    .body(JSON.stringify({
+      data: {
+        first_name: 'John', 
+        last_name: 'Smith'
+      }
+    }))
   ;
-
 });
 
-//create an instance of the (mock) XHR object and use as per normal
+// create an instance of the mock XHR object and use as per normal
 const xhr = new XMLHttpRequest();
 ...
 
 xhr.onreadystatechange = () => {
   if (xhr.readyState == 4) {
 
-    //when you're finished put the real XHR object back
+    // when you're finished put the real XHR object back
     mock.teardown();
 
   }
@@ -183,3 +178,65 @@ Set the response body.
 #### .progress(loaded : number, total : number, lengthComputable : bool)
 
 Dispatch a progress event. Pass in loaded size, total size and if event is lengthComputable.
+
+## How to?
+
+### Simulate a timeout
+
+Return a `Promise` that never resolves.
+
+```js
+import mock from 'xhr-mock';
+
+mock.post('http://localhost/foo/bar', (req, res) => {
+  return new Promise(() => {});
+});
+```
+
+> A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time anyway.
+
+### Simulate an error
+
+Return a `Promise` that rejects.
+
+```js
+import mock from 'xhr-mock';
+
+mock.post('http://localhost/foo/bar', (req, res) => {
+  return new Promise.reject();
+});
+```
+
+### Proxy requests
+
+If you want to mock some requests but not all of them, you can proxy unhandled requests to a real server.
+
+```js
+import mock from 'xhr-mock';
+
+// mock specific requests
+mock.post('http://localhost/foo/bar', (req, res) => {
+  return res.status(204);
+});
+
+// other requests will be proxied to the actual server
+mock.mock((req, res) => {
+  return fetch(req.url(), {
+    method: req.method(),
+    headers: req.headers(),
+    body: req.body()
+  })
+    .then(r => {
+      return r.text().then(text => {
+        return res
+          .status(r.statusCode)
+          .headers(r.headers.entries().reduce((headers, pair) => {
+            headers[pair[0]] = pair[1];
+          }))
+          .body(text)
+        ;
+      });
+    })
+  ;
+});
+```
