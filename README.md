@@ -1,6 +1,6 @@
 # xhr-mock
 
-[![npm (tag)](https://img.shields.io/npm/v/npm/next.svg)]()
+[![npm (tag)](https://img.shields.io/npm/v/xhr-mock/next.svg)]()
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
 [![npm](https://img.shields.io/npm/dm/localeval.svg)]()
 
