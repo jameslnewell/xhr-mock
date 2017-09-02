@@ -1,4 +1,5 @@
-var mock = require('xhr-mock');
+import mock from 'xhr-mock';
+
 mock.setup();
 
 mock.get('http://google.com/', function(req, res) {
@@ -7,10 +8,10 @@ mock.get('http://google.com/', function(req, res) {
 
 // ---------
 
-var axios = require('axios');
+const axios = require('axios');
 axios.get('http://google.com/').then(
   function(res) {
-    console.log('loaded', res._requestBody);
+    console.log('loaded', res.data);
   },
   function(error) {
     console.log('ERROR', error);

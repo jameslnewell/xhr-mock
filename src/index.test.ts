@@ -1,4 +1,4 @@
-import window from 'global';
+import window = require('global');
 import Mock from '.';
 import MockXMLHttpRequest from './MockXMLHttpRequest';
 

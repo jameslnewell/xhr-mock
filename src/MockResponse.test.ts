@@ -3,9 +3,9 @@ import MockResponse from './MockResponse';
 
 describe('MockResponse', () => {
   describe('.status()', () => {
-    it('should be -1 when not set', () => {
+    it('should be 200 when not set', () => {
       const res = new MockResponse();
-      expect(res.status()).toEqual(-1);
+      expect(res.status()).toEqual(200);
     });
 
     it('should be 404 when set', () => {
@@ -21,9 +21,9 @@ describe('MockResponse', () => {
   });
 
   describe('.reason()', () => {
-    it('should be an empty string when not set', () => {
+    it('should be OK when not set', () => {
       const res = new MockResponse();
-      expect(res.reason()).toEqual('');
+      expect(res.reason()).toEqual('OK');
     });
 
     it('should be Not found when set', () => {
@@ -96,24 +96,23 @@ describe('MockResponse', () => {
   });
 
   describe('.progress()', () => {
-    it('should dispatch the progress event', () => {
-      let progressEvent = null;
-      const events = new MockEventTarget();
-      const res = new MockResponse(events);
+    it('should dispatch the progress event', done => {
+      const target = new MockEventTarget();
+      const res = new MockResponse(target);
 
-      events.addEventListener('progress', event => {
-        progressEvent = event;
+      target.addEventListener('progress', event => {
+        expect(event).toEqual(
+          expect.objectContaining({
+            lengthComputable: true,
+            loaded: 15,
+            total: 100
+          })
+        );
+
+        done();
       });
 
-      res.progress(0, 100);
-
-      expect(progressEvent).toEqual(
-        expect.objectContaining({
-          lengthComputable: true,
-          loaded: 0,
-          total: 100
-        })
-      );
+      res.progress(true, 100, 15);
     });
 
     it('should return the response when the value is set', () => {

@@ -1,15 +1,15 @@
 import mock from '../src';
 
-const example = () =>
+const example = (method: string, url: string) =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState == XMLHttpRequest.DONE) {
-        return resolve(xhr.text);
+        return resolve(xhr.responseText);
       }
     };
     xhr.onerror = reject;
-    xhr.open('POST', '/example');
+    xhr.open(method, url);
     xhr.send();
   });
 
@@ -24,6 +24,6 @@ describe('native', () => {
       return res;
     });
 
-    return example();
+    return example('POST', '/example');
   });
 });

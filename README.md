@@ -20,21 +20,29 @@ import mock from 'xhr-mock';
 // replace the real XHR object with the mock XHR object
 mock.setup();
 
-// create a mock response for all POST requests with the URL http://localhost/api/user
-mock.post('http://localhost/api/user', (req, res) => {
+// mock object
+mock.get('http://localhost/index.html', {
+  status: 200,
+  reason: 'OK',
+  headers: {
+    'Content-Type': 'text/html'
+  },
+  body: '<h1>Hello World!</h1>'
+});
+
+// mock function
+mock.get(/api\/user/, (req, res) => {
   return res
     .status(201)
     .header('Content-Type', 'application/json')
     .body(JSON.stringify({
-      data: {
-        first_name: 'John', 
-        last_name: 'Smith'
-      }
+      first_name: 'John', 
+      last_name: 'Smith'
     }))
   ;
 });
 
-// create an instance of the mock XHR object and use as per normal
+// create an instance of the mock XHR object and use as usual
 const xhr = new XMLHttpRequest();
 ...
 
@@ -73,27 +81,27 @@ Restore the global `XMLHttpRequest` object to its original state.
 
 Forget all the request handlers.
 
-#### .get(url | regex, fn)
+#### .get(url | regex, mock)
 
 Register a factory function to create mock responses for each GET request to a specific URL.
 
-#### .post(url | regex, fn)
+#### .post(url | regex, mock)
 
 Register a factory function to create mock responses for each POST request to a specific URL.
 
-#### .put(url | regex, fn)
+#### .put(url | regex, mock)
 
 Register a factory function to create mock responses for each PUT request to a specific URL.
 
-#### .patch(url | regex, fn)
+#### .patch(url | regex, mock)
 
 Register a factory function to create mock responses for each PATCH request to a specific URL.
 
-#### .delete(url | regex, fn)
+#### .delete(url | regex, mock)
 
 Register a factory function to create mock responses for each DELETE request to a specific URL.
 
-#### .mock(method, url | regex, fn)
+#### .mock(method, url | regex, mock)
 
 Register a factory function to create mock responses for each request to a specific URL.
 

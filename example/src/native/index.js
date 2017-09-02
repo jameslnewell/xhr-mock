@@ -1,4 +1,5 @@
-var mock = require('xhr-mock');
+import mock from 'xhr-mock';
+
 mock.setup();
 
 mock.get('http://google.com/', function(req, res) {
@@ -7,7 +8,7 @@ mock.get('http://google.com/', function(req, res) {
 
 // ---------
 
-var xhr = new XMLHttpRequest();
+const xhr = new XMLHttpRequest();
 
 xhr.open('GET', 'http://google.com/');
 

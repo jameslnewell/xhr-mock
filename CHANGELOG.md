@@ -1,12 +1,18 @@
 # Change log
 
+## 2.0.0-preview.2
+
+- added types
+- added support for mock objects
+- break: changed the ordering of `MockRequest.progress()` and `MockRequest.progress()`
+
 ## 2.0.0-preview.1
 
 - added support for upload progress
 - break: renamed `MockResponse.statusText()` to `MockResponse.reason()`
 - break: removed `MockRequest.query()` and changed `MockRequest.url()` to return a URL object (with a `.toString()` method)
 - break: removed `MockResponse.timeout()` - instead, return a promise that never resolves
-- break: moved `MockRequest.progress()` to `MockResponse.progress()`
+- break: moved `MockRequest.progress()` to `MockResponse.progress()` and added `MockRequest.progress()`
 - break: removed support for [`component`](https://github.com/componentjs/component)
 
 ## 1.9.0

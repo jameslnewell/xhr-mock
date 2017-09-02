@@ -1,5 +1,6 @@
-var $ = require('jquery');
-var mock = require('xhr-mock');
+import $ from 'jquery';
+import mock from 'xhr-mock';
+
 mock.setup();
 
 mock.get('http://google.com/', function(req, res) {

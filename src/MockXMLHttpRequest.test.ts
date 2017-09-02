@@ -18,15 +18,18 @@ describe('MockXMLHttpRequest', () => {
 
   describe('.setRequestHeader()', () => {
     it('should set a header', done => {
+      expect.assertions(1);
+
       MockXMLHttpRequest.addHandler((req, res) => {
         expect(req.header('content-type')).toEqual('application/json');
         return res;
       });
 
       const xhr = new MockXMLHttpRequest();
-      xhr.open('/');
+      xhr.open('GET', '/');
       xhr.setRequestHeader('content-type', 'application/json');
       xhr.onload = done;
+      xhr.onerror = err => console.error(err);
       xhr.send();
     });
   });
@@ -172,14 +175,11 @@ describe('MockXMLHttpRequest', () => {
       xhr.open('get', '/');
       expect(xhr.onreadystatechange.mock.calls).toHaveLength(1); //FIXME: check event
     });
-
-    it('should throw an error when called with async=false', () => {
-      const xhr = new MockXMLHttpRequest();
-      expect(() => xhr.open('get', '/', false)).toThrow();
-    });
   });
 
   describe('.send()', () => {
+    //TODO: add sync tests
+
     it('should throw an error when .open() has not been called', () => {
       const xhr = new MockXMLHttpRequest();
       expect(() => xhr.send()).toThrow();

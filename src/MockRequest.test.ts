@@ -5,13 +5,25 @@ describe('MockRequest', function() {
   describe('.method()', () => {
     it('should be an empty string when not set', () => {
       const req = new MockRequest();
-      expect(req.method()).toEqual('');
+      expect(req.method()).toEqual('GET');
     });
 
     it('should be post when set', () => {
       const req = new MockRequest();
       req.method('POST');
       expect(req.method()).toEqual('POST');
+    });
+
+    it('should be uppercase when set', () => {
+      const req = new MockRequest();
+      req.method('put');
+      expect(req.method()).toEqual('PUT');
+    });
+
+    it('should be chicken when set', () => {
+      const req = new MockRequest();
+      req.method('chicken');
+      expect(req.method()).toEqual('chicken');
     });
 
     it('should return the request when the value is set', () => {
@@ -105,24 +117,23 @@ describe('MockRequest', function() {
   });
 
   describe('.progress()', () => {
-    it('should dispatch the progress event', () => {
-      let progressEvent = null;
-      const events = new MockEventTarget();
-      const req = new MockRequest(events);
+    it('should dispatch the progress event', done => {
+      const target = new MockEventTarget();
+      const req = new MockRequest(target);
 
-      events.addEventListener('progress', event => {
-        progressEvent = event;
+      target.addEventListener('progress', event => {
+        expect(event).toEqual(
+          expect.objectContaining({
+            lengthComputable: true,
+            loaded: 15,
+            total: 100
+          })
+        );
+
+        done();
       });
 
-      req.progress(0, 100);
-
-      expect(progressEvent).toEqual(
-        expect.objectContaining({
-          lengthComputable: true,
-          loaded: 0,
-          total: 100
-        })
-      );
+      req.progress(true, 100, 15);
     });
 
     it('should return the request when the value is set', () => {

@@ -13,7 +13,7 @@ module.exports = {
 
   output: {
     path: path.resolve('dist'),
-    filename: '[name]/index.test.js'
+    filename: '[name]/index.js'
   },
 
   plugins: [new CopyWebpackPlugin([{from: '**/*.html'}])]
