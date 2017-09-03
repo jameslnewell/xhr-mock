@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
 [![npm](https://img.shields.io/npm/dm/localeval.svg)]()
 
-Utility for mocking XMLHttpRequests in the browser.
+Utility for mocking XMLHttpRequest in the browser or in NodeJS.
 
 Useful for unit testing and doesn't require you to inject a mocked object into your code.
 
@@ -21,24 +21,27 @@ import mock from 'xhr-mock';
 mock.setup();
 
 // mock object
-mock.get('http://localhost/index.html', {
+mock.get('http://localhost/api/user/abc-123', {
   status: 200,
   reason: 'OK',
   headers: {
-    'Content-Type': 'text/html'
+    'Content-Type': 'application/json'
   },
-  body: '<h1>Hello World!</h1>'
+  body: JSON.stringify({
+    first_name: 'John', 
+    last_name: 'Smith'
+  })
 });
 
 // mock function
-mock.get(/api\/user/, (req, res) => {
+mock.post(/files\/.+/, (req, res) => {
   return res
     .status(201)
-    .header('Content-Type', 'application/json')
-    .body(JSON.stringify({
-      first_name: 'John', 
-      last_name: 'Smith'
-    }))
+    .header('Content-Type', 'plain/text')
+    .body('Hello World!')
+    .progress(true, 100, 0)
+    .progress(true, 100, 50)
+    .progress(true, 100, 100)
   ;
 });
 
@@ -191,7 +194,7 @@ Dispatch a progress event. Pass in loaded size, total size and if event is lengt
 
 ### Simulate a timeout
 
-Return a `Promise` that never resolves.
+Return a `Promise` that never resolves or rejects.
 
 ```js
 import mock from 'xhr-mock';

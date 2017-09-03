@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preview.4
+
+- fixed a bug with upload progress
+
 ## 2.0.0-preview.2
 
 - added types

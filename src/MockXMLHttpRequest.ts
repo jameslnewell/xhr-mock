@@ -48,7 +48,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   status: number;
   statusText: string;
   timeout: number = 0;
-  upload: XMLHttpRequestUpload;
+  upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
   onreadystatechange: (this: XMLHttpRequest, ev: Event) => any;
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
@@ -94,7 +94,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
   /** @private */
   _reset() {
-    this.upload = new MockXMLHttpRequestUpload();
     this.status = 0;
     this.statusText = '';
     this.response = null;
@@ -221,6 +220,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
     //indicate response progress
     //FIXME: response.progress() shouldn't be called before here
+    //TODO: avoid sending duplicate progress messages when the user does
     let responseTotal = 0;
     let responseLengthComputable = false;
     const contentLength = res.header('content-length');
