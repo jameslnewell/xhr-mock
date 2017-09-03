@@ -137,7 +137,7 @@ Get the request headers.
 
 Get the request body.
 
-#### .progress(loaded : number, total : number, lengthComputable : bool)
+#### .progress(lengthComputable : bool, total : number, loaded : number, )
 
 Dispatch a progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
 
@@ -183,7 +183,7 @@ Get the response body.
 
 Set the response body.
 
-#### .progress(loaded : number, total : number, lengthComputable : bool)
+#### .progress(lengthComputable : bool, total : number, loaded : number, )
 
 Dispatch a progress event. Pass in loaded size, total size and if event is lengthComputable.
 
