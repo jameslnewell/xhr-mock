@@ -1,5 +1,15 @@
-.idea
-.vscode
-components/
+
+# OS files
+.DS_Store
+
+# package manager files
 node_modules/
 *.log
+npm-debug.log.*
+
+# IDE files
+.idea
+.vscode
+
+# generated files
+lib

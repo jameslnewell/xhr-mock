@@ -1,6 +1,8 @@
 # xhr-mock
 
+[![npm (tag)](https://img.shields.io/npm/v/xhr-mock/next.svg)]()
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
+[![npm](https://img.shields.io/npm/dm/localeval.svg)]()
 
 Utility for mocking XMLHttpRequests in the browser.
 
@@ -8,46 +10,46 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 
 ## Installation
 
-### Browserify
-
-    npm install --save xhr-mock
-
-### Component
-
-    component install jameslnewell/xhr-mock
+    npm install --save-dev xhr-mock
 
 ## Usage
 
 ```javascript
-var mock = require('xhr-mock');
+import mock from 'xhr-mock';
 
-//replace the real XHR object with the mock XHR object
+// replace the real XHR object with the mock XHR object
 mock.setup();
 
-//create a mock response for all POST requests with the URL http://localhost/api/user
-mock.post('http://localhost/api/user', function(req, res) {
+// mock object
+mock.get('http://localhost/index.html', {
+  status: 200,
+  reason: 'OK',
+  headers: {
+    'Content-Type': 'text/html'
+  },
+  body: '<h1>Hello World!</h1>'
+});
 
-  //return null;              //simulate an error
-  //return res.timeout(true); //simulate a timeout
-
+// mock function
+mock.get(/api\/user/, (req, res) => {
   return res
     .status(201)
     .header('Content-Type', 'application/json')
-    .body(JSON.stringify({data: {
-      first_name: 'John', last_name: 'Smith'
-    }}))
+    .body(JSON.stringify({
+      first_name: 'John', 
+      last_name: 'Smith'
+    }))
   ;
-
 });
 
-//create an instance of the (mock) XHR object and use as per normal
-var xhr = new XMLHttpRequest();
+// create an instance of the mock XHR object and use as usual
+const xhr = new XMLHttpRequest();
 ...
 
-xhr.onreadystatechange = function() {
+xhr.onreadystatechange = () => {
   if (xhr.readyState == 4) {
 
-    //when you're finished put the real XHR object back
+    // when you're finished put the real XHR object back
     mock.teardown();
 
   }
@@ -79,27 +81,27 @@ Restore the global `XMLHttpRequest` object to its original state.
 
 Forget all the request handlers.
 
-#### .get(url | regex, fn)
+#### .get(url | regex, mock)
 
 Register a factory function to create mock responses for each GET request to a specific URL.
 
-#### .post(url | regex, fn)
+#### .post(url | regex, mock)
 
 Register a factory function to create mock responses for each POST request to a specific URL.
 
-#### .put(url | regex, fn)
+#### .put(url | regex, mock)
 
 Register a factory function to create mock responses for each PUT request to a specific URL.
 
-#### .patch(url | regex, fn)
+#### .patch(url | regex, mock)
 
 Register a factory function to create mock responses for each PATCH request to a specific URL.
 
-#### .delete(url | regex, fn)
+#### .delete(url | regex, mock)
 
 Register a factory function to create mock responses for each DELETE request to a specific URL.
 
-#### .mock(method, url | regex, fn)
+#### .mock(method, url | regex, mock)
 
 Register a factory function to create mock responses for each request to a specific URL.
 
@@ -115,7 +117,7 @@ Register a factory function to create mock responses for every request.
 
 Get the request method.
 
-#### .url() : string
+#### .url() : URL
 
 Get the request URL.
 
@@ -123,7 +125,7 @@ Get the request URL.
 
 Get the parsed query part of the request URL.
 
-#### .header(name : string) : string
+#### .header(name : string) : string | null
 
 Get a request header.
 
@@ -135,6 +137,10 @@ Get the request headers.
 
 Get the request body.
 
+#### .progress(lengthComputable : bool, total : number, loaded : number, )
+
+Dispatch a progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
+
 ### MockResponse
 
 #### .status() : number
@@ -145,19 +151,19 @@ Get the response status.
 
 Set the response status.
 
-#### .statusText() : string
+#### .reason() : string
 
-Get the response statusText.
+Get the response reason.
 
-#### .statusText(statusText : string)
+#### .reason(phrase : string)
 
-Set the response statusText.
+Set the response reason.
 
 #### .header(name : string, value: string)
 
 Set a response header.
 
-#### .header(name : string) : string
+#### .header(name : string) : string | null
 
 Get a response header.
 
@@ -177,41 +183,68 @@ Get the response body.
 
 Set the response body.
 
-#### .timeout() : bool|number
+#### .progress(lengthComputable : bool, total : number, loaded : number, )
 
-Get whether the response will trigger a time out.
+Dispatch a progress event. Pass in loaded size, total size and if event is lengthComputable.
 
-#### .timeout(timeout : bool|number)
+## How to?
 
-Set whether the response will trigger a time out. `timeout` defaults to the value set on the XHR object.
+### Simulate a timeout
 
-#### .progress(loaded : number, total : number, lengthComputable : bool)
+Return a `Promise` that never resolves.
 
-Trigger progress event. Pass in loaded size, total size and if event is lengthComputable.
+```js
+import mock from 'xhr-mock';
 
-## Change log
+mock.post('http://localhost/foo/bar', (req, res) => {
+  return new Promise(() => {});
+});
+```
 
-### 1.9.1
+> A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time anyway.
 
-- fixed [#30](https://github.com/jameslnewell/xhr-mock/issues/30)
+### Simulate an error
 
-### 1.9.0
+Return a `Promise` that rejects.
 
-- added `Response.statusText()` for setting the status text
+```js
+import mock from 'xhr-mock';
 
-### 1.8.0
+mock.post('http://localhost/foo/bar', (req, res) => {
+  return new Promise.reject();
+});
+```
 
-- added support for regexes instead of URLs in all the mock methods
-- added the `.query()` method to the request object
-- added the `.reset()` method to `mock` and `MockXMLHttpRequest`
-- added `withCredentials` to the mocked XHR objects (used by some libraries to test for "real" XHR support)
+### Proxy requests
 
-### 1.7.0
+If you want to mock some requests but not all of them, you can proxy unhandled requests to a real server.
 
-- added support for `addEventListener` ([#15](https://github.com/jameslnewell/xhr-mock/pull/15))
+```js
+import mock from 'xhr-mock';
 
-## ToDo
+// mock specific requests
+mock.post('http://localhost/foo/bar', (req, res) => {
+  return res.status(204);
+});
 
-- Ability to return mocked responses asynchronously
-- Ability to provide a simple object response instead of a function
-- Handle JSON and XML response types
+// other requests will be proxied to the actual server
+mock.mock((req, res) => {
+  return fetch(req.url(), {
+    method: req.method(),
+    headers: req.headers(),
+    body: req.body()
+  })
+    .then(r => {
+      return r.text().then(text => {
+        return res
+          .status(r.statusCode)
+          .headers(r.headers.entries().reduce((headers, pair) => {
+            headers[pair[0]] = pair[1];
+          }))
+          .body(text)
+        ;
+      });
+    })
+  ;
+});
+```

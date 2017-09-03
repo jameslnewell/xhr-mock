@@ -13,6 +13,7 @@
     "webpack": "^2.6.0"
   },
   "scripts": {
+    "clean": "rm -rf dist",
     "build": "webpack",
     "postinstall": "linklocal"
   }

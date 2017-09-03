@@ -1,4 +1,5 @@
-var mock = require('xhr-mock');
+import mock from 'xhr-mock';
+
 mock.setup();
 
 mock.get('http://google.com/', function(req, res) {
@@ -7,7 +8,7 @@ mock.get('http://google.com/', function(req, res) {
 
 // ---------
 
-var superagent = require('superagent');
+const superagent = require('superagent');
 superagent.get('http://google.com/', function(err, res) {
   if (err) return console.log('ERROR', arguments);
   console.log('loaded', res.text);
