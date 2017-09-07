@@ -55,10 +55,6 @@ describe('native', () => {
     expect.assertions(1);
 
     mock.post('http://localhost/foo/bar', (req, res) => {
-      req
-        .progress(true, 100, 0)
-        .progress(true, 100, 50)
-        .progress(true, 100, 100);
       return res
         .status(201)
         .header('Content-Type', 'image/jpeg')
@@ -69,10 +65,33 @@ describe('native', () => {
     xhr.upload.onprogress = jest.fn();
     xhr.onerror = done.fail;
     xhr.onload = () => {
-      expect(xhr.upload.onprogress).toHaveBeenCalledTimes(3);
+      expect(xhr.upload.onprogress).toHaveBeenCalledTimes(2);
+      done();
+    };
+    xhr.open('post', 'http://localhost/foo/bar');
+    xhr.send('Hello World!');
+  });
+
+  it('should emit progress events when downloading', done => {
+    expect.assertions(1);
+
+    mock.post('http://localhost/foo/bar', (req, res) => {
+      return res
+        .status(201)
+        .header('Content-Type', 'image/jpeg')
+        .body('Hello World!');
+    });
+
+    const xhr = new XMLHttpRequest();
+    xhr.onprogress = jest.fn();
+    xhr.onerror = done.fail;
+    xhr.onload = () => {
+      expect(xhr.onprogress).toHaveBeenCalledTimes(2);
       done();
     };
     xhr.open('post', 'http://localhost/foo/bar');
     xhr.send();
   });
+
+  //TODO: test content-length
 });

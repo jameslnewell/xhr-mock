@@ -11,11 +11,6 @@ export default class MockRequest {
   private _url: MockURL = parseURL('');
   private _headers: MockHeaders = {};
   private _body: null | string = null;
-  private _eventTarget?: EventTarget;
-
-  constructor(eventTarget?: EventTarget) {
-    this._eventTarget = eventTarget;
-  }
 
   method(): string;
   method(method: string): MockRequest;
@@ -83,22 +78,5 @@ export default class MockRequest {
     } else {
       return this._body;
     }
-  }
-
-  progress(
-    lengthComputable: boolean = false,
-    total: number = 0,
-    loaded: number = 0
-  ): MockRequest {
-    if (this._eventTarget) {
-      this._eventTarget.dispatchEvent(
-        new MockProgressEvent('progress', {
-          lengthComputable,
-          loaded,
-          total
-        })
-      );
-    }
-    return this;
   }
 }

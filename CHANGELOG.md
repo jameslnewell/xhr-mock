@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preview.6
+
+- break: removed `MockRequest.progress()` and `MockResponse.progress()`
+
 ## 2.0.0-preview.5
 
 - added an export for the real `XMLHttpRequest` object

@@ -20,29 +20,20 @@ import mock from 'xhr-mock';
 // replace the real XHR object with the mock XHR object
 mock.setup();
 
-// mock object
-mock.get('http://localhost/api/user/abc-123', {
-  status: 200,
-  reason: 'OK',
+mock.get('/api/user/123', {
   headers: {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
+    id: 123,
     first_name: 'John', 
     last_name: 'Smith'
   })
 });
 
-// mock function
-mock.post(/files\/.+/, (req, res) => {
-  return res
-    .status(201)
-    .header('Content-Type', 'plain/text')
-    .body('Hello World!')
-    .progress(true, 100, 0)
-    .progress(true, 100, 50)
-    .progress(true, 100, 100)
-  ;
+mock.post(/api\/files\/(.+)/, {
+  status: '201',
+  reason: 'Created'
 });
 
 // create an instance of the mock XHR object and use as usual
@@ -50,7 +41,7 @@ const xhr = new XMLHttpRequest();
 ...
 
 xhr.onreadystatechange = () => {
-  if (xhr.readyState == 4) {
+  if (xhr.readyState == XMLHttpRequest.DONE) {
 
     // when you're finished put the real XHR object back
     mock.teardown();
@@ -120,13 +111,9 @@ Register a factory function to create mock responses for every request.
 
 Get the request method.
 
-#### .url() : URL
+#### .url() : MockURL
 
 Get the request URL.
-
-#### .query() : object
-
-Get the parsed query part of the request URL.
 
 #### .header(name : string) : string | null
 
@@ -139,10 +126,6 @@ Get the request headers.
 #### .body() : string
 
 Get the request body.
-
-#### .progress(lengthComputable : bool, total : number, loaded : number)
-
-Dispatch a progress event on the upload object. Pass in loaded size, total size and if event is lengthComputable.
 
 ### MockResponse
 
@@ -186,11 +169,56 @@ Get the response body.
 
 Set the response body.
 
-#### .progress(lengthComputable : bool, total : number, loaded : number)
-
-Dispatch a progress event. Pass in loaded size, total size and if event is lengthComputable.
-
 ## How to?
+
+### Simulate progress
+
+#### Upload progress
+
+Set the `Content-Length` header and send a body. `xhr-mock` will emit `ProgressEvent`s.
+
+```js
+import mock from 'xhr-mock';
+
+mock.setup();
+mock.get('/', {});
+
+const xhr = new XMLHttpRequest();
+xhr.upload.onprogress = event => {
+  console.log(event.loaded, event.total);
+};
+xhr.onloadend = event => {
+  mock.teardown();
+};
+xhr.open('GET', '/');
+xhr.setRequestHeader('Content-Type', '12');
+xhr.send('Hello World!');
+```
+
+#### Download progress
+
+Set the `Content-Length` header and send a body. `xhr-mock` will emit `ProgressEvent`s.
+
+```js
+import mock from 'xhr-mock';
+
+mock.setup();
+mock.get('/', {
+  headers: {'Content-Type': '12'}
+  body: 'Hello World!'
+});
+
+const xhr = new XMLHttpRequest();
+xhr.onprogress = event => {
+  console.log(event.loaded, event.total);
+};
+xhr.onloadend = event => {
+  mock.teardown();
+};
+xhr.open('GET', '/');
+xhr.send();
+```
+
 
 ### Simulate a timeout
 
@@ -199,9 +227,18 @@ Return a `Promise` that never resolves or rejects.
 ```js
 import mock from 'xhr-mock';
 
-mock.post('http://localhost/foo/bar', (req, res) => {
+mock.post('/', (req, res) => {
   return new Promise(() => {});
 });
+
+const xhr = new XMLHttpRequest();
+xhr.timeout = 100;
+xhr.ontimeout = event => {
+  console.log('timeout');
+};
+xhr.open('GET', '/');
+xhr.send();
+
 ```
 
 > A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time anyway.
@@ -213,12 +250,20 @@ Return a `Promise` that rejects.
 ```js
 import mock from 'xhr-mock';
 
-mock.post('http://localhost/foo/bar', (req, res) => {
+mock.post('/', (req, res) => {
   return new Promise.reject();
 });
+
+const xhr = new XMLHttpRequest();
+xhr.onerror = event => {
+  console.log(event.error);
+};
+xhr.open('GET', '/');
+xhr.send();
+
 ```
 
-### Proxy requests
+### Proxying requests
 
 If you want to mock some requests but not all of them, you can proxy unhandled requests to a real server.
 
@@ -226,7 +271,7 @@ If you want to mock some requests but not all of them, you can proxy unhandled r
 import mock from 'xhr-mock';
 
 // mock specific requests
-mock.post('http://localhost/foo/bar', (req, res) => {
+mock.post('/', (req, res) => {
   return res.status(204);
 });
 

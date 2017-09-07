@@ -133,8 +133,6 @@ describe('MockXMLHttpRequest', () => {
         expect(events).toEqual([
           'xhr:loadstart',
           'xhr:readystatechange', //HEADERS_RECEIVED
-          'xhr:readystatechange', //LOADING
-          'xhr:progress',
           'xhr:progress',
           'xhr:readystatechange', //DONE
           'xhr:load',
@@ -156,6 +154,22 @@ describe('MockXMLHttpRequest', () => {
           'upload:progress',
           'upload:load',
           'upload:loadend',
+          'xhr:readystatechange', //HEADERS_RECEIVED
+          'xhr:progress',
+          'xhr:readystatechange', //DONE
+          'xhr:load',
+          'xhr:loadend'
+        ]);
+      });
+      it('should dispatch events in order when response has a body', () => {
+        MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
+        const events: string[] = [];
+        const xhr = new MockXMLHttpRequest();
+        xhr.open('put', '/', false);
+        addListeners(xhr, events);
+        xhr.send();
+        expect(events).toEqual([
+          'xhr:loadstart',
           'xhr:readystatechange', //HEADERS_RECEIVED
           'xhr:readystatechange', //LOADING
           'xhr:progress',
@@ -179,8 +193,6 @@ describe('MockXMLHttpRequest', () => {
           expect(events).toEqual([
             'xhr:loadstart',
             'xhr:readystatechange', //HEADERS_RECEIVED
-            'xhr:readystatechange', //LOADING
-            'xhr:progress',
             'xhr:progress',
             'xhr:readystatechange', //DONE
             'xhr:load'
@@ -206,6 +218,26 @@ describe('MockXMLHttpRequest', () => {
             'upload:load',
             'upload:loadend',
             'xhr:readystatechange', //HEADERS_RECEIVED
+            'xhr:progress',
+            'xhr:readystatechange', //DONE
+            'xhr:load'
+          ]);
+          done();
+        };
+        xhr.send('hello world!');
+      });
+
+      it('should dispatch events in order when response has a body', done => {
+        MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
+
+        const events: string[] = [];
+        const xhr = new MockXMLHttpRequest();
+        xhr.open('put', '/');
+        addListeners(xhr, events);
+        xhr.onloadend = () => {
+          expect(events).toEqual([
+            'xhr:loadstart',
+            'xhr:readystatechange', //HEADERS_RECEIVED
             'xhr:readystatechange', //LOADING
             'xhr:progress',
             'xhr:progress',
@@ -214,7 +246,7 @@ describe('MockXMLHttpRequest', () => {
           ]);
           done();
         };
-        xhr.send('hello world!');
+        xhr.send();
       });
     });
     //TODO: check values of all events
@@ -245,7 +277,7 @@ describe('MockXMLHttpRequest', () => {
       xhr.send();
     });
 
-    it('should time out after 100ms', done => {
+    it.only('should time out after 100ms', done => {
       let start: number, end: number;
 
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));

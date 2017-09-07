@@ -115,31 +115,4 @@ describe('MockRequest', function() {
       expect(req.body('HelloWorld')).toBe(req);
     });
   });
-
-  describe('.progress()', () => {
-    it('should dispatch the progress event', done => {
-      const target = new MockEventTarget();
-      const req = new MockRequest(target);
-
-      target.addEventListener('progress', event => {
-        expect(event).toEqual(
-          expect.objectContaining({
-            lengthComputable: true,
-            loaded: 15,
-            total: 100
-          })
-        );
-
-        done();
-      });
-
-      req.progress(true, 100, 15);
-    });
-
-    it('should return the request when the value is set', () => {
-      const events = new MockEventTarget();
-      const req = new MockRequest(events);
-      expect(req.progress()).toBe(req);
-    });
-  });
 });

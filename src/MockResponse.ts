@@ -7,11 +7,6 @@ export default class MockResponse {
   private _reason: string = 'OK';
   private _headers: MockHeaders = {};
   private _body: null | string = null;
-  private _eventTarget?: EventTarget;
-
-  constructor(eventTarget?: EventTarget) {
-    this._eventTarget = eventTarget;
-  }
 
   status(): number;
   status(status: number): MockResponse;
@@ -83,22 +78,5 @@ export default class MockResponse {
     } else {
       return this._body;
     }
-  }
-
-  progress(
-    lengthComputable: boolean = false,
-    total: number = 0,
-    loaded: number = 0
-  ): MockResponse {
-    if (this._eventTarget) {
-      this._eventTarget.dispatchEvent(
-        new MockProgressEvent('progress', {
-          lengthComputable,
-          loaded,
-          total
-        })
-      );
-    }
-    return this;
   }
 }
