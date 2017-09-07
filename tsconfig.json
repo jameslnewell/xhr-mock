@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "lib": [
       "es5",
       "es2015",
@@ -9,9 +8,14 @@
     "outDir": "./lib",
     "module": "commonjs",
     "moduleResolution": "node",
+    "noImplicitAny": true,
     "strictNullChecks": true,
     "target": "es5"
   },
+  "files": [
+    "typings/global.d.ts",
+    "typings/url.d.ts"
+  ],
   "include": [
     "src/**/*"
   ],

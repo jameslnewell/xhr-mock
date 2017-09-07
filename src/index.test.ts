@@ -15,15 +15,15 @@ describe('xhr-mock', () => {
   });
 
   it('should remove all handlers on setup, on reset and on teardown', () => {
-    Mock.get('http://www.google.com/', () => {});
+    Mock.get('http://www.google.com/', {});
     Mock.setup();
     expect(MockXMLHttpRequest.handlers).toHaveLength(0);
 
-    Mock.get('http://www.google.com/', () => {});
+    Mock.get('http://www.google.com/', {});
     Mock.reset();
     expect(MockXMLHttpRequest.handlers).toHaveLength(0);
 
-    Mock.get('http://www.google.com/', () => {});
+    Mock.get('http://www.google.com/', {});
     Mock.teardown();
     expect(MockXMLHttpRequest.handlers).toHaveLength(0);
   });

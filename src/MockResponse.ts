@@ -1,10 +1,11 @@
+import {MockHeaders} from './MockHeaders';
 import EventTarget from './MockEventTarget';
 import MockProgressEvent from './MockProgressEvent';
 
 export default class MockResponse {
   private _status: number = 200;
   private _reason: string = 'OK';
-  private _headers: {[name: string]: string} = {};
+  private _headers: MockHeaders = {};
   private _body: null | string = null;
   private _eventTarget?: EventTarget;
 
@@ -12,9 +13,9 @@ export default class MockResponse {
     this._eventTarget = eventTarget;
   }
 
-  status(): null | number;
+  status(): number;
   status(status: number): MockResponse;
-  status(status?: number): null | number | MockResponse {
+  status(status?: number): number | MockResponse {
     if (typeof status !== 'undefined') {
       this._status = status;
       return this;
@@ -23,9 +24,9 @@ export default class MockResponse {
     }
   }
 
-  reason(): null | string;
+  reason(): string;
   reason(reason: string): MockResponse;
-  reason(reason?: string): null | string | MockResponse {
+  reason(reason?: string): string | MockResponse {
     if (typeof reason !== 'undefined') {
       this._reason = reason;
       return this;
@@ -58,9 +59,9 @@ export default class MockResponse {
     }
   }
 
-  headers(): {};
-  headers(headers: {}): MockResponse;
-  headers(headers?: {}): {} | MockResponse {
+  headers(): MockHeaders;
+  headers(headers: MockHeaders): MockResponse;
+  headers(headers?: MockHeaders): MockHeaders | MockResponse {
     if (typeof headers === 'object') {
       for (let name in headers) {
         if (headers.hasOwnProperty(name)) {

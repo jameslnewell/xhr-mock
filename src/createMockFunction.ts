@@ -1,4 +1,6 @@
 import {Mock, MockObject, MockFunction} from './types';
+import {formatURL} from './MockURL';
+import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 
 function createResponseFromObject(object: MockObject) {
@@ -29,7 +31,7 @@ export default function(
   url: string | RegExp,
   mock: Mock
 ): MockFunction {
-  const matches = req => {
+  const matches = (req: MockRequest) => {
     const requestMethod = req.method();
     const requestURL = req.url().toString();
 

@@ -74,4 +74,15 @@ describe('MockEventTarget', () => {
 
     target.dispatchEvent(new MockEvent('event1'));
   });
+
+  it('should set this when an `onevent1` is called', () => {
+    expect.assertions(1);
+    const target = new MockEventTarget();
+
+    (target as any).onevent1 = function(event: MockEvent) {
+      expect(this).toBe(target);
+    };
+
+    target.dispatchEvent(new MockEvent('event1'));
+  });
 });

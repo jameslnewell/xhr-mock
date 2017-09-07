@@ -1,4 +1,4 @@
-import URL = require('url-parse');
+import {MockURL, parseURL, formatURL} from './MockURL';
 import {MockFunction} from './types';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
@@ -19,7 +19,7 @@ const notImplementedError = new Error(
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
 
-enum ReadyState {
+export enum ReadyState {
   UNSENT = 0,
   OPENED = 1,
   HEADERS_RECEIVED = 2,
@@ -167,15 +167,15 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
     method = method.toUpperCase();
 
     //create the full url including the username and password
-    const fullURL = new URL(url, {protocol: ''});
-    fullURL.set('username', username);
-    fullURL.set('password', password);
+    const fullURL = parseURL(url);
+    fullURL.username = username || '';
+    fullURL.password = password || '';
 
     this._reset();
     this._async = async;
     this._request
       .method(method)
-      .url(fullURL)
+      .url(formatURL(fullURL))
       .header('accept', '*/*');
 
     this.readyState = MockXMLHttpRequest.OPENED;

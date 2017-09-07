@@ -3,19 +3,18 @@ import {Mock, MockFunction} from './types';
 import createMockFunction from './createMockFunction';
 import MockXMLHttpRequest from './MockXMLHttpRequest';
 
-const realXHRClass = window.XMLHttpRequest;
-const mockXHRClass = MockXMLHttpRequest;
+export const RealXMLHttpRequest = window.XMLHttpRequest;
 
-class XHRMock {
+export class XHRMock {
   setup(): XHRMock {
-    window.XMLHttpRequest = mockXHRClass;
+    window.XMLHttpRequest = MockXMLHttpRequest;
     this.reset();
     return this;
   }
 
   teardown(): XHRMock {
     this.reset();
-    window.XMLHttpRequest = realXHRClass;
+    window.XMLHttpRequest = RealXMLHttpRequest;
     return this;
   }
 
@@ -26,16 +25,18 @@ class XHRMock {
 
   mock(fn: MockFunction): XHRMock;
   mock(method: string, url: string, mock: Mock): XHRMock;
-  mock(method: string | MockFunction, url?: string, mock?: Mock): XHRMock {
-    let fn;
+  mock(fnOrMethod: string | MockFunction, url?: string, mock?: Mock): XHRMock {
+    let fn: MockFunction;
     if (
-      typeof method === 'string' &&
+      typeof fnOrMethod === 'string' &&
       typeof url === 'string' &&
       mock !== undefined
     ) {
-      fn = createMockFunction(method, url, mock);
+      fn = createMockFunction(fnOrMethod, url, mock);
+    } else if (typeof fnOrMethod === 'function') {
+      fn = fnOrMethod;
     } else {
-      fn = method;
+      throw new Error('xhr-mock: Invalid parameters.');
     }
     MockXMLHttpRequest.addHandler(fn);
     return this;

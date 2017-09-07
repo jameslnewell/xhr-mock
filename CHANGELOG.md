@@ -1,8 +1,18 @@
 # Change log
 
+## 2.0.0-preview.5
+
+- added an export for the real `XMLHttpRequest` object
+- fix: made `MockObject` props optional
+- break: changed the signature of the `URL` returned from `MockRequest.url()`
+
 ## 2.0.0-preview.4
 
-- fixed a bug with upload progress
+- fix: fixed a bug with upload progress
+
+## 2.0.0-preview.3
+
+- fix: include transpiled files in published package
 
 ## 2.0.0-preview.2
 

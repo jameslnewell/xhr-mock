@@ -33,9 +33,9 @@ describe('MockRequest', function() {
   });
 
   describe('.url()', () => {
-    it('should be null when not set', () => {
+    it('should be an empty object when not set', () => {
       const req = new MockRequest();
-      expect(req.url()).toEqual(null);
+      expect(req.url()).toEqual({});
     });
 
     it('should be a URL when set', () => {
@@ -43,9 +43,9 @@ describe('MockRequest', function() {
       req.url('http://www.example.com/test.php?a=1&b=2');
       expect(req.url()).toEqual(
         expect.objectContaining({
-          protocol: 'http:',
+          protocol: 'http',
           host: 'www.example.com',
-          pathname: '/test.php',
+          path: '/test.php',
           query: {a: '1', b: '2'}
         })
       );

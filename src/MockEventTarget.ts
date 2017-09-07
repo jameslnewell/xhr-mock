@@ -55,9 +55,10 @@ export default class MockEventTarget implements EventTarget {
     (event as any).currentTarget = this;
 
     //call any built-in listeners
-    if (this[`on${event.type}`]) {
-      //FIXME: the listener should be added on set
-      this[`on${event.type}`](event);
+    //FIXME: the listener should be added on set
+    const method = (this as any)[`on${event.type}`];
+    if (method) {
+      method.call(this, event);
     }
 
     if (!this.listeners[event.type]) {

@@ -1,15 +1,18 @@
-import MockXMLHttpRequest, {STATE} from './MockXMLHttpRequest';
+import MockEvent from './MockEvent';
+import MockErrorEvent from './MockErrorEvent';
+import MockXMLHttpRequest from './MockXMLHttpRequest';
 
-const handleErr = done => event => done.fail(event.error);
+function failOnErrorEvent(done: jest.DoneCallback) {
+  return function(event: MockErrorEvent) {
+    done.fail(event.error);
+  };
+}
 
-const doneIfError = (done, check) => (...args) => {
-  debugger;
-  try {
-    check(...args);
-  } catch (error) {
-    done.fail(error);
-  }
-};
+function failOnTimeoutEvent(done: jest.DoneCallback) {
+  return function(event: MockEvent) {
+    done.fail();
+  };
+}
 
 describe('MockXMLHttpRequest', () => {
   beforeEach(() => {
@@ -51,7 +54,7 @@ describe('MockXMLHttpRequest', () => {
 
       const xhr = new MockXMLHttpRequest();
       xhr.onload = done;
-      xhr.onerror = handleErr(done);
+      xhr.onerror = failOnErrorEvent(done);
       xhr.open('post', '/');
       xhr.send('Hello World!');
     });
@@ -64,13 +67,13 @@ describe('MockXMLHttpRequest', () => {
 
       const xhr = new MockXMLHttpRequest();
       xhr.onload = done;
-      xhr.onerror = handleErr(done);
+      xhr.onerror = failOnErrorEvent(done);
       xhr.open('get', '/');
       xhr.send();
     });
 
     it('should time out after 100ms', done => {
-      let start, end;
+      let start: number, end: number;
 
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
 
@@ -82,7 +85,7 @@ describe('MockXMLHttpRequest', () => {
         expect(xhr.readyState).toEqual(4);
         done();
       };
-      xhr.onerror = handleErr(done);
+      xhr.onerror = failOnErrorEvent(done);
       start = Date.now();
       xhr.open('get', '/');
       xhr.send();
@@ -93,9 +96,9 @@ describe('MockXMLHttpRequest', () => {
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
       const xhr = new MockXMLHttpRequest();
       xhr.timeout = 100;
-      xhr.ontimeout = done.fail;
+      xhr.ontimeout = failOnTimeoutEvent(done);
       xhr.onabort = done;
-      xhr.onerror = handleErr(done);
+      xhr.onerror = failOnErrorEvent(done);
       xhr.open('get', '/');
       xhr.send();
       xhr.abort();
@@ -107,7 +110,7 @@ describe('MockXMLHttpRequest', () => {
       );
       const xhr = new MockXMLHttpRequest();
       xhr.timeout = 100;
-      xhr.ontimeout = done.fail;
+      xhr.ontimeout = failOnTimeoutEvent(done);
       xhr.onerror = done;
       xhr.open('get', '/');
       xhr.send();
@@ -122,14 +125,14 @@ describe('MockXMLHttpRequest', () => {
       });
 
       const xhr = new MockXMLHttpRequest();
-      xhr.open('/');
+      xhr.open('get', '/');
       xhr.onload = () => {
         expect(xhr.getResponseHeader('Content-Type')).toEqual(
           'application/json'
         );
         done();
       };
-      xhr.onerror = handleErr(done);
+      xhr.onerror = failOnErrorEvent(done);
       xhr.send();
     });
   });
@@ -143,14 +146,14 @@ describe('MockXMLHttpRequest', () => {
       });
 
       const xhr = new MockXMLHttpRequest();
-      xhr.open('/');
+      xhr.open('get', '/');
       xhr.onload = () => {
         expect(xhr.getAllResponseHeaders()).toEqual(
           'content-type: application/json\r\nx-powered-by: SecretSauce\r\n'
         );
         done();
       };
-      xhr.onerror = handleErr(done);
+      xhr.onerror = failOnErrorEvent(done);
       xhr.send();
     });
   });
@@ -170,10 +173,11 @@ describe('MockXMLHttpRequest', () => {
     });
 
     it('should call .onreadystatechange', () => {
+      const callback = jest.fn();
       const xhr = new MockXMLHttpRequest();
-      xhr.onreadystatechange = jest.fn();
+      xhr.onreadystatechange = callback;
       xhr.open('get', '/');
-      expect(xhr.onreadystatechange.mock.calls).toHaveLength(1); //FIXME: check event
+      expect(callback).toHaveBeenCalledTimes(1); //FIXME: check event
     });
   });
 
@@ -185,15 +189,16 @@ describe('MockXMLHttpRequest', () => {
       expect(() => xhr.send()).toThrow();
     });
 
-    const addListeners = (xhr, events) => {
-      const pushEvent = event => events.push(`xhr:${event.type}`);
+    const addListeners = (xhr: MockXMLHttpRequest, events: string[]) => {
+      const pushEvent = (event: MockEvent) => events.push(`xhr:${event.type}`);
       xhr.addEventListener('readystatechange', pushEvent);
       xhr.addEventListener('loadstart', pushEvent);
       xhr.addEventListener('progress', pushEvent);
       xhr.addEventListener('load', pushEvent);
       xhr.addEventListener('loadend', pushEvent);
 
-      const uploadPushEvent = event => events.push(`upload:${event.type}`);
+      const uploadPushEvent = (event: MockEvent) =>
+        events.push(`upload:${event.type}`);
       xhr.upload.addEventListener('loadstart', uploadPushEvent);
       xhr.upload.addEventListener('progress', uploadPushEvent);
       xhr.upload.addEventListener('load', uploadPushEvent);
@@ -203,7 +208,7 @@ describe('MockXMLHttpRequest', () => {
     it('should dispatch events in order when request does not have a body', done => {
       MockXMLHttpRequest.addHandler((req, res) => res);
 
-      const events = [];
+      const events: string[] = [];
       const xhr = new MockXMLHttpRequest();
       xhr.open('get', '/');
       addListeners(xhr, events);
@@ -225,7 +230,7 @@ describe('MockXMLHttpRequest', () => {
     it('should dispatch events in order when request has a body', done => {
       MockXMLHttpRequest.addHandler((req, res) => res);
 
-      const events = [];
+      const events: string[] = [];
       const xhr = new MockXMLHttpRequest();
       xhr.open('put', '/');
       addListeners(xhr, events);
