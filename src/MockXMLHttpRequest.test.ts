@@ -14,6 +14,22 @@ function failOnTimeoutEvent(done: jest.DoneCallback) {
   };
 }
 
+function addListeners(xhr: MockXMLHttpRequest, events: string[]) {
+  const pushEvent = (event: MockEvent) => events.push(`xhr:${event.type}`);
+  xhr.addEventListener('readystatechange', pushEvent);
+  xhr.addEventListener('loadstart', pushEvent);
+  xhr.addEventListener('progress', pushEvent);
+  xhr.addEventListener('load', pushEvent);
+  xhr.addEventListener('loadend', pushEvent);
+
+  const uploadPushEvent = (event: MockEvent) =>
+    events.push(`upload:${event.type}`);
+  xhr.upload.addEventListener('loadstart', uploadPushEvent);
+  xhr.upload.addEventListener('progress', uploadPushEvent);
+  xhr.upload.addEventListener('load', uploadPushEvent);
+  xhr.upload.addEventListener('loadend', uploadPushEvent);
+}
+
 describe('MockXMLHttpRequest', () => {
   beforeEach(() => {
     MockXMLHttpRequest.removeAllHandlers();
@@ -30,15 +46,16 @@ describe('MockXMLHttpRequest', () => {
 
       const xhr = new MockXMLHttpRequest();
       xhr.open('GET', '/');
-      xhr.setRequestHeader('content-type', 'application/json');
+      xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onload = done;
-      xhr.onerror = err => console.error(err);
+      xhr.onerror = failOnErrorEvent(done);
       xhr.send();
     });
   });
 
   describe('.getResponseHeader()', () => {
     it('should have a response header', done => {
+      expect.assertions(1);
       MockXMLHttpRequest.addHandler((req, res) => {
         return res.header('Content-Type', 'application/json');
       });
@@ -57,7 +74,7 @@ describe('MockXMLHttpRequest', () => {
   });
 
   describe('.getAllResponseHeaders()', () => {
-    it('should have a response header', done => {
+    it('should have return headers as a string', done => {
       MockXMLHttpRequest.addHandler((req, res) => {
         return res
           .header('Content-Type', 'application/json')
@@ -101,29 +118,13 @@ describe('MockXMLHttpRequest', () => {
   });
 
   describe('.send()', () => {
-    const addListeners = (xhr: MockXMLHttpRequest, events: string[]) => {
-      const pushEvent = (event: MockEvent) => events.push(`xhr:${event.type}`);
-      xhr.addEventListener('readystatechange', pushEvent);
-      xhr.addEventListener('loadstart', pushEvent);
-      xhr.addEventListener('progress', pushEvent);
-      xhr.addEventListener('load', pushEvent);
-      xhr.addEventListener('loadend', pushEvent);
-
-      const uploadPushEvent = (event: MockEvent) =>
-        events.push(`upload:${event.type}`);
-      xhr.upload.addEventListener('loadstart', uploadPushEvent);
-      xhr.upload.addEventListener('progress', uploadPushEvent);
-      xhr.upload.addEventListener('load', uploadPushEvent);
-      xhr.upload.addEventListener('loadend', uploadPushEvent);
-    };
-
     it('should throw an error when .open() has not been called', () => {
       const xhr = new MockXMLHttpRequest();
       expect(() => xhr.send()).toThrow();
     });
 
     describe('async=false', () => {
-      it('should dispatch events in order when request does not have a body', () => {
+      it('should dispatch events in order when both the request and response do not contain a body', () => {
         MockXMLHttpRequest.addHandler((req, res) => res);
         const events: string[] = [];
         const xhr = new MockXMLHttpRequest();
@@ -161,6 +162,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:loadend'
         ]);
       });
+
       it('should dispatch events in order when response has a body', () => {
         MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
         const events: string[] = [];
@@ -182,7 +184,7 @@ describe('MockXMLHttpRequest', () => {
     });
 
     describe('async=true', () => {
-      it('should dispatch events in order when request does not have a body', done => {
+      it('should dispatch events in order when both the request and response do not contain a body', done => {
         MockXMLHttpRequest.addHandler((req, res) => res);
 
         const events: string[] = [];
@@ -251,7 +253,7 @@ describe('MockXMLHttpRequest', () => {
     });
     //TODO: check values of all events
 
-    it('should set the request body when X', done => {
+    it('should set the request body when .send() is called with a body', done => {
       MockXMLHttpRequest.addHandler((req, res) => {
         expect(req.body()).toEqual('Hello World!');
         return res;
@@ -264,7 +266,7 @@ describe('MockXMLHttpRequest', () => {
       xhr.send('Hello World!');
     });
 
-    it('should not set the request body', done => {
+    it('should not set the request body when .send() is not called with a body', done => {
       MockXMLHttpRequest.addHandler((req, res) => {
         expect(req.body()).toEqual(null);
         return res;
@@ -277,26 +279,29 @@ describe('MockXMLHttpRequest', () => {
       xhr.send();
     });
 
-    it.only('should time out after 100ms', done => {
-      let start: number, end: number;
+    it.only(
+      'should time out when .timeout > 0 and no response is resloved within the time',
+      done => {
+        let start: number, end: number;
 
-      MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
+        MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
 
-      const xhr = new MockXMLHttpRequest();
-      xhr.timeout = 100;
-      xhr.ontimeout = () => {
-        end = Date.now();
-        expect(end - start).toBeGreaterThanOrEqual(100);
-        expect(xhr.readyState).toEqual(4);
-        done();
-      };
-      xhr.onerror = failOnErrorEvent(done);
-      start = Date.now();
-      xhr.open('get', '/');
-      xhr.send();
-    });
+        const xhr = new MockXMLHttpRequest();
+        xhr.timeout = 100;
+        xhr.ontimeout = () => {
+          end = Date.now();
+          expect(end - start).toBeGreaterThanOrEqual(100);
+          expect(xhr.readyState).toEqual(4);
+          done();
+        };
+        xhr.onerror = failOnErrorEvent(done);
+        start = Date.now();
+        xhr.open('get', '/');
+        xhr.send();
+      }
+    );
 
-    it('should not time out when the request was aborted', done => {
+    it('should not time out when .timeout > 0 and the request was aborted', done => {
       debugger;
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
       const xhr = new MockXMLHttpRequest();
@@ -309,7 +314,7 @@ describe('MockXMLHttpRequest', () => {
       xhr.abort();
     });
 
-    it('should not time out when the request errored', done => {
+    it('should not time out when .timeout > 0 and the request errored', done => {
       MockXMLHttpRequest.addHandler((req, res) =>
         Promise.reject(new Error('test!'))
       );
