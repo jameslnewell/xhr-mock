@@ -4,9 +4,8 @@
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
 [![npm](https://img.shields.io/npm/dm/localeval.svg)]()
 
-Utility for mocking XMLHttpRequest in the browser or in NodeJS.
+Utility for mocking XMLHttpRequest.
 
-Useful for unit testing and doesn't require you to inject a mocked object into your code.
 
 ## Installation
 
@@ -14,40 +13,78 @@ Useful for unit testing and doesn't require you to inject a mocked object into y
 
 ## Usage
 
-```javascript
-import mock from 'xhr-mock';
+`./createUser.js`
+```js
 
-// replace the real XHR object with the mock XHR object
-mock.setup();
-
-mock.get('/api/user/123', {
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    id: 123,
-    first_name: 'John', 
-    last_name: 'Smith'
-  })
-});
-
-mock.post(/api\/files\/(.+)/, {
-  status: '201',
-  reason: 'Created'
-});
-
-// create an instance of the mock XHR object and use as usual
-const xhr = new XMLHttpRequest();
-...
-
-xhr.onreadystatechange = () => {
-  if (xhr.readyState == XMLHttpRequest.DONE) {
-
-    // when you're finished put the real XHR object back
-    mock.teardown();
-
-  }
+// you could just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object
+export default function(data) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState == XMLHttpRequest.DONE) {
+        if (xhr.status === 201) {
+          resolve(JSON.parse(xhr.responseText).data);
+        } else {
+          reject(JSON.parse(xhr.responseText).error);
+        }
+      }
+    }
+    xhr.open('post', '/api/user');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify({data: data}))
+  });
 }
+
+```
+
+`./createUser.test.js`
+```js
+import mock from 'xhr-mock';
+import createUser from './createUser';
+
+describe('createUser()', () => {
+
+  // replace the real XHR object with the mock XHR object before each test
+  beforeEach(() => mock.setup());
+  
+  // put the real XHR object back and clear the mocks after each test
+  afterEach(() => mock.teardown());
+
+  it('should send the data as JSON', () => {
+
+    mock.post('/api/user', (res, res) => {
+      expect(req.header('Content-Type')).to.equal('application/json');
+      expect(req.body()).to.equal('{"foo":"bar"');
+      return res;
+    });
+
+    return createUser({name: 'John'});
+  });
+
+  it('should resolve with some data when status=201', () => {
+
+    mock.post('/api/user', {
+      status: 201,
+      reason: 'Created',
+      body: '{"data":{"id":"abc-123"}}'
+    });
+
+    return expect(createUser({name: 'John'})).to.eventually.deep.equal({id: 'abc-123'});
+  });
+
+  it('should reject with an error when status=400', () => {
+
+    mock.post('/api/user', {
+      status: 400,
+      reason: 'Bad Request',
+      body: '{"error":"A user named \\"John\\" already exists."}'
+    });
+
+    return expect(createUser({name: 'John'})).to.be.rejectedWith(Error)
+  });
+
+});
+
 ```
 
 ## Examples

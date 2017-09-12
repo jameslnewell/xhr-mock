@@ -270,14 +270,21 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   }
 
   private handleSendError(error: Error) {
+    //TODO: https://xhr.spec.whatwg.org/#request-error-steps
+
     //we've got a response before the timeout period so we don't want to timeout
     clearTimeout(this._timeoutTimer);
+
+    this.status = 0;
+    this.statusText = '';
+    this.responseType = '';
+    this.responseText = '';
 
     this.readyState = MockXMLHttpRequest.DONE;
     this.dispatchEvent(new MockErrorEvent('error', {error}));
   }
 
-  private handleTimeout() {
+  private handleSendTimeout() {
     this.readyState = MockXMLHttpRequest.DONE;
     this.dispatchEvent(new MockEvent('timeout'));
   }
@@ -318,7 +325,10 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
     // use setTimeout() to artificially detect a timeout rather than using the native timeout event
     //TODO: handle timeout being changed mid-request
     if (this.timeout) {
-      this._timeoutTimer = setTimeout(() => this.handleTimeout(), this.timeout);
+      this._timeoutTimer = setTimeout(
+        () => this.handleSendTimeout(),
+        this.timeout
+      );
     }
 
     //indicate the request has started being sent
