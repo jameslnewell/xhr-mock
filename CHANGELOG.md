@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preview.8
+
+- added `typings` to `package.json` 
+
 ## 2.0.0-preview.6
 
 - break: removed `MockRequest.progress()` and `MockResponse.progress()`
