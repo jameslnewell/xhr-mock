@@ -24,12 +24,16 @@ export class XHRMock {
   }
 
   mock(fn: MockFunction): XHRMock;
-  mock(method: string, url: string, mock: Mock): XHRMock;
-  mock(fnOrMethod: string | MockFunction, url?: string, mock?: Mock): XHRMock {
+  mock(method: string, url: string | RegExp, mock: Mock): XHRMock;
+  mock(
+    fnOrMethod: string | MockFunction,
+    url?: string | RegExp,
+    mock?: Mock
+  ): XHRMock {
     let fn: MockFunction;
     if (
       typeof fnOrMethod === 'string' &&
-      typeof url === 'string' &&
+      (typeof url === 'string' || url instanceof RegExp) &&
       mock !== undefined
     ) {
       fn = createMockFunction(fnOrMethod, url, mock);
@@ -42,23 +46,23 @@ export class XHRMock {
     return this;
   }
 
-  get(url: string, mock: Mock): XHRMock {
+  get(url: string | RegExp, mock: Mock): XHRMock {
     return this.mock('GET', url, mock);
   }
 
-  post(url: string, mock: Mock): XHRMock {
+  post(url: string | RegExp, mock: Mock): XHRMock {
     return this.mock('POST', url, mock);
   }
 
-  put(url: string, mock: Mock): XHRMock {
+  put(url: string | RegExp, mock: Mock): XHRMock {
     return this.mock('PUT', url, mock);
   }
 
-  patch(url: string, mock: Mock): XHRMock {
+  patch(url: string | RegExp, mock: Mock): XHRMock {
     return this.mock('PATCH', url, mock);
   }
 
-  delete(url: string, mock: Mock): XHRMock {
+  delete(url: string | RegExp, mock: Mock): XHRMock {
     return this.mock('DELETE', url, mock);
   }
 }
