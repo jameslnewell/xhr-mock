@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preview.9
+
+- added support for `RegExp` in typings ([#36](https://github.com/jameslnewell/xhr-mock/pull/36))
+
 ## 2.0.0-preview.8
 
 - added `typings` to `package.json` 
