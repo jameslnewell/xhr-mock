@@ -76,4 +76,16 @@ describe('createUser()', () => {
       'A user named "John" already exists.'
     );
   });
+
+  it('should support regex', () => {
+    expect.assertions(1);
+
+    mock.post(/^.*$/, {
+      status: 201,
+      reason: 'Created',
+      body: '{"data":{"id":"abc-123"}}'
+    });
+
+    return expect(createUser({name: 'John'})).resolves.toEqual({id: 'abc-123'});
+  });
 });
