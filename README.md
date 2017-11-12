@@ -52,7 +52,7 @@ describe('createUser()', () => {
 
   it('should send the data as JSON', () => {
 
-    mock.post('/api/user', (res, res) => {
+    mock.post('/api/user', (req, res) => {
       expect(req.header('Content-Type')).to.equal('application/json');
       expect(req.body()).to.equal('{"foo":"bar"');
       return res;
