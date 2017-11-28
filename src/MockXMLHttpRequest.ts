@@ -148,7 +148,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   }
 
   overrideMimeType(mime: string): void {
-    throw notImplementedError;
+    this.mockResponse.header('Content-Type', mime);
   }
 
   open(
