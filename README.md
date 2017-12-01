@@ -17,21 +17,32 @@ Utility for mocking XMLHttpRequest.
 ```js
 
 // you could just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object
+
 export default function(data) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState == XMLHttpRequest.DONE) {
         if (xhr.status === 201) {
-          resolve(JSON.parse(xhr.responseText).data);
+          try {
+            resolve(JSON.parse(xhr.responseText).data);
+          } catch (error) {
+            reject(error);
+          }
+        } else if (xhr.status) {
+          try {
+            reject(JSON.parse(xhr.responseText).error);
+          } catch (error) {
+            reject(error);
+          }
         } else {
-          reject(JSON.parse(xhr.responseText).error);
+          reject(new Error('An error ocurred whilst sending the response.'));
         }
       }
-    }
+    };
     xhr.open('post', '/api/user');
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({data: data}))
+    xhr.send(JSON.stringify({data: data}));
   });
 }
 
@@ -43,25 +54,26 @@ import mock from 'xhr-mock';
 import createUser from './createUser';
 
 describe('createUser()', () => {
-
   // replace the real XHR object with the mock XHR object before each test
   beforeEach(() => mock.setup());
-  
+
   // put the real XHR object back and clear the mocks after each test
   afterEach(() => mock.teardown());
 
-  it('should send the data as JSON', () => {
+  it('should send the data as JSON', async () => {
+    expect.assertions(2);
 
     mock.post('/api/user', (req, res) => {
-      expect(req.header('Content-Type')).to.equal('application/json');
-      expect(req.body()).to.equal('{"foo":"bar"');
-      return res;
+      expect(req.header('Content-Type')).toEqual('application/json');
+      expect(req.body()).toEqual('{"data":{"name":"John"}}');
+      return res.status(201).body('{"data":{"id":"abc-123"}}');
     });
 
-    return createUser({name: 'John'});
+    await createUser({name: 'John'});
   });
 
-  it('should resolve with some data when status=201', () => {
+  it('should resolve with some data when status=201', async () => {
+    expect.assertions(1);
 
     mock.post('/api/user', {
       status: 201,
@@ -69,20 +81,26 @@ describe('createUser()', () => {
       body: '{"data":{"id":"abc-123"}}'
     });
 
-    return expect(createUser({name: 'John'})).to.eventually.deep.equal({id: 'abc-123'});
+    const user = await createUser({name: 'John'});
+
+    expect(user).toEqual({id: 'abc-123'});
   });
 
-  it('should reject with an error when status=400', () => {
+  it('should reject with an error when status=400', async () => {
+    expect.assertions(1);
 
     mock.post('/api/user', {
       status: 400,
-      reason: 'Bad Request',
+      reason: 'Bad request',
       body: '{"error":"A user named \\"John\\" already exists."}'
     });
 
-    return expect(createUser({name: 'John'})).to.be.rejectedWith(Error)
+    try {
+      const user = await createUser({name: 'John'});
+    } catch (error) {
+      expect(error).toMatch('A user named "John" already exists.');
+    }
   });
-
 });
 
 ```

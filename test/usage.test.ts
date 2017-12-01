@@ -39,7 +39,7 @@ describe('createUser()', () => {
   // put the real XHR object back and clear the mocks after each test
   afterEach(() => mock.teardown());
 
-  it('should send the data as JSON', () => {
+  it('should send the data as JSON', async () => {
     expect.assertions(2);
 
     mock.post('/api/user', (req, res) => {
@@ -48,10 +48,10 @@ describe('createUser()', () => {
       return res.status(201).body('{"data":{"id":"abc-123"}}');
     });
 
-    return createUser({name: 'John'});
+    await createUser({name: 'John'});
   });
 
-  it('should resolve with some data when status=201', () => {
+  it('should resolve with some data when status=201', async () => {
     expect.assertions(1);
 
     mock.post('/api/user', {
@@ -60,10 +60,12 @@ describe('createUser()', () => {
       body: '{"data":{"id":"abc-123"}}'
     });
 
-    return expect(createUser({name: 'John'})).resolves.toEqual({id: 'abc-123'});
+    const user = await createUser({name: 'John'});
+
+    expect(user).toEqual({id: 'abc-123'});
   });
 
-  it('should reject with an error when status=400', () => {
+  it('should reject with an error when status=400', async () => {
     expect.assertions(1);
 
     mock.post('/api/user', {
@@ -72,20 +74,10 @@ describe('createUser()', () => {
       body: '{"error":"A user named \\"John\\" already exists."}'
     });
 
-    return expect(createUser({name: 'John'})).rejects.toMatch(
-      'A user named "John" already exists.'
-    );
-  });
-
-  it('should support regex', () => {
-    expect.assertions(1);
-
-    mock.post(/^.*$/, {
-      status: 201,
-      reason: 'Created',
-      body: '{"data":{"id":"abc-123"}}'
-    });
-
-    return expect(createUser({name: 'John'})).resolves.toEqual({id: 'abc-123'});
+    try {
+      const user = await createUser({name: 'John'});
+    } catch (error) {
+      expect(error).toMatch('A user named "John" already exists.');
+    }
   });
 });
