@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preview.10
+
+- fixed a bug where the `body` would not be sent when it was an empty string ([#32](https://github.com/jameslnewell/xhr-mock/issues/32))
+
 ## 2.0.0-preview.9
 
 - added support for `RegExp` in typings ([#36](https://github.com/jameslnewell/xhr-mock/pull/36))

@@ -324,7 +324,31 @@ describe('MockXMLHttpRequest', () => {
       xhr.onerror = done;
       xhr.open('get', '/');
       xhr.send();
-      xhr.abort();
     });
   });
+
+  it.only(
+    'should be able to send another request after the previous request errored',
+    done => {
+      MockXMLHttpRequest.addHandler((req, res) =>
+        Promise.reject(new Error('test!'))
+      );
+
+      const xhr = new MockXMLHttpRequest();
+      xhr.timeout = 100;
+      xhr.ontimeout = failOnTimeoutEvent(done);
+      xhr.onerror = () => {
+        try {
+          xhr.open('get', '/');
+          xhr.send();
+          xhr.abort();
+          done();
+        } catch (err) {
+          done.fail(err);
+        }
+      };
+      xhr.open('get', '/');
+      xhr.send();
+    }
+  );
 });

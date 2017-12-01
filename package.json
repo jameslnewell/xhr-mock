@@ -1,6 +1,6 @@
 {
   "name": "xhr-mock",
-  "version": "2.0.0-preview.9",
+  "version": "2.0.0-preview.10",
   "description": "Utility for mocking XMLHttpRequest.",
   "keywords": [
     "mock",
@@ -17,9 +17,7 @@
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "dependencies": {
     "global": "^4.3.0",
     "url": "^0.11.0"
@@ -41,16 +39,14 @@
     "build": "tsc --pretty --declaration",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:debug": "node --inspect --debug-brk ./node_modules/.bin/jest --runInBand --env jest-environment-node-debug",
+    "test:debug":
+      "node --inspect --debug-brk ./node_modules/.bin/jest --runInBand --env jest-environment-node-debug",
     "ci": "yarn run clean && yarn run lint && yarn run build && yarn run test",
     "precommit": "lint-staged",
     "prepublish": "yarn run ci"
   },
   "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.ts": ["prettier --write", "git add"]
   },
   "license": "MIT"
 }

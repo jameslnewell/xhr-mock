@@ -93,7 +93,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   }
 
   /** @private */
-  _reset() {
+  private _reset() {
     this.status = 0;
     this.statusText = '';
     this.response = null;
@@ -218,7 +218,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
     //set the response body on the XHR object (note: it should only be partial data here)
     const body = res.body();
-    if (body) {
+    if (body !== undefined) {
       this.readyState = MockXMLHttpRequest.LOADING;
 
       //send initial progress event
@@ -271,6 +271,12 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
   private handleSendError(error: Error) {
     //TODO: https://xhr.spec.whatwg.org/#request-error-steps
+    debugger;
+
+    if (!this._sending) {
+      return;
+    }
+    this._sending = false;
 
     //we've got a response before the timeout period so we don't want to timeout
     clearTimeout(this._timeoutTimer);
@@ -282,6 +288,8 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
     this.readyState = MockXMLHttpRequest.DONE;
     this.dispatchEvent(new MockErrorEvent('error', {error}));
+
+    //TODO: throw error if sync mode
   }
 
   private handleSendTimeout() {
@@ -313,7 +321,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
       body = undefined;
     }
 
-    if (body) {
+    if (body !== undefined) {
       //TODO: extract body and content-type https://fetch.spec.whatwg.org/#concept-bodyinit-extract
       this.mockRequest.body(body);
     }
@@ -335,7 +343,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
     this.dispatchEvent(new MockEvent('loadstart'));
 
     //indicate request progress
-    if (body) {
+    if (body !== undefined) {
       this.upload.dispatchEvent(new MockProgressEvent('loadstart'));
 
       const total = body ? body.length : 0; //TODO: use Content-Length instead
@@ -379,6 +387,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
     }
 
     if (this._async) {
+      debugger;
       handleAsync(
         MockXMLHttpRequest.handlers,
         this.mockRequest,
