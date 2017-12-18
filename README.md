@@ -306,7 +306,7 @@ Return a `Promise` that rejects.
 import mock from 'xhr-mock';
 
 mock.post('/', (req, res) => {
-  return new Promise.reject();
+  return Promise.reject();
 });
 
 const xhr = new XMLHttpRequest();
