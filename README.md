@@ -235,6 +235,7 @@ Set the `Content-Length` header and send a body. `xhr-mock` will emit `ProgressE
 import mock from 'xhr-mock';
 
 mock.setup();
+
 mock.post('/', {});
 
 const xhr = new XMLHttpRequest();
@@ -271,6 +272,8 @@ Return a `Promise` that never resolves or rejects.
 
 ```js
 import mock from 'xhr-mock';
+
+mock.setup();
 
 mock.post('/', () => new Promise(() => {}));
 
