@@ -235,12 +235,12 @@ Set the `Content-Length` header and send a body. `xhr-mock` will emit `ProgressE
 import mock from 'xhr-mock';
 
 mock.setup();
-mock.get('/', {});
+mock.post('/', {});
 
 const xhr = new XMLHttpRequest();
 xhr.upload.onprogress = event => console.log(event.loaded, event.total);;
-xhr.open('GET', '/');
-xhr.setRequestHeader('Content-Type', '12');
+xhr.open('POST', '/');
+xhr.setRequestHeader('Content-Length', '12');
 xhr.send('Hello World!');
 ```
 
@@ -254,7 +254,7 @@ import mock from 'xhr-mock';
 mock.setup();
 
 mock.get('/', {
-  headers: {'Content-Type': '12'}
+  headers: {'Content-Length': '12'},
   body: 'Hello World!'
 });
 
@@ -293,7 +293,7 @@ import mock from 'xhr-mock';
 
 mock.setup();
 
-mock.post('/', () => Promise.reject());
+mock.get('/', () => Promise.reject());
 
 const xhr = new XMLHttpRequest();
 xhr.onerror = event => console.log(event.error);
@@ -318,13 +318,13 @@ mock.post('/', {status: 204});
 mock.use(proxy);
 
 // this request will be mocked
-const xhr = new XMLHttpRequest();
-xhr.open('GET', '/');
-xhr.send();
+const xhr1 = new XMLHttpRequest();
+xhr1.open('POST', '/');
+xhr1.send();
 
 // this request will be proxied to the real server
-const xhr = new XMLHttpRequest();
-xhr.open('GET', 'https://jsonplaceholder.typicode.com/users/1');
-xhr.send();
+const xhr2 = new XMLHttpRequest();
+xhr2.open('GET', 'https://jsonplaceholder.typicode.com/users/1');
+xhr2.send();
 
 ```

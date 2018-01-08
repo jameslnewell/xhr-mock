@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preivew.13
+
+- fix: examples in `README.md`
+
 ## 2.0.0-preivew.12
 
 - added a non-minified UMD bundle - `./dist/xhr-mock.js`
