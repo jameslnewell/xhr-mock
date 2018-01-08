@@ -9,7 +9,8 @@ module.exports = {
     native: './native/index.js',
     axios: './axios/index.js',
     jquery: './native/index.js',
-    superagent: './superagent/index.js'
+    superagent: './superagent/index.js',
+    proxy: './proxy/index.js'
   },
 
   output: {

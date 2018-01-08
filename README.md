@@ -150,11 +150,11 @@ Register a factory function to create mock responses for each PATCH request to a
 
 Register a factory function to create mock responses for each DELETE request to a specific URL.
 
-#### .mock(method, url | regex, mock)
+#### .use(method, url | regex, mock)
 
 Register a factory function to create mock responses for each request to a specific URL.
 
-#### .mock(fn)
+#### .use(fn)
 
 Register a factory function to create mock responses for every request.
 
@@ -239,12 +239,7 @@ mock.setup();
 mock.get('/', {});
 
 const xhr = new XMLHttpRequest();
-xhr.upload.onprogress = event => {
-  console.log(event.loaded, event.total);
-};
-xhr.onloadend = event => {
-  mock.teardown();
-};
+xhr.upload.onprogress = event => console.log(event.loaded, event.total);;
 xhr.open('GET', '/');
 xhr.setRequestHeader('Content-Type', '12');
 xhr.send('Hello World!');
@@ -258,18 +253,14 @@ Set the `Content-Length` header and send a body. `xhr-mock` will emit `ProgressE
 import mock from 'xhr-mock';
 
 mock.setup();
+
 mock.get('/', {
   headers: {'Content-Type': '12'}
   body: 'Hello World!'
 });
 
 const xhr = new XMLHttpRequest();
-xhr.onprogress = event => {
-  console.log(event.loaded, event.total);
-};
-xhr.onloadend = event => {
-  mock.teardown();
-};
+xhr.onprogress = event => console.log(event.loaded, event.total);
 xhr.open('GET', '/');
 xhr.send();
 ```
@@ -282,15 +273,11 @@ Return a `Promise` that never resolves or rejects.
 ```js
 import mock from 'xhr-mock';
 
-mock.post('/', (req, res) => {
-  return new Promise(() => {});
-});
+mock.post('/', () => new Promise(() => {}));
 
 const xhr = new XMLHttpRequest();
 xhr.timeout = 100;
-xhr.ontimeout = event => {
-  console.log('timeout');
-};
+xhr.ontimeout = event => console.log('timeout');
 xhr.open('GET', '/');
 xhr.send();
 
@@ -305,14 +292,12 @@ Return a `Promise` that rejects.
 ```js
 import mock from 'xhr-mock';
 
-mock.post('/', (req, res) => {
-  return Promise.reject();
-});
+mock.setup();
+
+mock.post('/', () => Promise.reject());
 
 const xhr = new XMLHttpRequest();
-xhr.onerror = event => {
-  console.log(event.error);
-};
+xhr.onerror = event => console.log(event.error);
 xhr.open('GET', '/');
 xhr.send();
 
@@ -323,31 +308,24 @@ xhr.send();
 If you want to mock some requests but not all of them, you can proxy unhandled requests to a real server.
 
 ```js
-import mock from 'xhr-mock';
+import mock, {proxy} from 'xhr-mock';
+
+mock.setup();
 
 // mock specific requests
-mock.post('/', (req, res) => {
-  return res.status(204);
-});
+mock.post('/', {status: 204});
 
-// other requests will be proxied to the actual server
-mock.mock((req, res) => {
-  return fetch(req.url(), {
-    method: req.method(),
-    headers: req.headers(),
-    body: req.body()
-  })
-    .then(r => {
-      return r.text().then(text => {
-        return res
-          .status(r.statusCode)
-          .headers(r.headers.entries().reduce((headers, pair) => {
-            headers[pair[0]] = pair[1];
-          }))
-          .body(text)
-        ;
-      });
-    })
-  ;
-});
+// proxy unhandled requests to the real servers
+mock.use(proxy);
+
+// this request will be mocked
+const xhr = new XMLHttpRequest();
+xhr.open('GET', '/');
+xhr.send();
+
+// this request will be proxied to the real server
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://jsonplaceholder.typicode.com/users/1');
+xhr.send();
+
 ```

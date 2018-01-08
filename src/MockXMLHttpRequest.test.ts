@@ -279,30 +279,26 @@ describe('MockXMLHttpRequest', () => {
       xhr.send();
     });
 
-    it.only(
-      'should time out when .timeout > 0 and no response is resloved within the time',
-      done => {
-        let start: number, end: number;
+    it.only('should time out when .timeout > 0 and no response is resloved within the time', done => {
+      let start: number, end: number;
 
-        MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
+      MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
 
-        const xhr = new MockXMLHttpRequest();
-        xhr.timeout = 100;
-        xhr.ontimeout = () => {
-          end = Date.now();
-          expect(end - start).toBeGreaterThanOrEqual(100);
-          expect(xhr.readyState).toEqual(4);
-          done();
-        };
-        xhr.onerror = failOnErrorEvent(done);
-        start = Date.now();
-        xhr.open('get', '/');
-        xhr.send();
-      }
-    );
+      const xhr = new MockXMLHttpRequest();
+      xhr.timeout = 100;
+      xhr.ontimeout = () => {
+        end = Date.now();
+        expect(end - start).toBeGreaterThanOrEqual(100);
+        expect(xhr.readyState).toEqual(4);
+        done();
+      };
+      xhr.onerror = failOnErrorEvent(done);
+      start = Date.now();
+      xhr.open('get', '/');
+      xhr.send();
+    });
 
     it('should not time out when .timeout > 0 and the request was aborted', done => {
-      debugger;
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
       const xhr = new MockXMLHttpRequest();
       xhr.timeout = 100;
@@ -327,28 +323,25 @@ describe('MockXMLHttpRequest', () => {
     });
   });
 
-  it.only(
-    'should be able to send another request after the previous request errored',
-    done => {
-      MockXMLHttpRequest.addHandler((req, res) =>
-        Promise.reject(new Error('test!'))
-      );
+  it.only('should be able to send another request after the previous request errored', done => {
+    MockXMLHttpRequest.addHandler((req, res) =>
+      Promise.reject(new Error('test!'))
+    );
 
-      const xhr = new MockXMLHttpRequest();
-      xhr.timeout = 100;
-      xhr.ontimeout = failOnTimeoutEvent(done);
-      xhr.onerror = () => {
-        try {
-          xhr.open('get', '/');
-          xhr.send();
-          xhr.abort();
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
-      };
-      xhr.open('get', '/');
-      xhr.send();
-    }
-  );
+    const xhr = new MockXMLHttpRequest();
+    xhr.timeout = 100;
+    xhr.ontimeout = failOnTimeoutEvent(done);
+    xhr.onerror = () => {
+      try {
+        xhr.open('get', '/');
+        xhr.send();
+        xhr.abort();
+        done();
+      } catch (err) {
+        done.fail(err);
+      }
+    };
+    xhr.open('get', '/');
+    xhr.send();
+  });
 });

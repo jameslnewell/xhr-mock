@@ -1,5 +1,13 @@
 # Change log
 
+## 2.0.0-preivew.11
+
+- added `proxy` - a handler for proxying requests as real XHR
+- added `XHRMock.RealXMLHttpRequest`
+- deprecated `XHRMock.mock()` in favor of `XHRMock.use()`
+- removed `debugger` statements and added linting
+- fix: made `MockXMLHttpRequest` implement `XMLHttpRequest` and missing enum values on the instance e.g. `DONE`
+
 ## 2.0.0-preview.10
 
 - fixed a bug where the `body` would not be sent when it was an empty string ([#32](https://github.com/jameslnewell/xhr-mock/issues/32))
@@ -10,7 +18,7 @@
 
 ## 2.0.0-preview.8
 
-- added `typings` to `package.json` 
+- added `typings` to `package.json`
 
 ## 2.0.0-preview.6
 

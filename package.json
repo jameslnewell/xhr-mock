@@ -1,6 +1,6 @@
 {
   "name": "xhr-mock",
-  "version": "2.0.0-preview.10",
+  "version": "2.0.0-preview.11",
   "description": "Utility for mocking XMLHttpRequest.",
   "keywords": [
     "mock",
@@ -17,7 +17,9 @@
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "global": "^4.3.0",
     "url": "^0.11.0"
@@ -35,18 +37,22 @@
   },
   "scripts": {
     "clean": "rm -rf ./lib",
-    "lint": "tsc --pretty --noEmit --project tsconfig.test.json",
+    "lint": "tslint -c tslint.json '{src,test}/**/*.ts'",
+    "check": "tsc --pretty --noEmit --project tsconfig.test.json",
     "build": "tsc --pretty --declaration",
+    "watch": "tsc --pretty --declaration -w",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:debug":
-      "node --inspect --debug-brk ./node_modules/.bin/jest --runInBand --env jest-environment-node-debug",
-    "ci": "yarn run clean && yarn run lint && yarn run build && yarn run test",
+    "test:debug": "node --inspect --debug-brk ./node_modules/.bin/jest --runInBand --env jest-environment-node-debug",
+    "ci": "yarn run clean && yarn run check && yarn run lint && yarn run build && yarn run test",
     "precommit": "lint-staged",
     "prepublish": "yarn run ci"
   },
   "lint-staged": {
-    "*.ts": ["prettier --write", "git add"]
+    "*.ts": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "license": "MIT"
 }

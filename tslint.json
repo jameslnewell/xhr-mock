@@ -1,0 +1,6 @@
+{
+  "defaultSeverity": "error",
+  "rules": {
+    "no-debugger": "error"
+  }
+}

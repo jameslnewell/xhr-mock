@@ -33,12 +33,19 @@ function isMockResponsePromise(
   return (promise as Promise<MockResponse>).then !== undefined;
 }
 
-export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
+export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
+  implements XMLHttpRequest {
   static readonly UNSENT = ReadyState.UNSENT;
   static readonly OPENED = ReadyState.OPENED;
   static readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
   static readonly LOADING = ReadyState.LOADING;
   static readonly DONE = ReadyState.DONE;
+
+  readonly UNSENT = ReadyState.UNSENT;
+  readonly OPENED = ReadyState.OPENED;
+  readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
+  readonly LOADING = ReadyState.LOADING;
+  readonly DONE = ReadyState.DONE;
 
   response: any;
   responseText: string;
@@ -49,6 +56,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   statusText: string;
   timeout: number = 0;
   upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
+
   onreadystatechange: (this: XMLHttpRequest, ev: Event) => any;
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
@@ -119,10 +127,10 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   }
 
   getAllResponseHeaders(): string {
-    if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
-      return '';
-    }
-
+    // I'm pretty sure this fn can return null, but TS types say no
+    // if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
+    //   return null;
+    // }
     const headers = this.mockResponse.headers();
     const result = Object.keys(headers)
       .map(name => `${name}: ${headers[name]}\r\n`)
@@ -271,7 +279,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
   private handleSendError(error: Error) {
     //TODO: https://xhr.spec.whatwg.org/#request-error-steps
-    debugger;
 
     if (!this._sending) {
       return;
@@ -298,17 +305,22 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
   }
 
   // https://xhr.spec.whatwg.org/#event-xhr-loadstart
-  // send(data?: Document): void;
-  // send(data?: string): void;
-  // send(data?: any): void;
-  send(body?: string): void {
+  send(): void;
+  send(body?: Document): void;
+  send(body?: string): void;
+  send(body?: any): void;
+  send(body?: string | Document | any): void {
     //readyState must be opened
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
-      throw new Error('xhr-mock: Please call .open() before .send().');
+      throw new Error(
+        'xhr-mock: Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().'
+      );
     }
 
     if (this._sending) {
-      throw new Error('xhr-mock: .send() has already been called.');
+      throw new Error(
+        'xhr-mock: MockXMLHttpRequest.send() has already been called.'
+      );
     }
 
     this._sending = true;
@@ -321,8 +333,13 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
       body = undefined;
     }
 
+    //TODO: extract body and content-type https://fetch.spec.whatwg.org/#concept-bodyinit-extract
     if (body !== undefined) {
-      //TODO: extract body and content-type https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+      if (typeof body !== 'string') {
+        throw new Error(
+          "xhr-mock: A non-string body is not supported yet. You're welcome to submit a PR 😁."
+        );
+      }
       this.mockRequest.body(body);
     }
 
@@ -387,7 +404,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
     }
 
     if (this._async) {
-      debugger;
       handleAsync(
         MockXMLHttpRequest.handlers,
         this.mockRequest,
@@ -443,5 +459,9 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget {
 
     this._sending = false;
     this._aborting = true;
+  }
+
+  msCachingEnabled() {
+    return false;
   }
 }

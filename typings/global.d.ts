@@ -1,1 +1,3 @@
-declare module 'global';
+declare module 'global' {
+  export let XMLHttpRequest: {new (): XMLHttpRequest};
+}

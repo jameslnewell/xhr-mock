@@ -18,7 +18,7 @@ describe('native', () => {
   afterEach(() => mock.teardown());
 
   it('should send a POST request', () => {
-    mock.mock((req, res) => {
+    mock.use((req, res) => {
       expect(req.method()).toEqual('POST');
       expect(req.url().toString()).toEqual('/example');
       return res;
