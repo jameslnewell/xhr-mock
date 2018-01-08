@@ -8,12 +8,12 @@ type RealXHRMock = {
   status: number;
   statusText: string;
   responseText: string;
-  setRequestHeader: jest.Mock;
-  getAllResponseHeaders: jest.Mock;
-  open: jest.Mock;
-  send: jest.Mock;
-  onerror?: jest.Mock;
-  onloadend?: jest.Mock;
+  setRequestHeader: jest.Mock<void>;
+  getAllResponseHeaders: jest.Mock<string>;
+  open: jest.Mock<void>;
+  send: jest.Mock<void>;
+  onerror?: jest.Mock<void>;
+  onloadend?: jest.Mock<void>;
 };
 
 declare module './XHRMock' {
@@ -29,7 +29,7 @@ jest.mock('./XHRMock', () => {
         statusText: '',
         responseText: '',
         setRequestHeader: jest.fn(),
-        getAllResponseHeaders: jest.fn().mockReturnValue(''),
+        getAllResponseHeaders: jest.fn<string>().mockReturnValue(''),
         open: jest.fn(),
         send: jest.fn(() => {
           if (mock.error && mock.onerror) {
