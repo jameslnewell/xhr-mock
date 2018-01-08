@@ -6,7 +6,6 @@
 
 Utility for mocking XMLHttpRequest.
 
-
 ## Installation
 
     npm install --save-dev xhr-mock

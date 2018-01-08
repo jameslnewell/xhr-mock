@@ -13,3 +13,4 @@ npm-debug.log.*
 
 # generated files
 lib
+dist

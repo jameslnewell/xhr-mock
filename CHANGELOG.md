@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preivew.12
+
+- added a non-minified UMD bundle - `./dist/xhr-mock.js`
+
 ## 2.0.0-preivew.11
 
 - added `proxy` - a handler for proxying requests as real XHR
