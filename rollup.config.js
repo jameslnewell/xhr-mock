@@ -7,7 +7,8 @@ export default {
   output: {
     file: 'dist/xhr-mock.js',
     format: 'umd',
-    name: 'XHRMock'
+    name: 'XHRMock',
+    exports: 'default'
   },
   plugins: [
     typescript({typescript: require('typescript')}),
@@ -15,6 +16,5 @@ export default {
       preferBuiltins: false
     }),
     commonjs()
-  ],
-  exports: 'default'
+  ]
 };

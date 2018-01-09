@@ -1,5 +1,9 @@
 # Change log
 
+## 2.0.0-preivew.14
+
+- fix: made the proxy work in NodeJS
+
 ## 2.0.0-preivew.13
 
 - fix: examples in `README.md`

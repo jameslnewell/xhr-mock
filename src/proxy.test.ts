@@ -1,129 +1,160 @@
-import {__replaceRealXHR} from './XHRMock';
+import * as http from 'http';
+import * as https from 'https';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 import proxy from './proxy';
 
-type RealXHRMock = {
-  error?: Error;
-  status: number;
-  statusText: string;
-  responseText: string;
-  setRequestHeader: jest.Mock<void>;
-  getAllResponseHeaders: jest.Mock<string>;
-  open: jest.Mock<void>;
-  send: jest.Mock<void>;
-  onerror?: jest.Mock<void>;
-  onloadend?: jest.Mock<void>;
-};
+// declare module 'http' {
+//   export function __reset(): void;
+// }
 
-declare module './XHRMock' {
-  export function __replaceRealXHR(): RealXHRMock;
-}
+// declare module 'https' {
+//   export function __reset(): void;
+// }
 
-jest.mock('./XHRMock', () => {
-  let mock: RealXHRMock;
-  return {
-    __replaceRealXHR() {
-      mock = {
-        status: 200,
-        statusText: '',
-        responseText: '',
-        setRequestHeader: jest.fn(),
-        getAllResponseHeaders: jest.fn<string>().mockReturnValue(''),
-        open: jest.fn(),
-        send: jest.fn(() => {
-          if (mock.error && mock.onerror) {
-            mock.onerror({error: mock.error});
-          } else if (mock.onloadend) {
-            mock.onloadend();
-          }
-        })
-      };
-      return mock;
-    },
-    default: {
-      RealXMLHttpRequest: jest.fn(() => mock)
-    }
-  };
-});
+// jest.mock('http', () => {
+//   let callback: Function;
+//   let request: jest.Mock<void> = jest.fn((opts, cb) => callback = cb);
+//   return {
+//     __reset() {
+//       request.mockReset();
+//       request.mockReturnValue({
+//         on: jest.fn(),
+//         end: jest.fn(() => {
+//           callback();
+//         })
+//       });
+//     },
+//     request
+//   };
+// });
+
+// jest.mock('https', () => {
+//   let callback: Function;
+//   let request: jest.Mock<void> = jest.fn();
+//   return {
+//     __reset() {
+//       request.mockReset();
+//       request.mockReturnValue({
+//         on: jest.fn(),
+//         end: jest.fn(() => {
+//           callback();
+//         })
+//       });
+//     },
+//     request
+//   };
+// });
 
 describe('proxy', () => {
-  let xhr: RealXHRMock;
+  // beforeEach(() => {
+  //   http.__reset();
+  //   https.__reset();
+  // });
 
-  beforeEach(() => {
-    xhr = __replaceRealXHR();
-  });
-
-  it('should call open() with the method and URL', async () => {
+  it('should call http.request() with the method, URL and headers', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    req.method('PUT').url('http://httbin.org/put');
+    req
+      .method('PUT')
+      .url('http://httpbin.org/put')
+      .header('foo', 'bar')
+      .header('bar', 'foo');
     await proxy(req, res);
 
-    expect(xhr.open).toBeCalledWith('PUT', 'http://httbin.org/put');
+    const body = res.body() || '';
+    expect(JSON.parse(body)).toEqual(
+      expect.objectContaining({
+        url: 'http://httpbin.org/put',
+        headers: expect.objectContaining({
+          Foo: 'bar',
+          Bar: 'foo'
+        })
+      })
+    );
   });
 
-  it('should set the request headers', async () => {
+  it('should call https.request() with the method, URL and headers', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    req.header('foo', 'bar').header('bar', 'foo');
+    req
+      .method('PUT')
+      .url('https://httpbin.org/put')
+      .header('foo', 'bar')
+      .header('bar', 'foo');
     await proxy(req, res);
 
-    expect(xhr.setRequestHeader).toBeCalledWith('foo', 'bar');
+    const body = res.body() || '';
+    expect(JSON.parse(body)).toEqual(
+      expect.objectContaining({
+        url: 'https://httpbin.org/put',
+        headers: expect.objectContaining({
+          Foo: 'bar',
+          Bar: 'foo'
+        })
+      })
+    );
   });
 
   it('should call send() with a body', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    req.body('Hello World!');
+    req
+      .method('PUT')
+      .url('http://httpbin.org/put')
+      .header('Content-Length', '12')
+      .body('Hello World!');
     await proxy(req, res);
 
-    expect(xhr.send).toBeCalledWith('Hello World!');
+    const body = res.body() || '';
+    expect(JSON.parse(body)).toEqual(
+      expect.objectContaining({
+        url: 'http://httpbin.org/put',
+        data: 'Hello World!'
+      })
+    );
   });
 
   it('should call send() without a body', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
+    req.method('PUT').url('http://httpbin.org/put');
     await proxy(req, res);
 
-    expect(xhr.send).toBeCalledWith(null);
-  });
-
-  it('should set the status', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
-
-    xhr.status = 201;
-    await proxy(req, res);
-
-    expect(res.status()).toEqual(201);
+    const body = res.body() || '';
+    expect(JSON.parse(body)).toEqual(
+      expect.objectContaining({
+        url: 'http://httpbin.org/put',
+        data: ''
+      })
+    );
   });
 
   it('should set the reason', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    xhr.statusText = 'Created';
+    req.method('PUT').url('http://httpbin.org/put');
     await proxy(req, res);
 
-    expect(res.reason()).toEqual('Created');
+    expect(res.reason()).toEqual('OK');
   });
 
   it('should set the headers', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    xhr.getAllResponseHeaders.mockReturnValue('foo: bar\r\nbar: foo\r\n');
+    req.method('PUT').url('http://httpbin.org/put');
     await proxy(req, res);
 
     expect(res.headers()).toEqual(
       expect.objectContaining({
-        foo: 'bar',
-        bar: 'foo'
+        'content-type': 'application/json',
+        'content-length': '311'
       })
     );
   });
@@ -132,10 +163,10 @@ describe('proxy', () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    xhr.responseText = 'Hello World!';
+    req.method('PUT').url('http://httpbin.org/put');
     await proxy(req, res);
 
-    expect(res.body()).toEqual('Hello World!');
+    expect(res.body()).toBeDefined();
   });
 
   it('should error', async () => {
@@ -143,7 +174,8 @@ describe('proxy', () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    xhr.error = new Error();
+    req.method('DELETE').url('invalid://blah');
+
     try {
       await proxy(req, res);
     } catch (error) {

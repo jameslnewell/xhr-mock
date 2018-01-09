@@ -93,7 +93,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   private _async: boolean;
   private _sending: boolean;
   private _aborting: boolean;
-  private _timeoutTimer: number;
+  private _timeoutTimer: NodeJS.Timer;
 
   constructor() {
     super();

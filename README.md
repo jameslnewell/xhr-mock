@@ -6,9 +6,17 @@
 
 Utility for mocking XMLHttpRequest.
 
+Works in NodeJS and the browser. Handy for testing and prototyping when your backend isn't built yet.
+
 ## Installation
 
     npm install --save-dev xhr-mock
+
+<!-- OR
+
+```html
+<script src="https://unpkg.com/xhr-mock@next/dist/xhr-mock.js"></script>
+``` -->
 
 ## Usage
 
@@ -169,6 +177,10 @@ Get the request method.
 
 Get the request URL.
 
+#### .header(name : string, value: string)
+
+Set a request header.
+
 #### .header(name : string) : string | null
 
 Get a request header.
@@ -177,9 +189,17 @@ Get a request header.
 
 Get the request headers.
 
+#### .headers(headers : object)
+
+Set the request headers.
+
 #### .body() : string
 
 Get the request body.
+
+#### .body(body : string)
+
+Set the request body.
 
 ### MockResponse
 
@@ -307,7 +327,7 @@ xhr.send();
 
 ### Proxying requests
 
-If you want to mock some requests but not all of them, you can proxy unhandled requests to a real server.
+If you want to mock some requests, but not all of them, you can proxy unhandled requests to a real server.
 
 ```js
 import mock, {proxy} from 'xhr-mock';

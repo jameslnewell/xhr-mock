@@ -1,46 +1,51 @@
-import XHRMock from './XHRMock';
+import * as http from 'http';
+import * as https from 'https';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
-
-function parseHeaders(string: String): {} {
-  const headers: {[name: string]: string} = {};
-  const lines = string.split('\r\n');
-  lines.forEach(line => {
-    const [name, value] = line.split(':', 2);
-    if (name && value) {
-      headers[name] = value.replace(/^\s*/g, '').replace(/\s*$/g, '');
-    }
-  });
-  return headers;
-}
 
 export default function(
   req: MockRequest,
   res: MockResponse
 ): Promise<MockResponse> {
-  const xhr: XMLHttpRequest = new XHRMock.RealXMLHttpRequest();
-
   return new Promise((resolve, reject) => {
-    // TODO: reject with the correct type of error
-    xhr.onerror = event => reject(event.error);
-
-    xhr.onloadend = () => {
-      res
-        .status(xhr.status)
-        .reason(xhr.statusText)
-        .headers(parseHeaders(xhr.getAllResponseHeaders()))
-        .body(xhr.responseText);
-      resolve(res);
+    const options = {
+      method: req.method(),
+      protocol: `${req.url().protocol}:`,
+      hostname: req.url().host,
+      port: req.url().port,
+      auth: `${req.url().username} ${req.url().password}`,
+      path: req.url().path,
+      headers: req.headers()
     };
 
-    xhr.open(req.method(), req.url().toString());
+    const requestFn =
+      req.url().protocol === 'https' ? https.request : http.request;
 
-    const headers = req.headers();
-    Object.keys(headers).forEach(name => {
-      const value = headers[name];
-      xhr.setRequestHeader(name, value);
+    const httpReq = requestFn(options, httpRes => {
+      res.status(httpRes.statusCode || 0).reason(httpRes.statusMessage || '');
+
+      Object.keys(httpRes.headers).forEach(name => {
+        const value = httpRes.headers[name];
+        res.header(name, Array.isArray(value) ? value[0] : value || '');
+      });
+
+      let resBody = '';
+      httpRes.setEncoding('utf8');
+      httpRes.on('data', chunk => {
+        resBody += chunk.toString();
+      });
+      httpRes.on('end', () => {
+        res.body(resBody);
+        resolve(res);
+      });
     });
 
-    xhr.send(req.body());
+    httpReq.on('error', reject);
+
+    const reqBody = req.body();
+    if (reqBody !== undefined && reqBody !== null) {
+      httpReq.write(reqBody);
+    }
+    httpReq.end();
   });
 }

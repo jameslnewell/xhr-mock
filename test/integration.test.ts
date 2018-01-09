@@ -1,6 +1,6 @@
-import mock from '../src';
+import mock, {proxy} from '../src';
 
-const request = (method: string, url: string) =>
+const request = (method: string, url: string): Promise<string> =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
@@ -94,4 +94,24 @@ describe('native', () => {
   });
 
   //TODO: test content-length
+
+  it('should proxy unhandled URLs', async () => {
+    mock.get('https://reqres.in/api/users/1', {
+      status: 200,
+      body: 'Hello World!'
+    });
+
+    mock.use(proxy);
+
+    const ret1 = await request('GET', 'https://reqres.in/api/users/1');
+    expect(ret1).toEqual('Hello World!');
+
+    const ret2 = await request('GET', 'https://reqres.in/api/users/2');
+    expect(JSON.parse(ret2)).toEqual({
+      data: expect.objectContaining({
+        id: 2,
+        first_name: 'Janet'
+      })
+    });
+  });
 });
