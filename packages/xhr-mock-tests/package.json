@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.17.1",
+    "core-js": "^2.5.3",
     "jquery": "^3.2.1",
     "superagent": "^3.8.2",
     "xhr-mock": "^2.0.0-preview.15"
@@ -14,16 +15,16 @@
     "@types/superagent": "^3.5.6",
     "chai": "^4.1.2",
     "concurrently": "^3.5.1",
+    "glob": "^7.1.2",
     "testem": "^1.18.4",
     "ts-loader": "^3.2.0",
-    "webpack": "^3.10.0",
-    "glob": "^7.1.2"
+    "webpack": "^3.10.0"
   },
   "scripts": {
     "clean": "rm -rf ./dist",
     "lint": "tslint -c ../../tslint.base.json 'src/**/*.ts'",
     "check": "tsc --pretty --noEmit --project tsconfig.json",
-    "test": "concurrently webpack 'testem ci'",
+    "test": "webpack && testem ci",
     "test:watch": "concurrently 'webpack --watch' testem",
     "ci": "yarn run clean && yarn run lint && yarn run check && yarn run test"
   }
