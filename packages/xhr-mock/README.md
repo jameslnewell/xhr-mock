@@ -32,7 +32,7 @@ import mock from 'xhr-mock';
 If you aren't using a bundler like Webpack or Browserify then you will need to add this script to your HTML:
 
 ```html
-<script src="https://unpkg.com/xhr-mock@next/dist/xhr-mock.js"></script>
+<script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
 ```
 
 ## Usage

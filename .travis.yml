@@ -9,7 +9,7 @@ addons:
       - xvfb
 
 # so chrome works
-sudo: false
+# sudo: false
 
 # https://docs.travis-ci.com/user/gui-and-headless-browsers/
 before_script:

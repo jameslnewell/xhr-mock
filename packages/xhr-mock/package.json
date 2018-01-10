@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "global": "^4.3.0",
-    "typescript": "^2.6.2",
     "url": "^0.11.0"
   },
   "devDependencies": {
@@ -39,7 +38,8 @@
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-typescript": "^0.8.1",
-    "ts-jest": "^22.0.1"
+    "ts-jest": "^22.0.1",
+    "typescript": "^2.6.2"
   },
   "scripts": {
     "clean": "rm -rf ./lib ./dist",

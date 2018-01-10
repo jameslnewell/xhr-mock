@@ -6,6 +6,10 @@
 - fix (potential break): on `error`, `timeout` and `abort` the correct sequence of events are fired ([#41](https://github.com/jameslnewell/xhr-mock/issues/41))
 - fix (potential break): changed the `error` and `onabort` to be `ProgressEvent`s like the latest spec ([and different to the typescript types](https://github.com/Microsoft/TypeScript/issues/19830))
 
+## 2.0.0
+
+- released with updated docs
+
 ## 2.0.0-preivew.14
 
 - fix: made the proxy work in NodeJS
