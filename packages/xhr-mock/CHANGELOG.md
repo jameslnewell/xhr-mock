@@ -1,5 +1,9 @@
 # Change log
 
+# 2.0.2
+
+- fix: version badge on `README.md`
+
 ## 2.0.1
 
 - fix: undefined `__generator` in UMD bundle due to [#85](https://github.com/rollup/rollup-plugin-typescript/issues/85)
