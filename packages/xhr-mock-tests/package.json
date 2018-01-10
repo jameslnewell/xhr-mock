@@ -23,7 +23,7 @@
     "clean": "rm -rf ./dist",
     "lint": "tslint -c ../../tslint.base.json 'src/**/*.ts'",
     "check": "tsc --pretty --noEmit --project tsconfig.json",
-    "test": "concurrently webpack testem",
+    "test": "concurrently webpack 'testem ci'",
     "test:watch": "concurrently 'webpack --watch' testem",
     "ci": "yarn run clean && yarn run lint && yarn run check && yarn run test"
   }
