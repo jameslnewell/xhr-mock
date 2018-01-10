@@ -8,7 +8,7 @@ Utility for mocking `XMLHttpRequest`.
 
 Works in NodeJS and in the browser. Handy for testing and handy for prototyping while your backend is still being built.
 
-Compatible with [Axios](example/src/axios/index.js),  [Superagent](example/src/superagent/index.js), [jQuery](example/src/jquery/index.js)
+Compatible with [Axios](https://www.npmjs.com/package/axios),  [jQuery](https://www.npmjs.com/package/jquery), [Superagent](https://www.npmjs.com/package/superagent)
 and probably every other library built on `XMLHttpRequest`.
 
 ## Installation
