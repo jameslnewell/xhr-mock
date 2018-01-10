@@ -13,7 +13,7 @@
   "scripts": {
     "precommit": "lint-staged",
     "bootstrap": "lerna bootstrap --npm-client yarn",
-    "publish": "lerna publish",
+    "publish": "yarn run ci && lerna publish",
     "ci": "lerna run ci"
   },
   "lint-staged": {
