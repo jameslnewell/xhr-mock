@@ -1,6 +1,6 @@
 {
   "name": "xhr-mock",
-  "version": "2.0.0-preview.16",
+  "version": "2.0.0",
   "description": "Utility for mocking XMLHttpRequest.",
   "keywords": [
     "mock",
