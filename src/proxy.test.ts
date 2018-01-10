@@ -154,7 +154,7 @@ describe('proxy', () => {
     expect(res.headers()).toEqual(
       expect.objectContaining({
         'content-type': 'application/json',
-        'content-length': '311'
+        'content-length': expect.any(String)
       })
     );
   });

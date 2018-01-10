@@ -259,7 +259,7 @@ mock.setup();
 mock.post('/', {});
 
 const xhr = new XMLHttpRequest();
-xhr.upload.onprogress = event => console.log(event.loaded, event.total);;
+xhr.upload.onprogress = event => console.log(event.loaded, event.total);
 xhr.open('POST', '/');
 xhr.setRequestHeader('Content-Length', '12');
 xhr.send('Hello World!');
