@@ -6,8 +6,8 @@ module.exports = {
   serve_files: [
     './dist/tests.js'
   ]
-  // launch_in_ci: [
-  //   'Firefox',
-  //   'PhantomJS'
-  // ]
+  launch_in_ci: [
+    'Firefox',
+    'PhantomJS'
+  ]
 }
