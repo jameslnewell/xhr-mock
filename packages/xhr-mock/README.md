@@ -4,24 +4,24 @@
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
 [![npm](https://img.shields.io/npm/dm/localeval.svg)]()
 
-A utility for mocking `XMLHttpRequest`.
+Utility for mocking `XMLHttpRequest`.
 
-Works in NodeJS and the browser. Handy for testing and handy for prototyping while your backend is still being built.
+Works in NodeJS and in the browser. Handy for testing and handy for prototyping while your backend is still being built.
 
 Compatible with [Axios](example/src/axios/index.js),  [Superagent](example/src/superagent/index.js), [jQuery](example/src/jquery/index.js)
-and almost any other library built on `XMLHttpRequest`.
+and probably every other library built on `XMLHttpRequest`.
 
 ## Installation
 
 ### Using a bundler
 
-If you are using a bundler like Webpack or Browserify then install `xhr-mock` with `npm` or `yarn`:
+If you are using a bundler like Webpack or Browserify then install `xhr-mock` using `yarn` or `npm`:
 
 ```bash
-npm install --save-dev xhr-mock
+yarn add --dev xhr-mock
 ```
 
-Once installed, you can import and start using `xhr-mock` in your scripts:
+Once `xhr-mock` is installed, you can import it and start using in your scripts:
 
 ```js
 import mock from 'xhr-mock';
@@ -29,7 +29,7 @@ import mock from 'xhr-mock';
 
 ### Without a bundler
 
-If you aren't using a bundler like Webpack or Browserify then add this script to your HTML file:
+If you aren't using a bundler like Webpack or Browserify then you will need to add this script to your HTML files:
 
 ```html
 <script src="https://unpkg.com/xhr-mock@next/dist/xhr-mock.js"></script>
@@ -37,7 +37,7 @@ If you aren't using a bundler like Webpack or Browserify then add this script to
 
 ## Usage
 
-First off lets write some code that uses `XMLHttpRequest`.
+First off lets write some code that uses `XMLHttpRequest`...
 
 `./createUser.js`
 ```js

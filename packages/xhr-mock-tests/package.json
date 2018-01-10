@@ -16,7 +16,8 @@
     "concurrently": "^3.5.1",
     "testem": "^1.18.4",
     "ts-loader": "^3.2.0",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "glob": "^7.1.2"
   },
   "scripts": {
     "clean": "rm -rf ./dist",

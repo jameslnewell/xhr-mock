@@ -9,7 +9,7 @@ The documentation for the main NPM package can be found [here](./packages/xhr-mo
 
 ## 🛠 Development
 
-Install all the dependencies:
+Install the dependencies:
 ```bash
 yarn
 yarn run bootstrap
