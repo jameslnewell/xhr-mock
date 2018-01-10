@@ -15,7 +15,7 @@ and probably every other library built on `XMLHttpRequest`.
 
 ### Using a bundler
 
-If you are using a bundler like Webpack or Browserify then install `xhr-mock` using `yarn` or `npm`:
+If you are using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) then install `xhr-mock` using `yarn` or `npm`:
 
 ```bash
 yarn add --dev xhr-mock
@@ -29,7 +29,7 @@ import mock from 'xhr-mock';
 
 ### Without a bundler
 
-If you aren't using a bundler like Webpack or Browserify then you will need to add this script to your HTML:
+If you aren't using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) then you will need to add this script to your HTML:
 
 ```html
 <script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
