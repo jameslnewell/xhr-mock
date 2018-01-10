@@ -21,7 +21,7 @@ If you are using a bundler like Webpack or Browserify then install `xhr-mock` us
 yarn add --dev xhr-mock
 ```
 
-Once `xhr-mock` is installed, you can import it and start using in your scripts:
+Once `xhr-mock` is installed, you can import it and start using it in your scripts:
 
 ```js
 import mock from 'xhr-mock';
@@ -29,7 +29,7 @@ import mock from 'xhr-mock';
 
 ### Without a bundler
 
-If you aren't using a bundler like Webpack or Browserify then you will need to add this script to your HTML files:
+If you aren't using a bundler like Webpack or Browserify then you will need to add this script to your HTML:
 
 ```html
 <script src="https://unpkg.com/xhr-mock@next/dist/xhr-mock.js"></script>
@@ -42,7 +42,8 @@ First off lets write some code that uses `XMLHttpRequest`...
 `./createUser.js`
 ```js
 
-// you could have just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object
+// we could have just as easily use Axios, jQuery, Superagent
+// or another package here instead of using the native XMLHttpRequest object
 
 export default function(data) {
   return new Promise((resolve, reject) => {
