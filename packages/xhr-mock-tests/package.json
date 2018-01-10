@@ -6,7 +6,7 @@
     "core-js": "^2.5.3",
     "jquery": "^3.2.1",
     "superagent": "^3.8.2",
-    "xhr-mock": "^2.0.0"
+    "xhr-mock": "^2.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.0",
@@ -28,5 +28,5 @@
     "test:watch": "concurrently 'webpack --watch' testem",
     "ci": "yarn run clean && yarn run lint && yarn run check && yarn run test"
   },
-  "version": "2.0.0"
+  "version": "2.0.1"
 }
