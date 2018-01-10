@@ -9,6 +9,7 @@ export class XHRMock {
   RealXMLHttpRequest: {new (): XMLHttpRequest} = RealXMLHttpRequest;
 
   setup(): XHRMock {
+    // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
     window.XMLHttpRequest = MockXMLHttpRequest;
     this.reset();
     return this;

@@ -5,7 +5,7 @@ const request = (method: string, url: string): Promise<string> =>
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
       if (xhr.readyState == XMLHttpRequest.DONE) {
-        return resolve(xhr.responseText);
+        resolve(xhr.responseText);
       }
     };
     xhr.onerror = event => reject(event.error);
@@ -13,7 +13,7 @@ const request = (method: string, url: string): Promise<string> =>
     xhr.send();
   });
 
-describe('native', () => {
+describe('integration', () => {
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
 
@@ -34,9 +34,9 @@ describe('native', () => {
 
     const xhr = new XMLHttpRequest();
     xhr.timeout = 100;
-    xhr.ontimeout = done;
-    xhr.onerror = done.fail;
-    xhr.open('post', 'http://localhost/foo/bar');
+    xhr.ontimeout = () => done();
+    xhr.onerror = () => done.fail();
+    xhr.open('POST', 'http://localhost/foo/bar');
     xhr.send();
   });
 
@@ -46,14 +46,13 @@ describe('native', () => {
     });
 
     const xhr = new XMLHttpRequest();
-    xhr.onerror = done;
+    xhr.onerror = () => done();
     xhr.open('post', 'http://localhost/foo/bar');
     xhr.send();
   });
 
   it('should emit progress events when uploading', done => {
     expect.assertions(1);
-
     mock.post('http://localhost/foo/bar', (req, res) => {
       return res
         .status(201)
@@ -63,18 +62,17 @@ describe('native', () => {
 
     const xhr = new XMLHttpRequest();
     xhr.upload.onprogress = jest.fn();
-    xhr.onerror = done.fail;
-    xhr.onload = () => {
-      expect(xhr.upload.onprogress).toHaveBeenCalledTimes(2);
+    xhr.onerror = () => done.fail();
+    xhr.onloadend = () => {
+      expect(xhr.upload.onprogress).toHaveBeenCalledTimes(1);
       done();
     };
-    xhr.open('post', 'http://localhost/foo/bar');
+    xhr.open('POST', 'http://localhost/foo/bar');
     xhr.send('Hello World!');
   });
 
   it('should emit progress events when downloading', done => {
     expect.assertions(1);
-
     mock.post('http://localhost/foo/bar', (req, res) => {
       return res
         .status(201)
@@ -84,18 +82,20 @@ describe('native', () => {
 
     const xhr = new XMLHttpRequest();
     xhr.onprogress = jest.fn();
-    xhr.onerror = done.fail;
-    xhr.onload = () => {
-      expect(xhr.onprogress).toHaveBeenCalledTimes(2);
+    xhr.onerror = () => done.fail();
+    xhr.onloadend = () => {
+      expect(xhr.onprogress).toHaveBeenCalledTimes(1);
       done();
     };
-    xhr.open('post', 'http://localhost/foo/bar');
+    xhr.open('POST', 'http://localhost/foo/bar');
     xhr.send();
   });
 
   //TODO: test content-length
 
   it('should proxy unhandled URLs', async () => {
+    jest.setTimeout(20000);
+
     mock.get('https://reqres.in/api/users/1', {
       status: 200,
       body: 'Hello World!'

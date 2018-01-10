@@ -70,8 +70,8 @@ export default class MockResponse {
   }
 
   body(): null | string;
-  body(body: string): MockResponse;
-  body(body?: string): null | string | MockResponse {
+  body(body: null | string): MockResponse;
+  body(body?: null | string): null | string | MockResponse {
     if (typeof body !== 'undefined') {
       this._body = body;
       return this;

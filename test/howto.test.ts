@@ -34,7 +34,7 @@ describe('how to', () => {
   });
 
   it('should simulate a timeout', async () => {
-    mock.post('/', () => new Promise(() => {}));
+    mock.get('/', () => new Promise(() => {}));
 
     const xhr = new XMLHttpRequest();
     xhr.timeout = 100;
@@ -47,7 +47,7 @@ describe('how to', () => {
     mock.get('/', () => Promise.reject(new Error()));
 
     const xhr = new XMLHttpRequest();
-    xhr.onerror = event => console.log(event.error);
+    xhr.onerror = event => console.log('error');
     xhr.open('GET', '/');
     xhr.send();
   });

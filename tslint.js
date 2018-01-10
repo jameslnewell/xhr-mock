@@ -1,0 +1,10 @@
+module.exports = {
+  defaultSeverity: 'error',
+  rules: {
+    'no-debugger': 'error',
+    'mocha-avoid-only': 'error'
+  },
+  rulesDirectory: [
+    'node_modules/tslint-microsoft-contrib'
+   ],
+};

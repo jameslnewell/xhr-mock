@@ -23,7 +23,7 @@ export function sync(
       return result;
     }
   }
-  throw new Error('xhr-mock: No MockFunction returned a MockResponse.');
+  throw new Error('xhr-mock: No handler returned a response.');
 }
 
 export function async(
@@ -44,7 +44,7 @@ export function async(
     )
     .then(result => {
       if (!result) {
-        throw new Error('xhr-mock: No MockFunction returned a MockResponse.');
+        throw new Error('xhr-mock: No handler returned a response.');
       }
       return result;
     });

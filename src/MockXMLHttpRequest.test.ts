@@ -1,16 +1,16 @@
 import MockEvent from './MockEvent';
-import MockErrorEvent from './MockErrorEvent';
+import MockProgressEvent from './MockProgressEvent';
 import MockXMLHttpRequest from './MockXMLHttpRequest';
 
-function failOnErrorEvent(done: jest.DoneCallback) {
-  return function(event: MockErrorEvent) {
-    done.fail(event.error);
+function failOnEvent(done: jest.DoneCallback) {
+  return function(event: MockProgressEvent) {
+    done.fail();
   };
 }
 
-function failOnTimeoutEvent(done: jest.DoneCallback) {
-  return function(event: MockEvent) {
-    done.fail();
+function successOnEvent(done: jest.DoneCallback) {
+  return function(event: MockProgressEvent) {
+    done();
   };
 }
 
@@ -47,8 +47,8 @@ describe('MockXMLHttpRequest', () => {
       const xhr = new MockXMLHttpRequest();
       xhr.open('GET', '/');
       xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.onload = done;
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.onload = successOnEvent(done);
+      xhr.onerror = failOnEvent(done);
       xhr.send();
     });
   });
@@ -62,13 +62,13 @@ describe('MockXMLHttpRequest', () => {
 
       const xhr = new MockXMLHttpRequest();
       xhr.open('get', '/');
-      xhr.onload = () => {
+      xhr.onloadend = () => {
         expect(xhr.getResponseHeader('Content-Type')).toEqual(
           'application/json'
         );
         done();
       };
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.onerror = failOnEvent(done);
       xhr.send();
     });
   });
@@ -89,7 +89,7 @@ describe('MockXMLHttpRequest', () => {
         );
         done();
       };
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.onerror = failOnEvent(done);
       xhr.send();
     });
   });
@@ -132,9 +132,6 @@ describe('MockXMLHttpRequest', () => {
         addListeners(xhr, events);
         xhr.send();
         expect(events).toEqual([
-          'xhr:loadstart',
-          'xhr:readystatechange', //HEADERS_RECEIVED
-          'xhr:progress',
           'xhr:readystatechange', //DONE
           'xhr:load',
           'xhr:loadend'
@@ -149,14 +146,6 @@ describe('MockXMLHttpRequest', () => {
         addListeners(xhr, events);
         xhr.send('hello world!');
         expect(events).toEqual([
-          'xhr:loadstart',
-          'upload:loadstart',
-          'upload:progress',
-          'upload:progress',
-          'upload:load',
-          'upload:loadend',
-          'xhr:readystatechange', //HEADERS_RECEIVED
-          'xhr:progress',
           'xhr:readystatechange', //DONE
           'xhr:load',
           'xhr:loadend'
@@ -171,11 +160,6 @@ describe('MockXMLHttpRequest', () => {
         addListeners(xhr, events);
         xhr.send();
         expect(events).toEqual([
-          'xhr:loadstart',
-          'xhr:readystatechange', //HEADERS_RECEIVED
-          'xhr:readystatechange', //LOADING
-          'xhr:progress',
-          'xhr:progress',
           'xhr:readystatechange', //DONE
           'xhr:load',
           'xhr:loadend'
@@ -216,7 +200,6 @@ describe('MockXMLHttpRequest', () => {
             'xhr:loadstart',
             'upload:loadstart',
             'upload:progress',
-            'upload:progress',
             'upload:load',
             'upload:loadend',
             'xhr:readystatechange', //HEADERS_RECEIVED
@@ -242,7 +225,6 @@ describe('MockXMLHttpRequest', () => {
             'xhr:readystatechange', //HEADERS_RECEIVED
             'xhr:readystatechange', //LOADING
             'xhr:progress',
-            'xhr:progress',
             'xhr:readystatechange', //DONE
             'xhr:load'
           ]);
@@ -260,8 +242,8 @@ describe('MockXMLHttpRequest', () => {
       });
 
       const xhr = new MockXMLHttpRequest();
-      xhr.onload = done;
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.onload = successOnEvent(done);
+      xhr.onerror = failOnEvent(done);
       xhr.open('post', '/');
       xhr.send('Hello World!');
     });
@@ -273,13 +255,13 @@ describe('MockXMLHttpRequest', () => {
       });
 
       const xhr = new MockXMLHttpRequest();
-      xhr.onload = done;
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.onload = successOnEvent(done);
+      xhr.onerror = failOnEvent(done);
       xhr.open('get', '/');
       xhr.send();
     });
 
-    it.only('should time out when .timeout > 0 and no response is resloved within the time', done => {
+    it('should time out when .timeout > 0 and no response is resloved within the time', done => {
       let start: number, end: number;
 
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
@@ -292,7 +274,7 @@ describe('MockXMLHttpRequest', () => {
         expect(xhr.readyState).toEqual(4);
         done();
       };
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.onerror = failOnEvent(done);
       start = Date.now();
       xhr.open('get', '/');
       xhr.send();
@@ -302,9 +284,9 @@ describe('MockXMLHttpRequest', () => {
       MockXMLHttpRequest.addHandler((req, res) => new Promise(() => {}));
       const xhr = new MockXMLHttpRequest();
       xhr.timeout = 100;
-      xhr.ontimeout = failOnTimeoutEvent(done);
-      xhr.onabort = done;
-      xhr.onerror = failOnErrorEvent(done);
+      xhr.ontimeout = failOnEvent(done);
+      xhr.onabort = successOnEvent(done);
+      xhr.onerror = failOnEvent(done);
       xhr.open('get', '/');
       xhr.send();
       xhr.abort();
@@ -316,21 +298,21 @@ describe('MockXMLHttpRequest', () => {
       );
       const xhr = new MockXMLHttpRequest();
       xhr.timeout = 100;
-      xhr.ontimeout = failOnTimeoutEvent(done);
-      xhr.onerror = done;
+      xhr.ontimeout = failOnEvent(done);
+      xhr.onerror = successOnEvent(done);
       xhr.open('get', '/');
       xhr.send();
     });
   });
 
-  it.only('should be able to send another request after the previous request errored', done => {
+  it('should be able to send another request after the previous request errored', done => {
     MockXMLHttpRequest.addHandler((req, res) =>
       Promise.reject(new Error('test!'))
     );
 
     const xhr = new MockXMLHttpRequest();
     xhr.timeout = 100;
-    xhr.ontimeout = failOnTimeoutEvent(done);
+    xhr.ontimeout = failOnEvent(done);
     xhr.onerror = () => {
       try {
         xhr.open('get', '/');

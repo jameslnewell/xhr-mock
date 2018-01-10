@@ -1,9 +1,8 @@
 import {MockURL, parseURL, formatURL} from './MockURL';
-import {MockFunction} from './types';
+import {MockFunction, MockHeaders} from './types';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 import MockEvent from './MockEvent';
-import MockErrorEvent from './MockErrorEvent';
 import MockProgressEvent from './MockProgressEvent';
 import MockXMLHttpRequestUpload from './MockXMLHttpRequestUpload';
 import MockXMLHttpRequestEventTarget from './MockXMLHttpRequestEventTarget';
@@ -13,9 +12,7 @@ const notImplementedError = new Error(
   "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
 );
 
-//https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
-//http://www.w3.org/TR/2006/WD-XMLHttpRequest-20060405/
-// https://xhr.spec.whatwg.org/
+// implemented according to https://xhr.spec.whatwg.org/
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
 
@@ -33,6 +30,29 @@ function isMockResponsePromise(
   return (promise as Promise<MockResponse>).then !== undefined;
 }
 
+function calculateProgress(req: MockRequest | MockResponse) {
+  const header = req.header('content-length');
+  const body = req.body();
+
+  let lengthComputable = false;
+  let total = 0;
+
+  if (header) {
+    const contentLength = parseInt(header, 10);
+    if (contentLength !== NaN) {
+      lengthComputable = true;
+      total = contentLength;
+    }
+  }
+
+  return {
+    lengthComputable,
+    loaded: (body && body.length) || 0, //FIXME: Measure bytes not (unicode) chars
+    total
+  };
+}
+
+// @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
 export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   implements XMLHttpRequest {
   static readonly UNSENT = ReadyState.UNSENT;
@@ -46,16 +66,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
   readonly LOADING = ReadyState.LOADING;
   readonly DONE = ReadyState.DONE;
-
-  response: any;
-  responseText: string;
-  responseType: XMLHttpRequestResponseType;
-  responseURL: string;
-  responseXML: Document | null;
-  status: number;
-  statusText: string;
-  timeout: number = 0;
-  upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
 
   onreadystatechange: (this: XMLHttpRequest, ev: Event) => any;
 
@@ -87,43 +97,56 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     this.handlers = [];
   }
 
-  private mockRequest: MockRequest;
-  private mockResponse: MockResponse;
-  private _readyState: ReadyState;
-  private _async: boolean;
-  private _sending: boolean;
-  private _aborting: boolean;
+  private req: MockRequest = new MockRequest();
+  private res: MockResponse = new MockResponse();
+
+  responseType: XMLHttpRequestResponseType = '';
+  responseURL: string = '';
+  private _timeout: number = 0;
+  // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
+  upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
+  readyState: ReadyState = MockXMLHttpRequest.UNSENT;
+
+  // flags
+  private isSynchronous: boolean = false;
+  private isSending: boolean = false;
+  private isUploadComplete: boolean = false;
+  private isAborted: boolean = false;
+  private isTimedOut: boolean = false;
+
   private _timeoutTimer: NodeJS.Timer;
 
-  constructor() {
-    super();
-    this._reset();
+  get timeout(): number {
+    return this._timeout;
   }
 
-  /** @private */
-  private _reset() {
-    this.status = 0;
-    this.statusText = '';
-    this.response = null;
-    this.responseType = '';
-    this.responseText = '';
-    this.responseXML = null;
-
-    this.mockRequest = new MockRequest();
-    this.mockResponse = new MockResponse();
-    this._readyState = MockXMLHttpRequest.UNSENT;
-
-    this._sending = false;
-    this._aborting = false;
+  set timeout(timeout: number) {
+    if (timeout !== 0 && this.isSynchronous) {
+      throw new Error(
+        'Timeouts cannot be set for synchronous requests made from a document.'
+      );
+    }
+    this._timeout = timeout;
   }
 
-  get readyState(): ReadyState {
-    return this._readyState;
+  get response(): any {
+    return null;
   }
 
-  set readyState(value: ReadyState) {
-    this._readyState = value;
-    this.dispatchEvent(new MockEvent('readystatechange'));
+  get responseText(): string {
+    return this.res.body() || '';
+  }
+
+  get responseXML(): Document | null {
+    return null; // FIXME:
+  }
+
+  get status(): number {
+    return this.res.status();
+  }
+
+  get statusText(): string {
+    return this.res.reason();
   }
 
   getAllResponseHeaders(): string {
@@ -131,7 +154,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
     //   return null;
     // }
-    const headers = this.mockResponse.headers();
+    const headers = this.res.headers();
     const result = Object.keys(headers)
       .map(name => `${name}: ${headers[name]}\r\n`)
       .join('');
@@ -144,7 +167,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       return null;
     }
 
-    return this.mockResponse.header(name);
+    return this.res.header(name);
   }
 
   setRequestHeader(name: string, value: string): void {
@@ -152,7 +175,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       throw new Error('xhr-mock: request must be OPENED.');
     }
 
-    this.mockRequest.header(name, value);
+    this.req.header(name, value);
   }
 
   overrideMimeType(mime: string): void {
@@ -163,145 +186,384 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     method: string,
     url: string,
     async: boolean = true,
-    username?: string,
-    password?: string
+    username: string | null = null,
+    password: string | null = null
   ): void {
-    //check method type
+    // if method is not a method, then throw a "SyntaxError" DOMException
+    // if method is a forbidden method, then throw a "SecurityError" DOMException
     if (FORBIDDEN_METHODS.indexOf(method) !== -1) {
       throw new Error(`xhr-mock: Method ${method} is forbidden.`);
     }
 
-    //normalize method
+    // normalize method
     method = method.toUpperCase();
 
-    //create the full url including the username and password
+    // let parsedURL be the result of parsing url with settingsObject’s API base URL and settingsObject’s API URL character encoding
+    // if parsedURL is failure, then throw a "SyntaxError" DOMException
     const fullURL = parseURL(url);
+
+    // if the async argument is omitted, set async to true, and set username and password to null.
+
+    // if parsedURL’s host is non-null, run these substeps:
+    // if the username argument is not null, set the username given parsedURL and username
+    // if the password argument is not null, set the password given parsedURL and password
     fullURL.username = username || '';
-    fullURL.password = password || '';
+    fullURL.password = (username && password) || '';
 
-    this._reset();
-    this._async = async;
-    this.mockRequest
+    // if async is false, current global object is a Window object, and the timeout attribute value
+    // is not zero or the responseType attribute value is not the empty string, then throw an "InvalidAccessError" DOMException.
+    if ((!async && this._timeout !== 0) || this.responseType !== '') {
+      throw new Error('InvalidAccessError');
+    }
+
+    // terminate the ongoing fetch operated by the XMLHttpRequest object
+    if (this.isSending) {
+      throw new Error('xhr-mock: Unable to terminate the previous request');
+    }
+
+    // set variables associated with the object as follows:
+    // - unset the send() flag and upload listener flag
+    // - set the synchronous flag, if async is false, and unset the synchronous flag otherwise
+    // - set request method to method
+    // - set request URL to parsedURL
+    // - empty author request headers
+    this.isSending = false;
+    this.isSynchronous = !async;
+    this.req
       .method(method)
-      .url(formatURL(fullURL))
-      .header('accept', '*/*');
+      .headers({})
+      .url(formatURL(fullURL));
+    this.applyNetworkError();
 
-    this.readyState = MockXMLHttpRequest.OPENED;
+    // if the state is not opened, run these substeps:
+    if (this.readyState !== this.OPENED) {
+      // set state to opened
+      this.readyState = MockXMLHttpRequest.OPENED;
+
+      // fire an event named readystatechange
+      this.dispatchEvent(new MockEvent('readystatechange'));
+    }
   }
 
-  private dispatchUploadProgressEvent(type: string) {
-    const body = this.mockRequest.body();
-    const total = body ? body.length : 0;
-    this.upload.dispatchEvent(
-      new ProgressEvent(type, {
-        lengthComputable: true,
-        loaded: total,
-        total: total
+  private sendSync() {
+    // let response be the result of fetching req
+    let res;
+    try {
+      res = handleSync(MockXMLHttpRequest.handlers, this.req, this.res);
+
+      if (isMockResponsePromise(res)) {
+        throw new Error(
+          'xhr-mock: A handler returned a Promise<MockResponse> in sync mode.'
+        );
+      }
+
+      // if the timeout attribute value is not zero, then set the timed out flag and terminate fetching if it has not returned within the amount of milliseconds from the timeout.
+      // TODO: check if timeout was elapsed
+
+      //if response’s body is null, then run handle response end-of-body and return
+      // let reader be the result of getting a reader from response’s body’s stream
+      // let promise be the result of reading all bytes from response’s body’s stream with reader
+      // wait for promise to be fulfilled or rejected
+      // if promise is fulfilled with bytes, then append bytes to received bytes
+      // run handle response end-of-body for response
+      this.handleResponseBody(res);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  private async sendAsync() {
+    const req = this.req;
+
+    // fire a progress event named loadstart with 0 and 0
+    const progress = calculateProgress(this.res);
+    this.dispatchEvent(
+      new MockProgressEvent('loadstart', {
+        ...progress,
+        loaded: 0
       })
     );
-  }
 
-  private dispatchDownloadProgressEvent(type: string) {}
-
-  private handleSendResponse(res: MockResponse) {
-    //we've got a response before the timeout period so we don't want to timeout
-    clearTimeout(this._timeoutTimer);
-
-    //TODO: check if we've timedout
-    if (this._aborting) {
-      return;
-    }
-
-    //set the response headers on the XHR object
-    this.readyState = MockXMLHttpRequest.HEADERS_RECEIVED;
-    this.mockResponse = res;
-    this.status = res.status();
-    this.statusText = res.reason();
-
-    let total = 0;
-    const contentLength = res.header('Content-Length');
-    if (contentLength) {
-      total = parseInt(contentLength, 10);
-    }
-
-    //set the response body on the XHR object (note: it should only be partial data here)
-    const body = res.body();
-    if (body !== undefined) {
-      this.readyState = MockXMLHttpRequest.LOADING;
-
-      //send initial progress event
-      this.dispatchEvent(
-        new MockProgressEvent('progress', {
-          lengthComputable: total > 0,
-          loaded: 0, //TODO: use a % of the body
-          total: total
+    // if the upload complete flag is unset and upload listener flag is set, then fire a progress
+    // event named loadstart on the XMLHttpRequestUpload object with 0 and req’s body’s total bytes.
+    if (!this.isUploadComplete) {
+      const progress = calculateProgress(this.req);
+      this.upload.dispatchEvent(
+        new MockProgressEvent('loadstart', {
+          ...progress,
+          loaded: 0
         })
       );
-
-      //TODO: check if we've aborted or timedout
-      //TODO: trigger progress event every 50ms with a % of body length loaded
-
-      this.responseType = 'text';
-      this.response = body; //TODO: detect an object and return JSON, detect XML and return XML
-      this.responseText = String(body);
     }
 
-    //send final progress event
-    this.dispatchEvent(
-      new MockProgressEvent('progress', {
-        lengthComputable: total > 0,
-        loaded: body ? body.length : 0, // TODO: should be in bytes
-        total: total
-      })
-    );
-
-    //indicate the response has been fully received
-    this.readyState = MockXMLHttpRequest.DONE;
-
-    this._sending = false;
-
-    this.dispatchEvent(
-      new MockProgressEvent('load', {
-        lengthComputable: total > 0,
-        loaded: body ? body.length : 0, // TODO: should be in bytes
-        total: total
-      })
-    );
-
-    this.dispatchEvent(
-      new MockProgressEvent('loadend', {
-        lengthComputable: total > 0,
-        loaded: body ? body.length : 0, // TODO: should be in bytes
-        total: total
-      })
-    );
-  }
-
-  private handleSendError(error: Error) {
-    //TODO: https://xhr.spec.whatwg.org/#request-error-steps
-
-    if (!this._sending) {
+    // if state is not opened or the send() flag is unset, then return.
+    if (this.readyState !== this.OPENED || !this.isSending) {
       return;
     }
-    this._sending = false;
 
-    //we've got a response before the timeout period so we don't want to timeout
-    clearTimeout(this._timeoutTimer);
+    // fetch req. Handle the tasks queued on the networking task source per below
+    // run these subsubsteps in parallel:
+    // wait until either req’s done flag is set or
+    // the timeout attribute value number of milliseconds has passed since these subsubsteps started
+    // while timeout attribute value is not zero
+    // if req’s done flag is unset, then set the timed out flag and terminate fetching
 
-    this.status = 0;
-    this.statusText = '';
-    this.responseType = '';
-    this.responseText = '';
+    if (this._timeout !== 0) {
+      this._timeoutTimer = setTimeout(() => {
+        this.isTimedOut = true;
+        this.handleError();
+      }, this._timeout);
+    }
 
-    this.readyState = MockXMLHttpRequest.DONE;
-    this.dispatchEvent(new MockErrorEvent('error', {error}));
+    try {
+      const res = await handleAsync(
+        MockXMLHttpRequest.handlers,
+        this.req,
+        this.res
+      );
 
-    //TODO: throw error if sync mode
+      //we've received a response before the timeout so we don't want to timeout
+      clearTimeout(this._timeoutTimer);
+
+      if (this.isAborted || this.isTimedOut) {
+        return; // these cases will already have been handled
+      }
+
+      this.sendRequest(req);
+      this.recevieResponse(res);
+    } catch (error) {
+      //we've received an error before the timeout so we don't want to timeout
+      clearTimeout(this._timeoutTimer);
+
+      if (this.isAborted || this.isTimedOut) {
+        return; // these cases will already have been handled
+      }
+
+      this.handleError(error);
+    }
   }
 
-  private handleSendTimeout() {
-    this.readyState = MockXMLHttpRequest.DONE;
-    this.dispatchEvent(new MockEvent('timeout'));
+  private applyNetworkError() {
+    // a response whose type is "error" is known as a network error
+    this.responseType = '';
+    // this.responseType = 'error';
+
+    // a network error is a response whose status is always 0, status message is always the
+    // empty byte sequence, header list is always empty, body is always null, and
+    // trailer is always empty
+    this.res
+      .status(0)
+      .reason('')
+      .headers({})
+      .body(null);
+  }
+
+  // @see https://xhr.spec.whatwg.org/#request-error-steps
+  private reportError(event: string) {
+    // set state to done
+    this.readyState = this.DONE;
+
+    // unset the send() flag
+    this.isSending = false;
+
+    // set response to network error
+    this.applyNetworkError();
+
+    // if the synchronous flag is set, throw an exception exception
+    if (this.isSynchronous) {
+      throw new Error(event);
+    }
+
+    // fire an event named readystatechange
+    this.dispatchEvent(new MockEvent('readystatechange'));
+
+    // if the upload complete flag is unset, follow these substeps:
+    if (!this.isUploadComplete) {
+      // set the upload complete flag
+      this.isUploadComplete = true;
+
+      // if upload listener flag is unset, then terminate these substeps
+      // NOTE: not sure why this is necessary - if there's no listeners  listening, then the
+      // following events have no impact
+
+      const uploadProgress = calculateProgress(this.req);
+
+      // fire a progress event named event on the XMLHttpRequestUpload object with 0 and 0
+      this.upload.dispatchEvent(new MockProgressEvent(event, uploadProgress));
+
+      // fire a progress event named loadend on the XMLHttpRequestUpload object with 0 and 0
+      this.upload.dispatchEvent(
+        new MockProgressEvent('loadend', uploadProgress)
+      );
+    }
+
+    const downloadProgress = calculateProgress(this.res);
+
+    // fire a progress event named event with 0 and 0
+    this.dispatchEvent(new MockProgressEvent(event, downloadProgress));
+
+    // fire a progress event named loadend with 0 and 0
+    this.dispatchEvent(new MockProgressEvent('loadend', downloadProgress));
+  }
+
+  private sendRequest(req: MockRequest) {
+    if (this.isUploadComplete) {
+      return;
+    }
+
+    // if not roughly 50ms have passed since these subsubsteps were last invoked, terminate these subsubsteps
+    // TODO:
+
+    // If upload listener flag is set, then fire a progress event named progress on the
+    // XMLHttpRequestUpload object with request’s body’s transmitted bytes and request’s body’s
+    // total bytes
+    // const progress = getProgress(this.req);
+    // this.upload.dispatchEvent(new MockProgressEvent('progress', {
+    //   ...progress,
+    //   loaded: %
+    // }))
+    // TODO: repeat this in a timeout to simulate progress events
+    // TODO: dispatch total, length and lengthComputable values
+
+    // set the upload complete flag
+    this.isUploadComplete = true;
+
+    // if upload listener flag is unset, then terminate these subsubsteps.
+    // NOTE: it doesn't really matter if we emit these events and noone is listening
+
+    // let transmitted be request’s body’s transmitted bytes
+    // let length be request’s body’s total bytes
+    const progress = calculateProgress(this.req);
+
+    // fire a progress event named progress on the XMLHttpRequestUpload object with transmitted and length
+    this.upload.dispatchEvent(new MockProgressEvent('progress', progress));
+
+    // fire a progress event named load on the XMLHttpRequestUpload object with transmitted and length
+    this.upload.dispatchEvent(new MockProgressEvent('load', progress));
+
+    // fire a progress event named loadend on the XMLHttpRequestUpload object with transmitted and length
+    this.upload.dispatchEvent(new MockProgressEvent('loadend', progress));
+  }
+
+  private recevieResponse(res: MockResponse) {
+    // set state to headers received
+    this.readyState = this.HEADERS_RECEIVED;
+
+    // fire an event named readystatechange
+    this.dispatchEvent(new MockEvent('readystatechange'));
+
+    // if state is not headers received, then return
+    // NOTE: is that really necessary, we've just change the state a second ago
+
+    // if response’s body is null, then run handle response end-of-body and return
+    if (res.body() === null) {
+      this.handleResponseBody(res);
+      return;
+    }
+
+    // let reader be the result of getting a reader from response’s body’s stream
+    // let read be the result of reading a chunk from response’s body’s stream with reader
+    // When read is fulfilled with an object whose done property is false and whose value property
+    // is a Uint8Array object, run these subsubsubsteps and then run the above subsubstep again:
+    // TODO:
+
+    // append the value property to received bytes
+
+    // if not roughly 50ms have passed since these subsubsubsteps were last invoked, then terminate
+    // these subsubsubsteps
+    // TODO:
+
+    // if state is headers received, then set state to loading
+    // NOTE: why wouldn't it be headers received?
+    this.readyState = this.LOADING;
+
+    // fire an event named readystatechange
+    this.dispatchEvent(new MockEvent('readystatechange'));
+
+    // fire a progress event named progress with response’s body’s transmitted bytes and response’s
+    // body’s total bytes
+    // TODO: repeat to simulate progress
+    // const progress = calculateProgress(res);
+    // this.dispatchEvent(new MockProgressEvent('progress', {
+    //   ...progress,
+    //   loaded: %
+    // }));
+
+    // when read is fulfilled with an object whose done property is true, run handle response
+    // end-of-body for response
+    // when read is rejected with an exception, run handle errors for response
+    // NOTE: we don't handle this error case
+    this.handleResponseBody(res);
+  }
+
+  // @see https://xhr.spec.whatwg.org/#handle-errors
+  private handleError(error?: Error) {
+    // if the send() flag is unset, return
+    if (!this.isSending) {
+      return;
+    }
+
+    // if the timed out flag is set, then run the request error steps for event timeout and exception TimeoutError
+    if (this.isTimedOut) {
+      this.reportError('timeout');
+      return;
+    }
+
+    // otherwise, if response’s body’s stream is errored, then:
+    // NOTE: we're not handling this event
+    // if () {
+
+    //   // set state to done
+    //   this.readyState = this.DONE;
+
+    //   // unset the send() flag
+    //   this.isSending = false;
+
+    //   // set response to a network error
+    //   this.applyNetworkError();
+
+    //   return;
+    // }
+
+    // otherwise, if response’s aborted flag is set, then run the request error steps for event abort and exception AbortError
+    if (this.isAborted) {
+      this.reportError('abort');
+      return;
+    }
+
+    // if response is a network error, run the request error steps for event error and exception NetworkError
+    // NOTE: we assume all other calls are network errors
+    this.reportError('error');
+  }
+
+  // @see https://xhr.spec.whatwg.org/#handle-response-end-of-body
+  private handleResponseBody(res: MockResponse) {
+    this.res = res;
+
+    // let transmitted be response’s body’s transmitted bytes
+    // let length be response’s body’s total bytes.
+    const progress = calculateProgress(res);
+
+    // if the synchronous flag is unset, update response’s body using response
+    if (!this.isSynchronous) {
+      // fire a progress event named progress with transmitted and length
+      this.dispatchEvent(new MockProgressEvent('progress', progress));
+    }
+
+    // set state to done
+    this.readyState = this.DONE;
+
+    // unset the send() flag
+    this.isSending = false;
+
+    // fire an event named readystatechange
+    this.dispatchEvent(new MockEvent('readystatechange'));
+
+    // fire a progress event named load with transmitted and length
+    this.dispatchEvent(new MockProgressEvent('load', progress));
+
+    // fire a progress event named loadend with transmitted and length
+    this.dispatchEvent(new MockProgressEvent('loadend', progress));
   }
 
   // https://xhr.spec.whatwg.org/#event-xhr-loadstart
@@ -310,155 +572,85 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   send(body?: string): void;
   send(body?: any): void;
   send(body?: string | Document | any): void {
-    //readyState must be opened
+    // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
       throw new Error(
         'xhr-mock: Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().'
       );
     }
 
-    if (this._sending) {
+    // if the send() flag is set, throw an InvalidStateError exception
+    if (this.isSending) {
       throw new Error(
         'xhr-mock: MockXMLHttpRequest.send() has already been called.'
       );
     }
 
-    this._sending = true;
-
-    //body is ignored for GET and HEAD requests
-    if (
-      this.mockRequest.method() === 'GET' ||
-      this.mockRequest.method() === 'HEAD'
-    ) {
-      body = undefined;
+    // if the request method is GET or HEAD, set body to null
+    if (this.req.method() === 'GET' || this.req.method() === 'HEAD') {
+      body = null;
     }
 
-    //TODO: extract body and content-type https://fetch.spec.whatwg.org/#concept-bodyinit-extract
-    if (body !== undefined) {
+    // if body is null, go to the next step otherwise, let encoding and mimeType be null, and then follow these rules, switching on body
+    if (body !== null && body !== undefined) {
       if (typeof body !== 'string') {
         throw new Error(
           "xhr-mock: A non-string body is not supported yet. You're welcome to submit a PR 😁."
         );
       }
-      this.mockRequest.body(body);
+      // TODO: set mime-type and encoding
+      this.req.body(body);
     }
+
+    // if one or more event listeners are registered on the associated XMLHttpRequestUpload object, then set upload listener flag
+    // Note: not really necessary since dispatching an event to no listeners doesn't hurt anybody
 
     //TODO: check CORs
 
-    //dispatch a timeout event if we haven't received a response in the specified amount of time
-    // - we actually wait for the timeout amount of time because many packages like jQuery and Superagent
-    // use setTimeout() to artificially detect a timeout rather than using the native timeout event
-    //TODO: handle timeout being changed mid-request
-    if (this.timeout) {
-      this._timeoutTimer = setTimeout(
-        () => this.handleSendTimeout(),
-        this.timeout
-      );
+    // unset the upload complete flag
+    this.isUploadComplete = false;
+
+    // unset the timed out flag
+    this.isTimedOut = false;
+
+    // if req’s body is null, set the upload complete flag
+    if (body === null || body === undefined) {
+      this.isUploadComplete = true;
     }
 
-    //indicate the request has started being sent
-    this.dispatchEvent(new MockEvent('loadstart'));
+    // set the send() flag
+    this.isSending = true;
 
-    //indicate request progress
-    if (body !== undefined) {
-      this.upload.dispatchEvent(new MockProgressEvent('loadstart'));
-
-      const total = body ? body.length : 0; //TODO: use Content-Length instead
-
-      //send initial progress event
-      this.upload.dispatchEvent(
-        new MockProgressEvent('progress', {
-          lengthComputable: total > 0,
-          loaded: 0,
-          total: total
-        })
-      );
-
-      //TODO: check if we've aborted or timedout
-      //TODO: trigger progress event every 50ms with a % of body length loaded
-
-      //send final progress event
-      this.upload.dispatchEvent(
-        new MockProgressEvent('progress', {
-          lengthComputable: total > 0,
-          loaded: body.length, // TODO: should be in bytes
-          total: total
-        })
-      );
-
-      this.upload.dispatchEvent(
-        new MockProgressEvent('load', {
-          lengthComputable: total > 0,
-          loaded: body.length, // TODO: should be in bytes
-          total: total
-        })
-      );
-
-      this.upload.dispatchEvent(
-        new MockProgressEvent('loadend', {
-          lengthComputable: total > 0,
-          loaded: body.length, // TODO: should be in bytes
-          total: total
-        })
-      );
-    }
-
-    if (this._async) {
-      handleAsync(
-        MockXMLHttpRequest.handlers,
-        this.mockRequest,
-        this.mockResponse
-      ).then(
-        response => this.handleSendResponse(response),
-        error => this.handleSendError(error)
-      );
+    if (this.isSynchronous) {
+      this.sendSync();
     } else {
-      try {
-        const response = handleSync(
-          MockXMLHttpRequest.handlers,
-          this.mockRequest,
-          this.mockResponse
-        );
-
-        if (isMockResponsePromise(response)) {
-          throw new Error(
-            'xhr-mock: A handler returned a Promise<MockResponse> when in sync mode.'
-          );
-        } else {
-          this.handleSendResponse(response);
-        }
-      } catch (error) {
-        this.handleSendError(error);
-      }
+      this.sendAsync();
     }
   }
 
   abort(): void {
-    //FIXME: according to spec
-
     //we've cancelling the response before the timeout period so we don't want to timeout
     clearTimeout(this._timeoutTimer);
 
-    if (this._sending) {
-      this.readyState = MockXMLHttpRequest.DONE;
-      if (this.mockRequest.body()) {
-        this.upload.dispatchEvent(new MockEvent('progress'));
-      }
-      this.dispatchEvent(new MockEvent('progress'));
-      this.dispatchEvent(new MockEvent('abort'));
-      this.dispatchEvent(new MockEvent('loadend'));
+    // terminate the ongoing fetch with the aborted flag set
+    this.isAborted = true;
+
+    // if state is either opened with the send() flag set, headers received, or loading,
+    // run the request error steps for event
+    if (
+      this.readyState === this.OPENED ||
+      this.readyState === this.HEADERS_RECEIVED ||
+      this.readyState === this.LOADING
+    ) {
+      this.reportError('abort');
     }
 
-    //TODO: check spec
-    if (this.readyState === MockXMLHttpRequest.DONE) {
-      this._readyState = MockXMLHttpRequest.UNSENT;
-      this.status = 0;
-      this.statusText = '';
-      this.responseType = '';
+    // if state is done, then set state to unsent and response to a network error
+    if (this.readyState === this.DONE) {
+      this.readyState = this.UNSENT;
+      this.applyNetworkError();
+      return;
     }
-
-    this._sending = false;
-    this._aborting = true;
   }
 
   msCachingEnabled() {

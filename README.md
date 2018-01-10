@@ -6,7 +6,7 @@
 
 Utility for mocking XMLHttpRequest.
 
-Works in NodeJS and the browser. Handy for testing and prototyping when your backend isn't built yet.
+Works in NodeJS and the browser. Handy for testing and for prototyping while your backend is still being built.
 
 ## Installation
 
@@ -295,7 +295,7 @@ import mock from 'xhr-mock';
 
 mock.setup();
 
-mock.post('/', () => new Promise(() => {}));
+mock.get('/', () => new Promise(() => {}));
 
 const xhr = new XMLHttpRequest();
 xhr.timeout = 100;
@@ -309,17 +309,17 @@ xhr.send();
 
 ### Simulate an error
 
-Return a `Promise` that rejects.
+Return a `Promise` that rejects. If you want to test a particular error you an use one of the pre-defined error classes.
 
 ```js
 import mock from 'xhr-mock';
 
 mock.setup();
 
-mock.get('/', () => Promise.reject());
+mock.get('/', () => Promise.reject(new Error()));
 
 const xhr = new XMLHttpRequest();
-xhr.onerror = event => console.log(event.error);
+xhr.onerror = event => console.log('error');
 xhr.open('GET', '/');
 xhr.send();
 
