@@ -1,68 +1,25 @@
 {
-  "name": "xhr-mock",
-  "version": "2.0.0-preview.15",
-  "description": "Utility for mocking XMLHttpRequest.",
-  "keywords": [
-    "mock",
-    "xhr",
-    "test",
-    "fake",
-    "request",
-    "ajax",
-    "browser",
-    "xmlhttprequest",
-    "jquery",
-    "superagent",
-    "axios"
-  ],
-  "repository": "jameslnewell/xhr-mock",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
-  "browser": {
-    "./lib/proxy.js": "./lib/proxy.browser.js"
-  },
+  "name": "xhr-mock-monorepo",
+  "private": true,
   "dependencies": {
-    "global": "^4.3.0",
-    "url": "^0.11.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^22.0.1",
-    "@types/node": "^9.3.0",
-    "husky": "^0.14.3",
-    "jest": "^22.0.5",
-    "lint-staged": "^4.0.4",
-    "prettier": "^1.9.2",
-    "rollup": "^0.53.3",
-    "rollup-plugin-commonjs": "^8.2.6",
-    "rollup-plugin-node-resolve": "^3.0.0",
-    "rollup-plugin-typescript": "^0.8.1",
-    "ts-jest": "^22.0.1",
+    "lerna": "^2.6.0",
     "tslint": "^5.8.0",
     "tslint-microsoft-contrib": "^5.0.1",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "lint-staged": "^4.0.4",
+    "prettier": "^1.9.2",
+    "husky": "^0.14.3"
   },
   "scripts": {
-    "clean": "rm -rf ./lib ./dist",
-    "lint": "tslint -c tslint.js '{src,test}/**/*.ts'",
-    "check": "tsc --pretty --noEmit --project tsconfig.test.json",
-    "build:cjs": "tsc --pretty --declaration",
-    "build:umd": "rollup --config",
-    "build": "yarn run build:cjs && yarn run build:umd",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "ci": "yarn run clean && yarn run check && yarn run lint && yarn run build && yarn run test",
     "precommit": "lint-staged",
-    "prepublish": "yarn run ci"
+    "bootstrap": "lerna bootstrap --npm-client yarn",
+    "publish": "lerna publish",
+    "ci": "lerna run ci"
   },
   "lint-staged": {
     "*.ts": [
       "prettier --write",
       "git add"
     ]
-  },
-  "license": "MIT"
+  }
 }

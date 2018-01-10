@@ -114,7 +114,8 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   private isAborted: boolean = false;
   private isTimedOut: boolean = false;
 
-  private _timeoutTimer: NodeJS.Timer;
+  // @ts-ignore: wants a NodeJS.Timer because of @types/node
+  private _timeoutTimer: number;
 
   get timeout(): number {
     return this._timeout;
@@ -309,6 +310,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // if req’s done flag is unset, then set the timed out flag and terminate fetching
 
     if (this._timeout !== 0) {
+      // @ts-ignore: wants a NodeJS.Timer because of @types/node
       this._timeoutTimer = setTimeout(() => {
         this.isTimedOut = true;
         this.handleError();

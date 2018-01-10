@@ -1,8 +1,8 @@
 {
-  "name": "example",
+  "name": "xhr-mock-examples",
   "private": true,
   "dependencies": {
-    "axios": "^0.16.1",
+    "axios": "^0.17.1",
     "jquery": "^3.2.1",
     "superagent": "^3.5.2",
     "webpack-dev-server": "^2.10.0",
@@ -16,7 +16,6 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "webpack",
-    "watch": "webpack-dev-server",
-    "postinstall": "linklocal"
+    "watch": "webpack-dev-server"
   }
 }
