@@ -5,9 +5,13 @@ module.exports = {
   ],
   serve_files: [
     './dist/tests.js'
-  ]
-  launch_in_ci: [
-    'Firefox',
-    'PhantomJS'
-  ]
+  ],
+  browser_args: {
+    Chromium: [
+      '--no-sandbox'
+    ],
+    Chrome: [
+      '--no-sandbox'
+    ]
+  }
 }
