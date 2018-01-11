@@ -6,10 +6,10 @@
 
 Utility for mocking `XMLHttpRequest`.
 
-Great for testing or prototyping while your backend is still being built.
+Great for testing. Great for prototyping while your backend is still being built.
 
 Works in NodeJS and in the browser. Is compatible with [Axios](https://www.npmjs.com/package/axios),  [jQuery](https://www.npmjs.com/package/jquery), [Superagent](https://www.npmjs.com/package/superagent)
-and probably every other library built on `XMLHttpRequest`. Standard compliant [http://xhr.spec.whatwg.org/](http://xhr.spec.whatwg.org/).
+and probably every other library built on `XMLHttpRequest`. Standard compliant ([http://xhr.spec.whatwg.org/](http://xhr.spec.whatwg.org/)).
 
 ###### Documentation
 - [Installation](#installation)
@@ -35,11 +35,13 @@ import mock from 'xhr-mock';
 
 ### Without a bundler
 
-If you aren't using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) then you will need to add this script to your HTML:
+If you aren't using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) then add this script to your HTML:
 
 ```html
 <script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
 ```
+
+Now you can start using the global variable `XHRMock` in your scripts.
 
 ## <a name="usage">Usage</a>
 
