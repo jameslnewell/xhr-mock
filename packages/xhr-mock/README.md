@@ -27,7 +27,7 @@ If you are using a bundler like [Webpack](https://www.npmjs.com/package/webpack)
 yarn add --dev xhr-mock
 ```
 
-Once `xhr-mock` is installed, you can import it and start using it in your scripts:
+Now import `xhr-mock` and start using it in your scripts:
 
 ```js
 import mock from 'xhr-mock';
@@ -41,7 +41,7 @@ If you aren't using a bundler like [Webpack](https://www.npmjs.com/package/webpa
 <script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
 ```
 
-Now you can start using the global variable `XHRMock` in your scripts.
+Now you can start using the global, `XHRMock`, in your scripts.
 
 ## <a name="usage">Usage</a>
 
