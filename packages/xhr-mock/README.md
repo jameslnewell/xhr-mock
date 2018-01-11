@@ -6,12 +6,18 @@
 
 Utility for mocking `XMLHttpRequest`.
 
-Works in NodeJS and in the browser. Handy for testing and handy for prototyping while your backend is still being built.
+Great for testing and great for prototyping while your backend is still being built.
 
-Compatible with [Axios](https://www.npmjs.com/package/axios),  [jQuery](https://www.npmjs.com/package/jquery), [Superagent](https://www.npmjs.com/package/superagent)
-and probably every other library built on `XMLHttpRequest`.
+Works in NodeJS and in the browser. Is compatible with [Axios](https://www.npmjs.com/package/axios),  [jQuery](https://www.npmjs.com/package/jquery), [Superagent](https://www.npmjs.com/package/superagent)
+and probably every other library built on `XMLHttpRequest`. Standard compliant [http://xhr.spec.whatwg.org/](http://xhr.spec.whatwg.org/).
 
-## Installation
+###### Documentation
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+- [How to?](#how-to)
+
+## <a name="installation">Installation</a>
 
 ### Using a bundler
 
@@ -35,7 +41,7 @@ If you aren't using a bundler like [Webpack](https://www.npmjs.com/package/webpa
 <script src="https://unpkg.com/xhr-mock/dist/xhr-mock.js"></script>
 ```
 
-## Usage
+## <a name="usage">Usage</a>
 
 First off lets write some code that uses `XMLHttpRequest`...
 
@@ -134,7 +140,7 @@ describe('createUser()', () => {
 
 ```
 
-## API
+## <a name="api">API</a>
 
 ### xhr-mock
 
@@ -256,7 +262,7 @@ Get the response body.
 
 Set the response body.
 
-## How to?
+## <a name="how-to">How to?</a>
 
 ### Simulate progress
 
