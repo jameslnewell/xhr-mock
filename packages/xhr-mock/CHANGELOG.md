@@ -1,5 +1,9 @@
 # Change log
 
+# 2.0.3
+
+- improving the documentation
+
 # 2.0.2
 
 - fix: version badge on `README.md`
