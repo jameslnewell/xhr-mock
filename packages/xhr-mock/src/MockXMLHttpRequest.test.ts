@@ -50,7 +50,7 @@ describe('MockXMLHttpRequest', () => {
       expect(xhr.response).toEqual('');
     });
 
-    it('should return an the responseText when type is empty string and the request is done', done => {
+    it('should return the responseText when type is empty string and the request is done', done => {
       MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
       const xhr = new MockXMLHttpRequest();
       xhr.responseType = '';
@@ -63,7 +63,7 @@ describe('MockXMLHttpRequest', () => {
       xhr.send();
     });
 
-    it('should return an the responseText when type is text and the request is done', done => {
+    it('should return the responseText when type is text and the request is done', done => {
       MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
       const xhr = new MockXMLHttpRequest();
       xhr.responseType = '';
