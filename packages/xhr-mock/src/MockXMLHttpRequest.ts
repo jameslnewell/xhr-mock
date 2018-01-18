@@ -130,8 +130,20 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     this._timeout = timeout;
   }
 
+  // https://xhr.spec.whatwg.org/#the-response-attribute
   get response(): any {
-    return null;
+    if (this.responseType === '' || this.responseType === 'text') {
+      if (this.readyState !== this.LOADING && this.readyState !== this.DONE) {
+        return '';
+      }
+      return this.responseText;
+    }
+
+    if (this.readyState !== this.DONE) {
+      return null;
+    }
+
+    throw notImplementedError;
   }
 
   get responseText(): string {
@@ -213,7 +225,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     // if async is false, current global object is a Window object, and the timeout attribute value
     // is not zero or the responseType attribute value is not the empty string, then throw an "InvalidAccessError" DOMException.
-    if ((!async && this._timeout !== 0) || this.responseType !== '') {
+    if (!async && (this._timeout !== 0 || this.responseType !== '')) {
       throw new Error('InvalidAccessError');
     }
 
@@ -346,10 +358,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   private applyNetworkError() {
-    // a response whose type is "error" is known as a network error
-    this.responseType = '';
-    // this.responseType = 'error';
-
     // a network error is a response whose status is always 0, status message is always the
     // empty byte sequence, header list is always empty, body is always null, and
     // trailer is always empty

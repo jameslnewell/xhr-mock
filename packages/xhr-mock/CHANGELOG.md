@@ -1,5 +1,9 @@
 # Change log
 
+# 2.0.4
+
+- fix: improve compliance of `.response`
+
 # 2.0.3
 
 - improving the documentation

@@ -35,6 +35,71 @@ describe('MockXMLHttpRequest', () => {
     MockXMLHttpRequest.removeAllHandlers();
   });
 
+  describe('.response', () => {
+    it('should return an empty string when type is empty string and the request is not loading and is not done', () => {
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = '';
+      xhr.open('get', '/');
+      expect(xhr.response).toEqual('');
+    });
+
+    it('should return an empty string when type is text and the request is not loading and is not done', () => {
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'text';
+      xhr.open('get', '/');
+      expect(xhr.response).toEqual('');
+    });
+
+    it('should return an the responseText when type is empty string and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = '';
+      xhr.onload = () => {
+        expect(xhr.response).toEqual('Hello World!');
+        done();
+      };
+      xhr.onerror = failOnEvent(done);
+      xhr.open('get', '/');
+      xhr.send();
+    });
+
+    it('should return an the responseText when type is text and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('Hello World!'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = '';
+      xhr.onload = () => {
+        expect(xhr.response).toEqual('Hello World!');
+        done();
+      };
+      xhr.onerror = failOnEvent(done);
+      xhr.open('get', '/');
+      xhr.send();
+    });
+
+    it('should return null when type is json and the request is not done', () => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('{}'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'json';
+      xhr.open('get', '/');
+      expect(xhr.response).toEqual(null);
+    });
+
+    it('should throw when the type is json and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('{}'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'json';
+      xhr.onload = () => {
+        expect(() => xhr.response).toThrow(
+          "This feature hasn't been implmented yet"
+        );
+        done();
+      };
+      xhr.onerror = failOnEvent(done);
+      xhr.open('get', '/');
+      xhr.send();
+    });
+  });
+
   describe('.setRequestHeader()', () => {
     it('should set a header', done => {
       expect.assertions(1);
