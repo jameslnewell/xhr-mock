@@ -93,7 +93,7 @@ describe('superagent', () => {
       expect.fail();
     } catch (error) {
       expect(error).to.be.an('Error');
-      expect(error.message).to.contain('timeout');
+      expect(error.message.toLowerCase()).to.contain('timeout');
     }
   });
 
@@ -105,7 +105,7 @@ describe('superagent', () => {
       expect.fail();
     } catch (error) {
       expect(error).to.be.an('Error');
-      expect(error.message).to.contain('terminated');
+      expect(error.message.toLowerCase()).to.contain('terminated');
     }
   });
 });

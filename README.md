@@ -29,6 +29,7 @@ yarn run test  # run the unit tests
 Test the package against a few well known XHR libraries:
 
 ```bash
+# NOTE: you need to build the main package first
 cd packages/tests
 yarn run test  # run the integration tests
 ```
