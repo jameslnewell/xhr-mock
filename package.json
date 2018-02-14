@@ -17,9 +17,6 @@
     "ci": "lerna run ci"
   },
   "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,json,ts,md}": ["prettier --write", "git add"]
   }
 }

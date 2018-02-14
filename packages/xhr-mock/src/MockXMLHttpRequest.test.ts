@@ -84,15 +84,17 @@ describe('MockXMLHttpRequest', () => {
       expect(xhr.response).toEqual(null);
     });
 
-    it('should throw when the type is json and the request is done', done => {
-      MockXMLHttpRequest.addHandler((req, res) => res.body('{}'));
+    it('should return json when the type is json and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('{"foo": "bar"}'));
       const xhr = new MockXMLHttpRequest();
       xhr.responseType = 'json';
       xhr.onload = () => {
-        expect(() => xhr.response).toThrow(
-          "This feature hasn't been implmented yet"
-        );
-        done();
+        try {
+          expect(xhr.response).toEqual({foo: 'bar'});
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
       };
       xhr.onerror = failOnEvent(done);
       xhr.open('get', '/');

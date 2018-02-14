@@ -143,6 +143,19 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       return null;
     }
 
+    const body = this.res.body();
+    if (!body) {
+      return null;
+    }
+
+    if (this.responseType === 'json') {
+      try {
+        return JSON.parse(this.responseText);
+      } catch (error) {
+        return null;
+      }
+    }
+
     throw notImplementedError;
   }
 

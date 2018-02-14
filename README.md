@@ -1,7 +1,6 @@
 # xhr-mock
 
-This repo is a mono-repo managed by   `lernajs`.
-
+This repo is a mono-repo managed by `lernajs`.
 
 ## [📖 Documentation](./packages/xhr-mock)
 
@@ -10,6 +9,7 @@ The documentation for the main NPM package can be found [here](./packages/xhr-mo
 ## 🛠 Development
 
 Install the dependencies:
+
 ```bash
 yarn
 yarn run bootstrap
@@ -24,13 +24,14 @@ cd packages/xhr-mock
 yarn run build # transpile the sources
 yarn run test  # run the unit tests
 ```
+
 ### The integration tests
 
 Test the package against a few well known XHR libraries:
 
 ```bash
 # NOTE: you need to build the main package first
-cd packages/tests
+cd packages/xhr-mock-tests
 yarn run test  # run the integration tests
 ```
 
