@@ -10,7 +10,7 @@ export type MockObject = {
   status?: number;
   reason?: string;
   headers?: MockHeaders;
-  body?: string;
+  body?: any;
 };
 
 export type MockFunction = (

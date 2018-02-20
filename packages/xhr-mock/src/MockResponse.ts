@@ -6,7 +6,7 @@ export default class MockResponse {
   private _status: number = 200;
   private _reason: string = 'OK';
   private _headers: MockHeaders = {};
-  private _body: null | string = null;
+  private _body: any = null;
 
   status(): number;
   status(status: number): MockResponse;
@@ -69,9 +69,9 @@ export default class MockResponse {
     }
   }
 
-  body(): null | string;
-  body(body: null | string): MockResponse;
-  body(body?: null | string): null | string | MockResponse {
+  body(): any;
+  body(body: any): MockResponse;
+  body(body?: any): any | MockResponse {
     if (typeof body !== 'undefined') {
       this._body = body;
       return this;

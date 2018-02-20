@@ -100,6 +100,33 @@ describe('MockXMLHttpRequest', () => {
       xhr.open('get', '/');
       xhr.send();
     });
+
+    it('should return null when the type is other and the request is not done', () => {
+      const fakeBuffer = {};
+      MockXMLHttpRequest.addHandler((req, res) => res.body(fakeBuffer));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.open('get', '/');
+      expect(xhr.response).toEqual(null);
+    });
+
+    it('should return an object when the type is other and the request is done', done => {
+      const fakeBuffer = {};
+      MockXMLHttpRequest.addHandler((req, res) => res.body(fakeBuffer));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = () => {
+        try {
+          expect(xhr.response).toBe(fakeBuffer);
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      };
+      xhr.onerror = failOnEvent(done);
+      xhr.open('get', '/');
+      xhr.send();
+    });
   });
 
   describe('.setRequestHeader()', () => {

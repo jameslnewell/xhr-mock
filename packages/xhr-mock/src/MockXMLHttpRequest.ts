@@ -156,7 +156,8 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       }
     }
 
-    throw notImplementedError;
+    // rely on the mock to do the right thing with an arraybuffer, blob or document
+    return body;
   }
 
   get responseText(): string {
