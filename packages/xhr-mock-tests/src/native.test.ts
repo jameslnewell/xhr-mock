@@ -5,7 +5,7 @@ describe('native', () => {
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
 
-  it('should get a blob', done => {
+  it('should get a array buffer', done => {
     mock.get('/myfile.png', {
       body: new ArrayBuffer(0)
     });
