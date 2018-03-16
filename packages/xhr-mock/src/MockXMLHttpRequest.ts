@@ -148,9 +148,33 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       return null;
     }
 
-    if (this.responseType === 'json') {
+    if (this.responseType === 'json' && typeof body === 'string') {
       try {
         return JSON.parse(this.responseText);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    if (this.responseType === 'blob' && typeof body === 'string') {
+      try {
+        throw notImplementedError;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    if (this.responseType === 'arraybuffer' && typeof body === 'string') {
+      try {
+        throw notImplementedError;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    if (this.responseType === 'document' && typeof body === 'string') {
+      try {
+        throw notImplementedError;
       } catch (error) {
         return null;
       }
@@ -358,7 +382,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       }
 
       this.sendRequest(req);
-      this.recevieResponse(res);
+      this.receiveResponse(res);
     } catch (error) {
       //we've received an error before the timeout so we don't want to timeout
       clearTimeout(this._timeoutTimer);
@@ -469,7 +493,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     this.upload.dispatchEvent(new MockProgressEvent('loadend', progress));
   }
 
-  private recevieResponse(res: MockResponse) {
+  private receiveResponse(res: MockResponse) {
     // set state to headers received
     this.readyState = this.HEADERS_RECEIVED;
 

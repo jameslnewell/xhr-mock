@@ -16,7 +16,7 @@ describe('native', () => {
     req.responseType = 'arraybuffer';
 
     req.onload = function(oEvent) {
-      const arrayBuffer = req.response; // Note: not oReq.responseText
+      const arrayBuffer = req.response;
       expect(arrayBuffer).to.be.an('ArrayBuffer');
       done();
     };

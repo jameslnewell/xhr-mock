@@ -22,7 +22,7 @@ function createUser(data) {
             reject(error);
           }
         } else {
-          reject(new Error('An error ocurred whilst sending the response.'));
+          reject(new Error('An error ocurred whilst sending the request.'));
         }
       }
     };
