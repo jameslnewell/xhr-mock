@@ -1,5 +1,5 @@
 import window = require('global');
-import {Mock, MockFunction} from './types';
+import {Mock, MockFunction, ErrorCallbackEvent} from './types';
 import createMockFunction from './createMockFunction';
 import MockXMLHttpRequest from './MockXMLHttpRequest';
 
@@ -23,6 +23,11 @@ export class XHRMock {
 
   reset(): XHRMock {
     MockXMLHttpRequest.removeAllHandlers();
+    return this;
+  }
+
+  error(callback: (event: ErrorCallbackEvent) => void): XHRMock {
+    MockXMLHttpRequest.errorCallback = callback;
     return this;
   }
 

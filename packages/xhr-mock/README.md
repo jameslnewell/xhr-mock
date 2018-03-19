@@ -8,14 +8,15 @@ Utility for mocking `XMLHttpRequest`.
 
 Great for testing. Great for prototyping while your backend is still being built.
 
-Works in NodeJS and in the browser. Is compatible with [Axios](https://www.npmjs.com/package/axios),  [jQuery](https://www.npmjs.com/package/jquery), [Superagent](https://www.npmjs.com/package/superagent)
+Works in NodeJS and in the browser. Is compatible with [Axios](https://www.npmjs.com/package/axios), [jQuery](https://www.npmjs.com/package/jquery), [Superagent](https://www.npmjs.com/package/superagent)
 and probably every other library built on `XMLHttpRequest`. Standard compliant ([http://xhr.spec.whatwg.org/](http://xhr.spec.whatwg.org/)).
 
 ###### Documentation
-- [Installation](#installation)
-- [Usage](#usage)
-- [API](#api)
-- [How to?](#how-to)
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [API](#api)
+* [How to?](#how-to)
 
 ## <a name="installation">Installation</a>
 
@@ -48,8 +49,8 @@ Now you can start using the global, `XHRMock`, in your scripts.
 First off lets write some code that uses `XMLHttpRequest`...
 
 `./createUser.js`
-```js
 
+```js
 // we could have just as easily use Axios, jQuery, Superagent
 // or another package here instead of using the native XMLHttpRequest object
 
@@ -71,7 +72,7 @@ export default function(data) {
             reject(error);
           }
         } else {
-          reject(new Error('An error ocurred whilst sending the response.'));
+          reject(new Error('An error ocurred whilst sending the request.'));
         }
       }
     };
@@ -80,12 +81,12 @@ export default function(data) {
     xhr.send(JSON.stringify({data: data}));
   });
 }
-
 ```
 
 Now lets test the code we've written...
 
 `./createUser.test.js`
+
 ```js
 import mock from 'xhr-mock';
 import createUser from './createUser';
@@ -139,7 +140,6 @@ describe('createUser()', () => {
     }
   });
 });
-
 ```
 
 ## <a name="api">API</a>
@@ -185,6 +185,10 @@ Register a factory function to create mock responses for each request to a speci
 #### .use(fn)
 
 Register a factory function to create mock responses for every request.
+
+#### .error(fn)
+
+Log errors thrown by handlers.
 
 ### MockXMLHttpRequest
 
@@ -306,7 +310,6 @@ xhr.open('GET', '/');
 xhr.send();
 ```
 
-
 ### Simulate a timeout
 
 Return a `Promise` that never resolves or rejects.
@@ -323,7 +326,6 @@ xhr.timeout = 100;
 xhr.ontimeout = event => console.log('timeout');
 xhr.open('GET', '/');
 xhr.send();
-
 ```
 
 > A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time anyway.
@@ -343,7 +345,6 @@ const xhr = new XMLHttpRequest();
 xhr.onerror = event => console.log('error');
 xhr.open('GET', '/');
 xhr.send();
-
 ```
 
 ### Proxying requests
@@ -370,7 +371,6 @@ xhr1.send();
 const xhr2 = new XMLHttpRequest();
 xhr2.open('GET', 'https://jsonplaceholder.typicode.com/users/1');
 xhr2.send();
-
 ```
 
 ## License

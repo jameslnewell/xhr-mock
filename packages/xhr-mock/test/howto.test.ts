@@ -61,7 +61,7 @@ describe('how to', () => {
 
     // this request will be mocked
     const xhr1 = new XMLHttpRequest();
-    xhr1.open('GET', '/');
+    xhr1.open('POST', '/');
     xhr1.send();
 
     // this request will be proxied to the real server
