@@ -28,7 +28,6 @@
   },
   "devDependencies": {
     "@alexlur/rollup-plugin-typescript": "^1.0.4",
-    "@types/jest": "^22.0.1",
     "@types/node": "^9.3.0",
     "axios": "^0.17.1",
     "jest": "^22.0.5",
