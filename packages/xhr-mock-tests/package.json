@@ -7,6 +7,7 @@
     "jquery": "^3.2.1",
     "rxjs": "^5.5.6",
     "superagent": "^3.8.2",
+    "tslint": "^5.9.1",
     "xhr-mock": "^2.2.0"
   },
   "devDependencies": {
