@@ -2,11 +2,13 @@
   "name": "xhr-mock-tests",
   "private": true,
   "dependencies": {
+    "@types/url-search-params": "^0.10.1",
     "axios": "^0.17.1",
     "core-js": "^2.5.3",
     "jquery": "^3.2.1",
     "rxjs": "^5.5.6",
     "superagent": "^3.8.2",
+    "url-search-params": "^0.10.0",
     "xhr-mock": "^2.2.0"
   },
   "devDependencies": {

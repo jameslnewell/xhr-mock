@@ -1,4 +1,6 @@
 import 'core-js';
-// import * as chai from 'chai';
+import URLSearchParams = require('url-search-params');
 
-// window.expect = chai.expect;
+if (!window.URLSearchParams) {
+  window.URLSearchParams = URLSearchParams;
+}
