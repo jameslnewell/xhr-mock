@@ -186,6 +186,10 @@ Register a factory function to create mock responses for each request to a speci
 
 Register a factory function to create mock responses for every request.
 
+#### .error(fn)
+
+Log errors thrown by handlers.
+
 ### MockXMLHttpRequest
 
 ### MockRequest

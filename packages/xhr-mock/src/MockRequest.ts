@@ -69,9 +69,9 @@ export default class MockRequest {
     }
   }
 
-  body(): null | string;
-  body(body: null | string): MockRequest;
-  body(body?: null | string): null | string | MockRequest {
+  body(): any;
+  body(body: any): MockRequest;
+  body(body?: any): any | MockRequest {
     if (typeof body !== 'undefined') {
       this._body = body;
       return this;

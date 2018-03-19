@@ -1,5 +1,10 @@
 # Change log
 
+# 2.3.0
+
+* added support for requests with `Blob`, `FormData` or `URLSearchParams` bodies
+* log errors thrown/rejected in handlers by default but allow logging to be customised
+
 # 2.2.0
 
 * added "support" for `responseType` of `arraybuffer`, `blob` and `document` by returning whatever object `res.body(body)` is set to

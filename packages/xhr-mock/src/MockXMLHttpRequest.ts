@@ -1,5 +1,5 @@
 import {MockURL, parseURL, formatURL} from './MockURL';
-import {MockFunction, MockHeaders} from './types';
+import {MockFunction, MockHeaders, ErrorCallbackEvent} from './types';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 import MockEvent from './MockEvent';
@@ -9,7 +9,7 @@ import MockXMLHttpRequestEventTarget from './MockXMLHttpRequestEventTarget';
 import {sync as handleSync, async as handleAsync} from './handle';
 
 const notImplementedError = new Error(
-  "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
+  "xhr-mock: This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
 );
 
 // implemented according to https://xhr.spec.whatwg.org/
@@ -73,8 +73,11 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
   withCredentials: boolean = false;
 
-  /** @private */
   static handlers: MockFunction[] = [];
+  static errorCallback: (event: ErrorCallbackEvent) => void = ({err}) =>
+    console.error(
+      `xhr-mock: A handler errored: \n ${(err && err.stack) || err}`
+    );
 
   /**
    * Add a mock handler
@@ -223,7 +226,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   setRequestHeader(name: string, value: string): void {
     if (this.readyState < MockXMLHttpRequest.OPENED) {
-      throw new Error('xhr-mock: request must be OPENED.');
+      throw new Error('xhr-mock: xhr must be OPENED.');
     }
 
     this.req.header(name, value);
@@ -319,6 +322,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       // run handle response end-of-body for response
       this.handleResponseBody(res);
     } catch (error) {
+      MockXMLHttpRequest.errorCallback({req: this.req, err: error});
       this.handleError(error);
     }
   }
@@ -391,6 +395,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
         return; // these cases will already have been handled
       }
 
+      MockXMLHttpRequest.errorCallback({req: this.req, err: error});
       this.handleError(error);
     }
   }
@@ -419,7 +424,9 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     // if the synchronous flag is set, throw an exception exception
     if (this.isSynchronous) {
-      throw new Error(event);
+      throw new Error(
+        'xhr-mock: An error occurred whilst sending a synchronous request.'
+      );
     }
 
     // fire an event named readystatechange
@@ -616,10 +623,8 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   // https://xhr.spec.whatwg.org/#event-xhr-loadstart
   send(): void;
-  send(body?: Document): void;
-  send(body?: string): void;
   send(body?: any): void;
-  send(body?: string | Document | any): void {
+  send(body?: any): void {
     // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
       throw new Error(
@@ -640,13 +645,49 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
 
     // if body is null, go to the next step otherwise, let encoding and mimeType be null, and then follow these rules, switching on body
+    let encoding;
+    let mimeType;
     if (body !== null && body !== undefined) {
-      if (typeof body !== 'string') {
-        throw new Error(
-          "xhr-mock: A non-string body is not supported yet. You're welcome to submit a PR 😁."
+      if (body instanceof Document) {
+        // Set encoding to `UTF-8`.
+        // Set mimeType to `text/html` if body is an HTML document, and to `application/xml` otherwise. Then append `;charset=UTF-8` to mimeType.
+        // Set request body to body, serialized, converted to Unicode, and utf-8 encoded.
+        encoding = 'UTF-8';
+        mimeType =
+          body instanceof XMLDocument ? 'application/xml' : 'text/html';
+      } else {
+        // If body is a string, set encoding to `UTF-8`.
+        // Set request body and mimeType to the result of extracting body.
+        // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+
+        if (body instanceof Blob) {
+          mimeType = body.type;
+        } else if (body instanceof FormData) {
+          mimeType = 'multipart/form-data; boundary=----XHRMockFormBoundary';
+        } else if (body instanceof URLSearchParams) {
+          encoding = 'UTF-8';
+          mimeType = 'application/x-www-form-urlencoded';
+        } else if (typeof body === 'string') {
+          encoding = 'UTF-8';
+          mimeType = 'text/plain';
+        } else {
+          throw notImplementedError;
+        }
+      }
+
+      // if mimeType is non-null and author request headers does not contain `Content-Type`, then append `Content-Type`/mimeType to author request headers.
+      // otherwise, if the header whose name is a byte-case-insensitive match for `Content-Type` in author request headers has a value that is a valid MIME type,
+      //    which has a `charset` parameter whose value is not a byte-case-insensitive match for encoding, and encoding is not null, then set all the `charset` parameters
+      //    whose value is not a byte-case-insensitive match for encoding of that header’s value to encoding.
+      // chrome seems to forget the second case ^^^
+      const contentType = this.req.header('content-type');
+      if (!contentType) {
+        this.req.header(
+          'content-type',
+          encoding ? `${mimeType}; charset=${encoding}` : mimeType
         );
       }
-      // TODO: set mime-type and encoding
+
       this.req.body(body);
     }
 

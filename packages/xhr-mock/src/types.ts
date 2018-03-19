@@ -19,3 +19,8 @@ export type MockFunction = (
 ) => undefined | MockResponse | Promise<undefined | MockResponse>;
 
 export type Mock = MockObject | MockFunction;
+
+export interface ErrorCallbackEvent {
+  req: MockRequest;
+  err: Error;
+}
