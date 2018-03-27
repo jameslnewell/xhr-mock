@@ -15,6 +15,7 @@ const notImplementedError = new Error(
 // implemented according to https://xhr.spec.whatwg.org/
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
+const USE_URL_SEARCH_PARAMS = typeof URLSearchParams !== 'undefined';
 
 export enum ReadyState {
   UNSENT = 0,
@@ -664,7 +665,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
           mimeType = body.type;
         } else if (body instanceof FormData) {
           mimeType = 'multipart/form-data; boundary=----XHRMockFormBoundary';
-        } else if (body instanceof URLSearchParams) {
+        } else if (USE_URL_SEARCH_PARAMS && body instanceof URLSearchParams) {
           encoding = 'UTF-8';
           mimeType = 'application/x-www-form-urlencoded';
         } else if (typeof body === 'string') {
