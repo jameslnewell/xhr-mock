@@ -2,6 +2,7 @@ import MockEvent from './MockEvent';
 import MockProgressEvent from './MockProgressEvent';
 import MockXMLHttpRequest from './MockXMLHttpRequest';
 import {MockRequest} from '.';
+import {MockError} from './MockError';
 
 function failOnEvent(done: jest.DoneCallback) {
   return function(event: MockProgressEvent) {
@@ -482,6 +483,21 @@ describe('MockXMLHttpRequest', () => {
         done.fail(err);
       }
     };
+    xhr.open('get', '/');
+    xhr.send();
+  });
+
+  it('should error when no handlers are registered', done => {
+    expect.assertions(2);
+
+    MockXMLHttpRequest.errorCallback = ({req, err}) => {
+      expect(req).toBeInstanceOf(MockRequest);
+      expect(err).toBeInstanceOf(MockError);
+    };
+
+    const xhr = new MockXMLHttpRequest();
+    xhr.onload = failOnEvent(done);
+    xhr.onerror = successOnEvent(done);
     xhr.open('get', '/');
     xhr.send();
   });

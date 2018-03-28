@@ -1,5 +1,10 @@
 # Change log
 
+# 2.3.1
+
+* fix: format the default error message better ([#57](https://github.com/jameslnewell/xhr-mock/issues/57#issuecomment-376489889))
+* fix: IE11 which chokes on `URLSearchParams` ([#58](https://github.com/jameslnewell/xhr-mock/pull/58))
+
 # 2.3.0
 
 * added support for requests with `Blob`, `FormData` or `URLSearchParams` bodies

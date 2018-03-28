@@ -7,9 +7,11 @@ import MockProgressEvent from './MockProgressEvent';
 import MockXMLHttpRequestUpload from './MockXMLHttpRequestUpload';
 import MockXMLHttpRequestEventTarget from './MockXMLHttpRequestEventTarget';
 import {sync as handleSync, async as handleAsync} from './handle';
+import {formatError} from './formatError';
+import {MockError} from './MockError';
 
-const notImplementedError = new Error(
-  "xhr-mock: This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
+const notImplementedError = new MockError(
+  "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
 );
 
 // implemented according to https://xhr.spec.whatwg.org/
@@ -23,12 +25,6 @@ export enum ReadyState {
   HEADERS_RECEIVED = 2,
   LOADING = 3,
   DONE = 4
-}
-
-function isMockResponsePromise(
-  promise: MockResponse | Promise<MockResponse>
-): promise is Promise<MockResponse> {
-  return (promise as Promise<MockResponse>).then !== undefined;
 }
 
 function calculateProgress(req: MockRequest | MockResponse) {
@@ -75,10 +71,15 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   withCredentials: boolean = false;
 
   static handlers: MockFunction[] = [];
-  static errorCallback: (event: ErrorCallbackEvent) => void = ({err}) =>
-    console.error(
-      `xhr-mock: A handler errored: \n ${(err && err.stack) || err}`
-    );
+  static errorCallback: (event: ErrorCallbackEvent) => void = ({req, err}) => {
+    if (err instanceof MockError) {
+      console.error(formatError(err.message, req));
+    } else {
+      console.error(
+        formatError('A handler returned an error for the request.', req, err)
+      );
+    }
+  };
 
   /**
    * Add a mock handler
@@ -127,7 +128,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   set timeout(timeout: number) {
     if (timeout !== 0 && this.isSynchronous) {
-      throw new Error(
+      throw new MockError(
         'Timeouts cannot be set for synchronous requests made from a document.'
       );
     }
@@ -193,7 +194,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   get responseXML(): Document | null {
-    return null; // FIXME:
+    throw notImplementedError;
   }
 
   get status(): number {
@@ -227,7 +228,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   setRequestHeader(name: string, value: string): void {
     if (this.readyState < MockXMLHttpRequest.OPENED) {
-      throw new Error('xhr-mock: xhr must be OPENED.');
+      throw new MockError('xhr must be OPENED.');
     }
 
     this.req.header(name, value);
@@ -247,7 +248,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // if method is not a method, then throw a "SyntaxError" DOMException
     // if method is a forbidden method, then throw a "SecurityError" DOMException
     if (FORBIDDEN_METHODS.indexOf(method) !== -1) {
-      throw new Error(`xhr-mock: Method ${method} is forbidden.`);
+      throw new MockError(`Method ${method} is forbidden.`);
     }
 
     // normalize method
@@ -268,12 +269,12 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // if async is false, current global object is a Window object, and the timeout attribute value
     // is not zero or the responseType attribute value is not the empty string, then throw an "InvalidAccessError" DOMException.
     if (!async && (this._timeout !== 0 || this.responseType !== '')) {
-      throw new Error('InvalidAccessError');
+      throw new MockError('InvalidAccessError');
     }
 
     // terminate the ongoing fetch operated by the XMLHttpRequest object
     if (this.isSending) {
-      throw new Error('xhr-mock: Unable to terminate the previous request');
+      throw new MockError('Unable to terminate the previous request');
     }
 
     // set variables associated with the object as follows:
@@ -305,12 +306,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     let res;
     try {
       res = handleSync(MockXMLHttpRequest.handlers, this.req, this.res);
-
-      if (isMockResponsePromise(res)) {
-        throw new Error(
-          'xhr-mock: A handler returned a Promise<MockResponse> in sync mode.'
-        );
-      }
 
       // if the timeout attribute value is not zero, then set the timed out flag and terminate fetching if it has not returned within the amount of milliseconds from the timeout.
       // TODO: check if timeout was elapsed
@@ -425,8 +420,8 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     // if the synchronous flag is set, throw an exception exception
     if (this.isSynchronous) {
-      throw new Error(
-        'xhr-mock: An error occurred whilst sending a synchronous request.'
+      throw new MockError(
+        'An error occurred whilst sending a synchronous request.'
       );
     }
 
@@ -628,16 +623,14 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   send(body?: any): void {
     // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
-      throw new Error(
-        'xhr-mock: Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().'
+      throw new MockError(
+        'Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().'
       );
     }
 
     // if the send() flag is set, throw an InvalidStateError exception
     if (this.isSending) {
-      throw new Error(
-        'xhr-mock: MockXMLHttpRequest.send() has already been called.'
-      );
+      throw new MockError('MockXMLHttpRequest.send() has already been called.');
     }
 
     // if the request method is GET or HEAD, set body to null
