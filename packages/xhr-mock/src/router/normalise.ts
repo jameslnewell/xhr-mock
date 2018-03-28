@@ -1,8 +1,8 @@
 import * as statuses from 'statuses';
-import {Headers, Request, Response} from './types';
+import {Headers, Request, Response} from '../types';
 
 function normaliseMethod(method: string): string {
-  return method.toLowerCase();
+  return method.toUpperCase();
 }
 
 function normaliseHeaders(headers: Headers): Headers {
@@ -16,13 +16,10 @@ function getReasonById(status: number): string {
   return statuses[status] || '';
 }
 
-// TODO: add params and query
 export function normaliseRequest(req: Partial<Request>): Request {
   return {
     version: '1.1',
-    path: '/',
-    query: {},
-    params: {},
+    uri: '/',
     body: undefined,
     ...req,
     method: normaliseMethod(req.method || 'get'),

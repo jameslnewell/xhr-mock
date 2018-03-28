@@ -1,5 +1,26 @@
 # Change log
 
+## 3.0.0
+
+* breaking: changed `Request` and `Response` to be plain JavaScript objects
+* breaking: renamed `Request.url` to `Request.uri` and to a plain string
+* breaking: route handlers will no longer receive the response, they should create the response
+* addition: router methods e.g. `.get('/app/:id')` will parse the the url uring `path-to-regex` and populate `Request.params` with the result
+* addition: improved error reporting
+
+### Internal
+
+* moved the router out of XHRMock and the handlers out of MockXMLHttpRequest
+
+### TODO:
+
+* before(), after() and error() hooks for logging
+* router methods to support an advanced url match object e.g. {host: 'localhost', path: '/x/y', query: {foo: 'bar'}}
+* add ctx for `async` etc
+* fetch
+* improve docs
+* write a code mod
+
 # 2.3.1
 
 * fix: format the default error message better ([#57](https://github.com/jameslnewell/xhr-mock/issues/57#issuecomment-376489889))

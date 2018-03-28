@@ -1,7 +1,6 @@
-import XHRMock from './XHRMock';
-import MockRequest from './MockRequest';
-import MockResponse from './MockResponse';
+export * from './types';
 import proxy from './proxy';
+import MockFacade from './MockFacade';
 
-export default XHRMock;
-export {MockRequest, MockResponse, proxy};
+export {proxy};
+export default new MockFacade();
