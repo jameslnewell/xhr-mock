@@ -1,6 +1,6 @@
 {
   "name": "xhr-mock",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Utility for mocking XMLHttpRequest.",
   "keywords": [
     "mock",
@@ -18,10 +18,7 @@
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
+  "files": ["lib", "dist"],
   "browser": {
     "./lib/proxy.js": "./lib/proxy.browser.js"
   },
@@ -40,7 +37,7 @@
     "rollup-plugin-node-resolve": "^3.0.0",
     "ts-jest": "^22.0.1",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.2"
+    "typescript": "2.7.2"
   },
   "scripts": {
     "clean": "rm -rf ./lib ./dist",
@@ -52,7 +49,8 @@
     "build": "yarn run build:cjs && yarn run build:umd",
     "test": "jest",
     "test:watch": "jest --watch",
-    "ci": "yarn run clean && yarn run check && yarn run lint && yarn run build && yarn run test"
+    "ci":
+      "yarn run clean && yarn run check && yarn run lint && yarn run build && yarn run test"
   },
   "license": "MIT"
 }
