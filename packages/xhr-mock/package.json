@@ -1,6 +1,6 @@
 {
   "name": "xhr-mock",
-  "version": "2.4.0",
+  "version": "3.0.0-preview.1",
   "description": "Utility for mocking XMLHttpRequest.",
   "keywords": [
     "mock",
@@ -13,7 +13,8 @@
     "xmlhttprequest",
     "jquery",
     "superagent",
-    "axios"
+    "axios",
+    "rxjs"
   ],
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
@@ -23,7 +24,7 @@
     "dist"
   ],
   "browser": {
-    "./lib/proxy.js": "./lib/proxy.browser.js"
+    "./lib/proxy/index.js": "./lib/proxy/index.browser.js"
   },
   "dependencies": {
     "global": "^4.3.0",

@@ -1,14 +1,14 @@
-import {MockURL, parseURL, formatURL} from './MockURL';
-import {MockFunction, MockHeaders, ErrorCallbackEvent} from './types';
-import MockRequest from './MockRequest';
-import MockResponse from './MockResponse';
+import { ErrorCallbackEvent } from '../types';
+import MockRequest from '../MockRequest';
+import MockResponse from '../MockResponse';
 import MockEvent from './MockEvent';
 import MockProgressEvent from './MockProgressEvent';
 import MockXMLHttpRequestUpload from './MockXMLHttpRequestUpload';
 import MockXMLHttpRequestEventTarget from './MockXMLHttpRequestEventTarget';
-import {sync as handleSync, async as handleAsync} from './handle';
-import {formatError} from './formatError';
-import {MockError} from './MockError';
+import { sync as handleSync, async as handleAsync } from '../handle';
+import { formatError } from '../formatError';
+import { MockError } from '../MockError';
+
 
 const notImplementedError = new MockError(
   "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
@@ -71,7 +71,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   withCredentials: boolean = false;
 
   static handlers: MockFunction[] = [];
-  static errorCallback: (event: ErrorCallbackEvent) => void = ({req, err}) => {
+  static errorCallback: (event: ErrorCallbackEvent) => void = ({ req, err }) => {
     if (err instanceof MockError) {
       console.error(formatError(err.message, req));
     } else {
@@ -318,7 +318,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       // run handle response end-of-body for response
       this.handleResponseBody(res);
     } catch (error) {
-      MockXMLHttpRequest.errorCallback({req: this.req, err: error});
+      MockXMLHttpRequest.errorCallback({ req: this.req, err: error });
       this.handleError(error);
     }
   }
@@ -391,7 +391,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
         return; // these cases will already have been handled
       }
 
-      MockXMLHttpRequest.errorCallback({req: this.req, err: error});
+      MockXMLHttpRequest.errorCallback({ req: this.req, err: error });
       this.handleError(error);
     }
   }

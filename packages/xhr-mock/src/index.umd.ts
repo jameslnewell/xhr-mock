@@ -1,2 +1,4 @@
-import XHRMock from './XHRMock';
-export default XHRMock;
+export * from './types';
+import MockFacade from './MockFacade';
+
+export default new MockFacade();
