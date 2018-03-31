@@ -1,4 +1,4 @@
-export default class MockEvent implements Event {
+export class MockEvent implements Event {
   readonly bubbles: boolean;
   readonly cancelable: boolean;
   cancelBubble: boolean;

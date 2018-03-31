@@ -1,9 +1,9 @@
-import isPromise from './isPromise';
+import {isPromise} from './isPromise';
 
 describe('isPromise()', () => {
   it('should return true', () => {
     expect(isPromise(Promise.resolve())).toBeTruthy();
-    // expect(isPromise(Promise.reject())).toBeTruthy();
+    // expect(isPromise(Promise.reject(new Error()))).toBeTruthy();
     expect(
       isPromise(
         new Promise(() => {

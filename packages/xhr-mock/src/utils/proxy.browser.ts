@@ -3,7 +3,7 @@ import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 
 function parseHeaders(string: String): {} {
-  const headers: {[name: string]: string} = {};
+  const headers: { [name: string]: string } = {};
   const lines = string.split('\r\n');
   lines.forEach(line => {
     const [name, value] = line.split(':', 2);
@@ -14,7 +14,7 @@ function parseHeaders(string: String): {} {
   return headers;
 }
 
-export default function(
+export function proxy(
   req: MockRequest,
   res: MockResponse
 ): Promise<MockResponse> {

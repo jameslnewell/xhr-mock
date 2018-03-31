@@ -3,7 +3,7 @@ import * as https from 'https';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 
-export default function(
+export function proxy(
   req: MockRequest,
   res: MockResponse
 ): Promise<MockResponse> {

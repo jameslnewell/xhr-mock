@@ -1,103 +1,106 @@
 import {
-  Request,
-  Response,
-  MethodMatch,
-  URIMatch,
-  RouteHandler,
-  BeforeRouteCallback,
-  AfterRouteCallback,
-  ErrorRouteCallback,
-  ErrorRouteEvent,
-  AfterRouteEvent
-} from '../types';
-import MockError from '../MockError';
-import createRouteHandler from './createRouteHandler';
-import isPromise from './isPromise';
+  MockRequest,
+  MockResponse,
+  MockContext,
+  MockMethodCriteria,
+  MockURICriteria,
+  MockHandler,
+  MockBeforeCallback,
+  MockAfterCallback,
+  MockErrorCallback,
+  MockErrorCallbackEvent,
+  MockAfterCallbackEvent
+} from './types';
+import {MockError} from '../MockError';
+import {createHandler} from './createHandler';
+import {isPromise} from './isPromise';
+import {formatMessage} from './formatMessage';
 import {normaliseRequest, normaliseResponse} from './normalise';
 
-function afterLogger(event: AfterRouteEvent) {
+function afterLogger(event: MockAfterCallbackEvent) {
   const {req, res} = event;
-  console.info(`
-  xhr-mock: A request resolved to a response:
-
-     REQUEST: ${req.method} ${req.uri} HTTP/${req.version}
-
-    RESPONSE: HTTP/${res.version} ${res.status} ${res.reason}
-
-`);
+  console.info(
+    formatMessage('A handler returned a response for the request.', {req, res})
+  );
 }
 
-function errorLogger(event: ErrorRouteEvent) {
+function errorLogger(event: MockErrorCallbackEvent) {
   const {req, err} = event;
-  console.error(`
-    xhr-mock: An error occured whilst routing a request:
-
-      REQUEST: ${req.method} ${req.uri} HTTP/${req.version}
-
-        ERROR: ${err.message}
-
-  `);
+  if (err instanceof MockError) {
+    console.error(formatMessage(err.message, {req}));
+  } else {
+    console.error(
+      formatMessage('A handler returned an error for the request.', {req, err})
+    );
+  }
 }
 
-export default class MockRouter {
-  private beforeCallback: BeforeRouteCallback;
-  private afterCallback: AfterRouteCallback = afterLogger;
-  private errorCallback: ErrorRouteCallback = errorLogger;
-  private routeHandlers: RouteHandler[] = [];
+export class MockRouter {
+  private beforeHandlerCallback?: MockBeforeCallback;
+  private afterHandlerCallback?: MockAfterCallback = afterLogger;
+  private handlerErrorCallback?: MockErrorCallback = errorLogger;
+  private handlers: MockHandler[] = [];
 
   clear() {
-    this.routeHandlers = [];
+    this.handlers = [];
+    this.beforeHandlerCallback = undefined;
+    this.afterHandlerCallback = afterLogger;
+    this.handlerErrorCallback = errorLogger;
     return this;
   }
 
-  before(callback: BeforeRouteCallback) {
-    this.beforeCallback = callback;
+  before(callback: MockBeforeCallback) {
+    this.beforeHandlerCallback = callback;
     return this;
   }
 
-  after(callback: AfterRouteCallback) {
-    this.afterCallback = callback;
+  after(callback: MockAfterCallback) {
+    this.afterHandlerCallback = callback;
     return this;
   }
 
-  error(callback: ErrorRouteCallback) {
-    this.errorCallback = callback;
+  error(callback: MockErrorCallback) {
+    this.handlerErrorCallback = callback;
     return this;
   }
 
-  use(handler: RouteHandler): MockRouter;
-  use(method: MethodMatch, uri: URIMatch, handler: RouteHandler): MockRouter;
+  use(handler: MockHandler): MockRouter;
   use(
-    method: MethodMatch,
-    uri: URIMatch,
-    response: Partial<Response>
+    method: MockMethodCriteria,
+    uri: MockURICriteria,
+    handler: MockHandler
   ): MockRouter;
   use(
-    methodOrHandler: MethodMatch | RouteHandler,
-    uri?: URIMatch,
-    handlerOrResponse?: RouteHandler | Partial<Response>
+    method: MockMethodCriteria,
+    uri: MockURICriteria,
+    response: Partial<MockResponse>
+  ): MockRouter;
+  use(
+    methodOrHandler: MockMethodCriteria | MockHandler,
+    uri?: MockURICriteria,
+    handlerOrResponse?: MockHandler | Partial<MockResponse>
   ): MockRouter {
     if (typeof methodOrHandler === 'function' && !uri && !handlerOrResponse) {
-      this.routeHandlers.push(methodOrHandler);
+      this.handlers.push(methodOrHandler);
     } else if (
       typeof methodOrHandler === 'string' &&
       uri &&
       handlerOrResponse
     ) {
-      this.routeHandlers.push(
-        createRouteHandler(methodOrHandler, uri, handlerOrResponse)
+      this.handlers.push(
+        createHandler(methodOrHandler, uri, handlerOrResponse)
       );
     } else {
-      throw new Error('Invalid parameters.');
+      throw new MockError('Invalid parameters.');
     }
     return this;
   }
 
-  get(uri: URIMatch, handler: RouteHandler): MockRouter;
-  get(uri: URIMatch, response: Partial<Response>): MockRouter;
+  get(uri: MockURICriteria, handler: MockHandler): MockRouter;
+  get(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   get(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
@@ -109,11 +112,11 @@ export default class MockRouter {
     return this;
   }
 
-  post(uri: URIMatch, handler: RouteHandler): MockRouter;
-  post(uri: URIMatch, response: Partial<Response>): MockRouter;
+  post(uri: MockURICriteria, handler: MockHandler): MockRouter;
+  post(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   post(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
@@ -125,11 +128,11 @@ export default class MockRouter {
     return this;
   }
 
-  put(uri: URIMatch, handler: RouteHandler): MockRouter;
-  put(uri: URIMatch, response: Partial<Response>): MockRouter;
+  put(uri: MockURICriteria, handler: MockHandler): MockRouter;
+  put(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   put(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
@@ -141,11 +144,11 @@ export default class MockRouter {
     return this;
   }
 
-  patch(uri: URIMatch, handler: RouteHandler): MockRouter;
-  patch(uri: URIMatch, response: Partial<Response>): MockRouter;
+  patch(uri: MockURICriteria, handler: MockHandler): MockRouter;
+  patch(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   patch(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
@@ -157,11 +160,11 @@ export default class MockRouter {
     return this;
   }
 
-  delete(uri: URIMatch, handler: RouteHandler): MockRouter;
-  delete(uri: URIMatch, response: Partial<Response>): MockRouter;
+  delete(uri: MockURICriteria, handler: MockHandler): MockRouter;
+  delete(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   delete(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
@@ -173,15 +176,15 @@ export default class MockRouter {
     return this;
   }
 
-  // TODO: CONTEXT
-  routeSync(req: Partial<Request>): Response {
+  routeSync(req: Partial<MockRequest>, ctx: MockContext): MockResponse {
     const fullRequest = normaliseRequest(req);
-    if (this.beforeCallback) {
-      this.beforeCallback({req: fullRequest});
+    const fullContext = {...ctx, sync: true};
+    if (this.beforeHandlerCallback) {
+      this.beforeHandlerCallback({req: fullRequest, ctx: fullContext});
     }
     try {
-      for (let i = 0; i < this.routeHandlers.length; ++i) {
-        const res = this.routeHandlers[i](fullRequest);
+      for (let i = 0; i < this.handlers.length; ++i) {
+        const res = this.handlers[i](fullRequest, fullContext);
         if (!res) {
           continue;
         }
@@ -191,54 +194,69 @@ export default class MockRouter {
           );
         }
         const fullResponse = normaliseResponse(res);
-        if (this.afterCallback) {
-          this.afterCallback({req: fullRequest, res: fullResponse});
+        if (this.afterHandlerCallback) {
+          this.afterHandlerCallback({
+            req: fullRequest,
+            res: fullResponse,
+            ctx: fullContext
+          });
         }
         return fullResponse;
       }
-      throw new MockError('No response was returned by a handler.');
-    } catch (error) {
-      if (this.errorCallback) {
-        this.errorCallback({req: fullRequest, err: error});
+      throw new MockError('No handler returned a response for the request.');
+    } catch (err) {
+      if (this.handlerErrorCallback) {
+        this.handlerErrorCallback({
+          req: fullRequest,
+          err: err,
+          ctx: fullContext
+        });
       }
-      throw error;
+      throw err;
     }
   }
 
-  // TODO: CONTEXT
-  routeAsync(req: Partial<Request>): Promise<Response> {
+  async routeAsync(
+    req: Partial<MockRequest>,
+    ctx: MockContext
+  ): Promise<MockResponse> {
     const fullRequest = normaliseRequest(req);
-    if (this.beforeCallback) {
-      this.beforeCallback({req: fullRequest});
+    const fullContext = {...ctx, sync: false};
+    if (this.beforeHandlerCallback) {
+      this.beforeHandlerCallback({req: fullRequest, ctx: fullContext});
     }
-    return this.routeHandlers
-      .reduce(
+
+    try {
+      const res = await this.handlers.reduce(
         (promise, handler) =>
           promise.then(res => {
             if (res) {
               return res;
             } else {
-              return handler(fullRequest);
+              return handler(fullRequest, fullContext);
             }
           }),
         Promise.resolve(undefined)
-      )
-      .then(res => {
-        if (res) {
-          const fullResponse = normaliseResponse(res);
-          if (this.afterCallback) {
-            this.afterCallback({req: fullRequest, res: fullResponse});
-          }
-          return fullResponse;
-        } else {
-          throw new MockError('No response was returned by a handler.');
+      );
+
+      if (res) {
+        const fullResponse = normaliseResponse(res);
+        if (this.afterHandlerCallback) {
+          this.afterHandlerCallback({
+            req: fullRequest,
+            res: fullResponse,
+            ctx: fullContext
+          });
         }
-      })
-      .catch(error => {
-        if (this.errorCallback) {
-          this.errorCallback({req: fullRequest, err: error});
-        }
-        throw error;
-      });
+        return fullResponse;
+      } else {
+        throw new MockError('No handler returned a response for the request.');
+      }
+    } catch (err) {
+      if (this.handlerErrorCallback) {
+        this.handlerErrorCallback({req: fullRequest, err, ctx: fullContext});
+      }
+      throw err;
+    }
   }
 }

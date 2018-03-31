@@ -1,29 +1,30 @@
 import window = require('global');
 import {
-  Request,
-  Response,
-  MethodMatch,
-  URIMatch,
-  RouteHandler,
-  BeforeRouteCallback,
-  AfterRouteCallback,
-  ErrorRouteCallback
-} from './types';
-import MockError from './MockError';
-import MockRouter from './router/Router';
-import MockXMLHttpRequest from './xhr/MockXMLHttpRequest';
+  MockRequest,
+  MockResponse,
+  MockMethodCriteria,
+  MockURICriteria,
+  MockHandler,
+  MockBeforeCallback,
+  MockAfterCallback,
+  MockErrorCallback,
+  MockRouter
+} from './router';
+import {MockError} from './MockError';
+import {MockXMLHttpRequest} from './xhr/MockXMLHttpRequest';
 
 const RealXMLHttpRequest = window.XMLHttpRequest;
 
-export default class MockFacade {
+export class MockFacade {
   RealXMLHttpRequest: {new (): XMLHttpRequest} = RealXMLHttpRequest;
 
-  router: MockRouter = new MockRouter();
+  private router: MockRouter = new MockRouter();
+  private mockXMLHttpRequest = new MockXMLHttpRequest(this.router);
 
   setup(): MockFacade {
     // replace the real methods
     // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
-    window.XMLHttpRequest = MockXMLHttpRequest;
+    window.XMLHttpRequest = new MockXMLHttpRequest(this.router);
 
     // remove the registered handlers
     this.router.clear();
@@ -46,31 +47,31 @@ export default class MockFacade {
     return this;
   }
 
-  before(callback: BeforeRouteCallback): MockFacade {
+  before(callback: MockBeforeCallback): MockFacade {
     this.router.before(callback);
     return this;
   }
 
-  after(callback: AfterRouteCallback): MockFacade {
+  after(callback: MockAfterCallback): MockFacade {
     this.router.after(callback);
     return this;
   }
 
-  error(callback: ErrorRouteCallback): MockFacade {
+  error(callback: MockErrorCallback): MockFacade {
     this.router.error(callback);
     return this;
   }
 
-  use(handler: RouteHandler): MockFacade;
+  use(handler: MockHandler): MockFacade;
   use(
-    method: MethodMatch,
-    uri: URIMatch,
-    handler: RouteHandler | Partial<Response>
+    method: MockMethodCriteria,
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockFacade;
   use(
-    methodOrHandler: MethodMatch | RouteHandler,
-    uri?: URIMatch,
-    handlerOrResponse?: RouteHandler | Partial<Response>
+    methodOrHandler: MockMethodCriteria | MockHandler,
+    uri?: MockURICriteria,
+    handlerOrResponse?: MockHandler | Partial<MockResponse>
   ): MockFacade {
     if (
       typeof methodOrHandler === 'string' &&
@@ -85,14 +86,15 @@ export default class MockFacade {
     } else if (typeof methodOrHandler === 'function') {
       this.router.use(methodOrHandler);
     } else {
+      // TODO: will the compiler even let us get here?
       throw new MockError('Invalid handler.');
     }
     return this;
   }
 
   get(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.get(uri, handlerOrResponse);
@@ -104,8 +106,8 @@ export default class MockFacade {
   }
 
   post(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.post(uri, handlerOrResponse);
@@ -117,8 +119,8 @@ export default class MockFacade {
   }
 
   put(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.put(uri, handlerOrResponse);
@@ -130,8 +132,8 @@ export default class MockFacade {
   }
 
   patch(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.patch(uri, handlerOrResponse);
@@ -143,8 +145,8 @@ export default class MockFacade {
   }
 
   delete(
-    uri: URIMatch,
-    handlerOrResponse: RouteHandler | Partial<Response>
+    uri: MockURICriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>
   ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.delete(uri, handlerOrResponse);

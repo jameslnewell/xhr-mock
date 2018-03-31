@@ -1,14 +1,7 @@
 export * from './types';
-import proxy from './proxy';
-<<<<<<< HEAD
-import {once} from './utils/once';
-import {delay} from './utils/delay';
+export { once } from './utils/once';
+export { delay } from './utils/delay';
+export { proxy } from './utils/proxy';
+import { MockFacade } from './MockFacade';
 
-export default XHRMock;
-export {MockRequest, MockResponse, proxy, once, delay};
-=======
-import MockFacade from './MockFacade';
-
-export {proxy};
 export default new MockFacade();
->>>>>>> refactoring

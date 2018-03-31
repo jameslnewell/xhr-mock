@@ -1,5 +1,5 @@
 {
-  "name": "xhr-mock-examples",
+  "name": "@xhr-mock/examples",
   "private": true,
   "dependencies": {
     "axios": "^0.17.1",

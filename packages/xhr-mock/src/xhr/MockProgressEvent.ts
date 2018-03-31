@@ -1,7 +1,6 @@
-import MockEvent from './MockEvent';
+import {MockEvent} from './MockEvent';
 
-export default class MockProgressEvent extends MockEvent
-  implements ProgressEvent {
+export class MockProgressEvent extends MockEvent implements ProgressEvent {
   readonly lengthComputable: boolean;
   readonly loaded: number;
   readonly total: number;
