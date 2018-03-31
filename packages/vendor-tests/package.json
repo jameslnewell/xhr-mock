@@ -1,5 +1,5 @@
 {
-  "name": "xhr-mock-tests",
+  "name": "@xhr-mock/vendor-tests",
   "private": true,
   "dependencies": {
     "@types/url-search-params": "^0.10.1",

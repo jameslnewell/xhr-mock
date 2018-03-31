@@ -1,7 +1,19 @@
-import MockRouter from './MockRouter';
-import {MockRequest, RequestWithParams, MockResponse} from '../types';
+import {
+  MockRequest,
+  MockRequestWithParams,
+  MockResponse,
+  MockContext
+} from './types';
+import {MockRouter} from './MockRouter';
 
 const noop = () => undefined;
+
+const createMockRouter = () => {
+  const router = new MockRouter();
+  router.after(noop);
+  router.error(noop);
+  return router;
+};
 
 const req: MockRequest = {
   version: '1.1',
@@ -19,50 +31,58 @@ const res: MockResponse = {
   body: undefined
 };
 
+const ctx: MockContext = {
+  sync: false
+};
+
 describe('MockRouter', () => {
-  it('should match the callback', () => {
-    const router = new MockRouter();
+  it('should match the handler', () => {
+    const router = createMockRouter();
     router.get('/foo/bar', () => res);
-    expect(router.routeSync(req)).toEqual(res);
+    expect(router.routeSync(req, ctx)).toEqual(res);
   });
 
-  it('should not match the callback', () => {
-    const router = new MockRouter();
+  it('should not match the handler', () => {
+    const router = createMockRouter();
     router.post('/bar', () => res);
-    expect(() => router.routeSync(req)).toThrow();
+    expect(() => router.routeSync(req, ctx)).toThrow();
   });
 
   describe('.routeSync()', () => {
-    it('should error when there are no callbacks and no response is returned', () => {
-      const router = new MockRouter();
-      expect(() => router.routeSync(req)).toThrow(/no response/i);
+    it('should error when there are no handlers and no response is returned', () => {
+      const router = createMockRouter();
+      expect(() => router.routeSync(req, ctx)).toThrow(
+        /No handler returned a response/i
+      );
     });
 
-    it('should error when there are callbacks and no response is returned', () => {
-      const router = new MockRouter();
+    it('should error when there are handlers and no response is returned', () => {
+      const router = createMockRouter();
       router.use(noop);
       router.use(noop);
-      expect(() => router.routeSync(req)).toThrow(/no response/i);
+      expect(() => router.routeSync(req, ctx)).toThrow(
+        /No handler returned a response/i
+      );
     });
 
-    it('should error when there are callbacks and a response is returned asynchronously', () => {
-      const router = new MockRouter();
+    it('should error when there are handlers and a response is returned asynchronously', () => {
+      const router = createMockRouter();
       router.use(() => Promise.resolve(res));
-      expect(() => router.routeSync(req)).toThrow(
+      expect(() => router.routeSync(req, ctx)).toThrow(
         /returned a response asynchronously/i
       );
     });
 
-    it('should return a response when there are callbacks and a response is returned synchronously', () => {
-      const router = new MockRouter();
+    it('should return a response when there are handlers and a response is returned synchronously', () => {
+      const router = createMockRouter();
       router.use(() => res);
-      expect(router.routeSync(req)).toEqual(res);
+      expect(router.routeSync(req, ctx)).toEqual(res);
     });
 
     it('should normalise the request', () => {
       expect.assertions(1);
       const req = {method: 'PUT', uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.put('/', req => {
         expect(req).toEqual({
           version: '1.1',
@@ -74,16 +94,16 @@ describe('MockRouter', () => {
         });
         return {};
       });
-      router.routeSync(req);
+      router.routeSync(req, ctx);
     });
 
     it('should normalise the response', () => {
       const req = {method: 'PUT', uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.put('/', req => {
         return {status: 201};
       });
-      expect(router.routeSync(req)).toEqual({
+      expect(router.routeSync(req, ctx)).toEqual({
         version: '1.1',
         status: 201,
         reason: 'Created',
@@ -95,7 +115,7 @@ describe('MockRouter', () => {
     it('should call the before callback', () => {
       expect.assertions(1);
       const req = {uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.before(({req}) => {
         expect(req).toEqual({
           version: '1.1',
@@ -106,13 +126,13 @@ describe('MockRouter', () => {
         });
       });
       router.get('/', {});
-      router.routeSync(req);
+      router.routeSync(req, ctx);
     });
 
     it('should call the after callback', () => {
       expect.assertions(2);
       const req = {uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.after(({req, res}) => {
         expect(req).toEqual({
           version: '1.1',
@@ -130,13 +150,13 @@ describe('MockRouter', () => {
         });
       });
       router.get('/', {status: 201});
-      router.routeSync(req);
+      router.routeSync(req, ctx);
     });
 
     it('should call the error callback', () => {
       expect.assertions(2);
       const req = {uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.error(({req, err}) => {
         expect(req).toEqual({
           version: '1.1',
@@ -151,58 +171,58 @@ describe('MockRouter', () => {
         throw new Error('Oops');
       });
       try {
-        router.routeSync(req);
+        router.routeSync(req, ctx);
       } catch (error) {}
     });
   });
 
   describe('.routeAsync()', () => {
-    it('should error when there are no callbacks and no response is returned', async () => {
+    it('should error when there are no handlers and no response is returned', async () => {
       expect.assertions(1);
-      const router = new MockRouter();
+      const router = createMockRouter();
       try {
-        await router.routeAsync(req);
+        await router.routeAsync(req, ctx);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/no response/i)
+            message: expect.stringMatching(/No handler returned a response/i)
           })
         );
       }
     });
 
-    it('should error when there are callbacks and no response is returned', async () => {
+    it('should error when there are handlers and no response is returned', async () => {
       expect.assertions(1);
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.use(noop);
       router.use(noop);
       try {
-        await router.routeAsync(req);
+        await router.routeAsync(req, ctx);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/no response/i)
+            message: expect.stringMatching(/No handler returned a response/i)
           })
         );
       }
     });
 
-    it('should return a response when there are callbacks and a response is returned asynchronously', async () => {
+    it('should return a response when there are handlers and a response is returned asynchronously', async () => {
       expect.assertions(1);
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.use(() => Promise.resolve(res));
       try {
-        const res = await router.routeAsync(req);
+        const res = await router.routeAsync(req, ctx);
         expect(res).toEqual(res);
       } catch (error) {}
     });
 
-    it('should return a response when there are callbacks and a response is returned synchronously', async () => {
+    it('should return a response when there are handlers and a response is returned synchronously', async () => {
       expect.assertions(1);
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.use(() => res);
       try {
-        const res = await router.routeAsync(req);
+        const res = await router.routeAsync(req, ctx);
         expect(res).toEqual(res);
       } catch (error) {}
     });
@@ -210,7 +230,7 @@ describe('MockRouter', () => {
     it('should normalise the request', async () => {
       expect.assertions(1);
       const req = {method: 'PUT', uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.put('/', req => {
         expect(req).toEqual({
           version: '1.1',
@@ -224,18 +244,18 @@ describe('MockRouter', () => {
         return {};
       });
       try {
-        const res = await router.routeAsync(req);
+        const res = await router.routeAsync(req, ctx);
       } catch (error) {}
     });
 
     it('should normalise the response', async () => {
       const req = {method: 'PUT', uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.put('/', req => {
         return {status: 201};
       });
       try {
-        const res = await router.routeAsync(req);
+        const res = await router.routeAsync(req, ctx);
         expect(res).toEqual({
           version: '1.1',
           status: 201,
@@ -249,7 +269,7 @@ describe('MockRouter', () => {
     it('should call the before callback', async () => {
       expect.assertions(1);
       const req = {uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.before(({req}) => {
         expect(req).toEqual({
           version: '1.1',
@@ -260,13 +280,13 @@ describe('MockRouter', () => {
         });
       });
       router.get('/', {});
-      await router.routeAsync(req);
+      await router.routeAsync(req, ctx);
     });
 
     it('should call the after callback', async () => {
       expect.assertions(2);
       const req = {uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.after(({req, res}) => {
         expect(req).toEqual({
           version: '1.1',
@@ -284,13 +304,13 @@ describe('MockRouter', () => {
         });
       });
       router.get('/', {status: 201});
-      await router.routeAsync(req);
+      await router.routeAsync(req, ctx);
     });
 
-    it.only('should call the error callback', async () => {
+    it('should call the error callback', async () => {
       expect.assertions(2);
       const req = {uri: '/'};
-      const router = new MockRouter();
+      const router = createMockRouter();
       router.error(({req, err}) => {
         expect(req).toEqual({
           version: '1.1',
@@ -307,19 +327,24 @@ describe('MockRouter', () => {
       });
       router.get('/', () => Promise.reject(new Error('Oops')));
       try {
-        await router.routeAsync(req);
+        await router.routeAsync(req, ctx);
       } catch (error) {}
     });
   });
 
   it('should populate the request params', () => {
-    const router = new MockRouter();
-    router.get('/api/item/:id(\\d+)', (req: RequestWithParams) => {
+    const router = createMockRouter();
+    router.get('/api/item/:id([0-9]+)', (req: MockRequestWithParams) => {
       expect(req.params).toEqual({
         id: '123'
       });
       return {};
     });
-    router.routeSync({uri: '/api/item/123'});
+    router.routeSync({uri: '/api/item/123'}, ctx);
   });
+
+  it('should clear the before callback');
+  it('should clear the after callback');
+  it('should clear the error callback');
+  it('should clear the handlers');
 });

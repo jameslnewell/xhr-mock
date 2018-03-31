@@ -20,7 +20,7 @@ and probably every other library built on `XMLHttpRequest`. Standard compliant (
 
 ## <a name="installation">Installation</a>
 
-### Using a bundler
+### With a bundler
 
 If you are using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) then install `xhr-mock` using `yarn` or `npm`:
 

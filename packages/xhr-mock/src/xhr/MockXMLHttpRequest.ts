@@ -1,14 +1,9 @@
-import { ErrorCallbackEvent } from '../types';
-import MockRequest from '../MockRequest';
-import MockResponse from '../MockResponse';
-import MockEvent from './MockEvent';
-import MockProgressEvent from './MockProgressEvent';
-import MockXMLHttpRequestUpload from './MockXMLHttpRequestUpload';
-import MockXMLHttpRequestEventTarget from './MockXMLHttpRequestEventTarget';
-import { sync as handleSync, async as handleAsync } from '../handle';
-import { formatError } from '../formatError';
-import { MockError } from '../MockError';
-
+import {MockRequest, MockResponse, MockContext, MockRouter} from '../router';
+import {MockError} from '../MockError';
+import {MockEvent} from './MockEvent';
+import {MockProgressEvent} from './MockProgressEvent';
+import {MockXMLHttpRequestUpload} from './MockXMLHttpRequestUpload';
+import {MockXMLHttpRequestEventTarget} from './MockXMLHttpRequestEventTarget';
 
 const notImplementedError = new MockError(
   "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
@@ -28,8 +23,8 @@ export enum ReadyState {
 }
 
 function calculateProgress(req: MockRequest | MockResponse) {
-  const header = req.header('content-length');
-  const body = req.body();
+  const header = req.headers['content-length'];
+  const body = req.body;
 
   let lengthComputable = false;
   let total = 0;
@@ -50,7 +45,7 @@ function calculateProgress(req: MockRequest | MockResponse) {
 }
 
 // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
-export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
+export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   implements XMLHttpRequest {
   static readonly UNSENT = ReadyState.UNSENT;
   static readonly OPENED = ReadyState.OPENED;
@@ -70,40 +65,23 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
   withCredentials: boolean = false;
 
-  static handlers: MockFunction[] = [];
-  static errorCallback: (event: ErrorCallbackEvent) => void = ({ req, err }) => {
-    if (err instanceof MockError) {
-      console.error(formatError(err.message, req));
-    } else {
-      console.error(
-        formatError('A handler returned an error for the request.', req, err)
-      );
-    }
+  private router: MockRouter;
+
+  private req: MockRequest = {
+    version: '1.1',
+    method: 'GET',
+    uri: '',
+    headers: {},
+    body: undefined
   };
 
-  /**
-   * Add a mock handler
-   */
-  static addHandler(fn: MockFunction): void {
-    this.handlers.push(fn);
-  }
-
-  /**
-   * Remove a mock handler
-   */
-  static removeHandler(fn: MockFunction): void {
-    throw notImplementedError;
-  }
-
-  /**
-   * Remove all request handlers
-   */
-  static removeAllHandlers(): void {
-    this.handlers = [];
-  }
-
-  private req: MockRequest = new MockRequest();
-  private res: MockResponse = new MockResponse();
+  private res: MockResponse = {
+    version: '1.1',
+    status: 200,
+    reason: 'OK',
+    headers: {},
+    body: undefined
+  };
 
   responseType: XMLHttpRequestResponseType = '';
   responseURL: string = '';
@@ -121,6 +99,11 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   // @ts-ignore: wants a NodeJS.Timer because of @types/node
   private _timeoutTimer: number;
+
+  constructor(router: MockRouter) {
+    super();
+    this.router = router;
+  }
 
   get timeout(): number {
     return this._timeout;
@@ -148,7 +131,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       return null;
     }
 
-    const body = this.res.body();
+    const body = this.res.body;
     if (!body) {
       return null;
     }
@@ -186,11 +169,11 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
 
     // rely on the mock to do the right thing with an arraybuffer, blob or document
-    return body;
+    return body || null;
   }
 
   get responseText(): string {
-    return this.res.body() || '';
+    return this.res.body || '';
   }
 
   get responseXML(): Document | null {
@@ -198,11 +181,11 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   get status(): number {
-    return this.res.status();
+    return this.res.status;
   }
 
   get statusText(): string {
-    return this.res.reason();
+    return this.res.reason;
   }
 
   getAllResponseHeaders(): string {
@@ -210,7 +193,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
     //   return null;
     // }
-    const headers = this.res.headers();
+    const headers = this.res.headers;
     const result = Object.keys(headers)
       .map(name => `${name}: ${headers[name]}\r\n`)
       .join('');
@@ -223,7 +206,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       return null;
     }
 
-    return this.res.header(name);
+    return this.res.headers[name.toLowerCase()];
   }
 
   setRequestHeader(name: string, value: string): void {
@@ -231,7 +214,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       throw new MockError('xhr must be OPENED.');
     }
 
-    this.req.header(name, value);
+    this.req.headers[name] = value;
   }
 
   overrideMimeType(mime: string): void {
@@ -251,20 +234,17 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       throw new MockError(`Method ${method} is forbidden.`);
     }
 
-    // normalize method
-    method = method.toUpperCase();
-
     // let parsedURL be the result of parsing url with settingsObject’s API base URL and settingsObject’s API URL character encoding
     // if parsedURL is failure, then throw a "SyntaxError" DOMException
-    const fullURL = parseURL(url);
+    // const fullURL = parseURL(url);
 
     // if the async argument is omitted, set async to true, and set username and password to null.
 
     // if parsedURL’s host is non-null, run these substeps:
     // if the username argument is not null, set the username given parsedURL and username
     // if the password argument is not null, set the password given parsedURL and password
-    fullURL.username = username || '';
-    fullURL.password = (username && password) || '';
+    // fullURL.username = username || '';
+    // fullURL.password = (username && password) || '';
 
     // if async is false, current global object is a Window object, and the timeout attribute value
     // is not zero or the responseType attribute value is not the empty string, then throw an "InvalidAccessError" DOMException.
@@ -285,10 +265,14 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // - empty author request headers
     this.isSending = false;
     this.isSynchronous = !async;
-    this.req
-      .method(method)
-      .headers({})
-      .url(formatURL(fullURL));
+    this.req = {
+      // TODO: normalise
+      version: '1.1',
+      method,
+      headers: {},
+      uri: url, // TODO: full url with username and pw
+      body: undefined
+    };
     this.applyNetworkError();
 
     // if the state is not opened, run these substeps:
@@ -305,7 +289,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // let response be the result of fetching req
     let res;
     try {
-      res = handleSync(MockXMLHttpRequest.handlers, this.req, this.res);
+      res = this.router.routeSync(this.req, {sync: true});
 
       // if the timeout attribute value is not zero, then set the timed out flag and terminate fetching if it has not returned within the amount of milliseconds from the timeout.
       // TODO: check if timeout was elapsed
@@ -318,7 +302,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       // run handle response end-of-body for response
       this.handleResponseBody(res);
     } catch (error) {
-      MockXMLHttpRequest.errorCallback({ req: this.req, err: error });
       this.handleError(error);
     }
   }
@@ -368,11 +351,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
 
     try {
-      const res = await handleAsync(
-        MockXMLHttpRequest.handlers,
-        this.req,
-        this.res
-      );
+      const res = await this.router.routeAsync(this.req, {sync: false});
 
       //we've received a response before the timeout so we don't want to timeout
       clearTimeout(this._timeoutTimer);
@@ -391,7 +370,6 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
         return; // these cases will already have been handled
       }
 
-      MockXMLHttpRequest.errorCallback({ req: this.req, err: error });
       this.handleError(error);
     }
   }
@@ -400,11 +378,13 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // a network error is a response whose status is always 0, status message is always the
     // empty byte sequence, header list is always empty, body is always null, and
     // trailer is always empty
-    this.res
-      .status(0)
-      .reason('')
-      .headers({})
-      .body(null);
+    this.res = {
+      version: '1.1',
+      status: 0,
+      reason: '',
+      headers: {},
+      body: undefined
+    };
   }
 
   // @see https://xhr.spec.whatwg.org/#request-error-steps
@@ -507,7 +487,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // NOTE: is that really necessary, we've just change the state a second ago
 
     // if response’s body is null, then run handle response end-of-body and return
-    if (res.body() === null) {
+    if (res.body === null) {
       this.handleResponseBody(res);
       return;
     }
@@ -634,7 +614,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
 
     // if the request method is GET or HEAD, set body to null
-    if (this.req.method() === 'GET' || this.req.method() === 'HEAD') {
+    if (this.req.method === 'GET' || this.req.method === 'HEAD') {
       body = null;
     }
 
@@ -674,15 +654,14 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       //    which has a `charset` parameter whose value is not a byte-case-insensitive match for encoding, and encoding is not null, then set all the `charset` parameters
       //    whose value is not a byte-case-insensitive match for encoding of that header’s value to encoding.
       // chrome seems to forget the second case ^^^
-      const contentType = this.req.header('content-type');
+      const contentType = this.req.headers['content-type'];
       if (!contentType) {
-        this.req.header(
-          'content-type',
-          encoding ? `${mimeType}; charset=${encoding}` : mimeType
-        );
+        this.req.headers['content-type'] = encoding
+          ? `${mimeType}; charset=${encoding}`
+          : mimeType;
       }
 
-      this.req.body(body);
+      this.req.body = body;
     }
 
     // if one or more event listeners are registered on the associated XMLHttpRequestUpload object, then set upload listener flag

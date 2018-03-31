@@ -1,3 +1,3 @@
-export default function isPromise(val: any): val is Promise<any> {
-  return val && typeof (val as Promise<any>).then !== 'undefined';
+export function isPromise<T = any>(val: Promise<T> | any): val is Promise<T> {
+  return val && typeof (val as Promise<T>).then !== 'undefined';
 }
