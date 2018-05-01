@@ -24,9 +24,7 @@ describe('native', () => {
 
   it('should receive a request containing form data', done => {
     mock.post('/contact', (req, res) => {
-      expect(req.header('content-type')).to.equal(
-        'multipart/form-data; boundary=----XHRMockFormBoundary'
-      );
+      expect(req.header('content-type')).to.equal('multipart/form-data; boundary=----XHRMockFormBoundary');
       expect(req.body()).to.equal(data);
       return res;
     });
@@ -46,9 +44,7 @@ describe('native', () => {
 
   it('should receive a request containing url data', done => {
     mock.post('/contact', (req, res) => {
-      expect(req.header('content-type')).to.equal(
-        'application/x-www-form-urlencoded; charset=UTF-8'
-      );
+      expect(req.header('content-type')).to.equal('application/x-www-form-urlencoded; charset=UTF-8');
       expect(req.body()).to.equal(data);
       return res;
     });

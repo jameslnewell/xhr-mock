@@ -1,10 +1,9 @@
-import MockEvent from './MockEvent';
-import MockProgressEvent from './MockProgressEvent';
-import MockEventTarget from './MockEventTarget';
+import {MockEvent} from './MockEvent';
+import {MockProgressEvent} from './MockProgressEvent';
+import {MockEventTarget} from './MockEventTarget';
 
 // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
-export class MockXMLHttpRequestEventTarget extends MockEventTarget
-  implements XMLHttpRequestEventTarget {
+export class MockXMLHttpRequestEventTarget extends MockEventTarget implements XMLHttpRequestEventTarget {
   onabort: (this: XMLHttpRequestEventTarget, ev: ProgressEvent) => any;
   // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
   onerror: (this: XMLHttpRequestEventTarget, ev: ProgressEvent) => any;

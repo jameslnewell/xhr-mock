@@ -2,22 +2,27 @@
   "name": "xhr-mock-monorepo",
   "private": true,
   "dependencies": {
-    "@types/jest": "^22.1.2",
     "husky": "^0.14.3",
-    "lerna": "^2.6.0",
-    "lint-staged": "^4.0.4",
+    "lerna": "^2.11.0",
+    "lint-staged": "^7.0.5",
     "prettier": "^1.9.2",
-    "tslint": "^5.8.0",
-    "tslint-microsoft-contrib": "^5.0.1",
-    "typescript": "2.7.2"
+    "tslint": "^5.9.1",
+    "tslint-microsoft-contrib": "^5.0.3",
+    "typescript": "^2.8.1"
+  },
+  "workspaces": {
+    "packages": ["packages/*"],
+    "nohoist": ["**/@types/**"]
   },
   "scripts": {
+    "clean": "lerna run clean",
+    "build": "lerna run build",
+    "test": "lerna run test",
     "precommit": "lint-staged",
-    "bootstrap": "lerna bootstrap --npm-client yarn",
     "publish": "yarn run ci && lerna publish",
     "ci": "lerna run ci"
   },
   "lint-staged": {
-    "*.{js,json,ts,md}": ["prettier --write", "git add"]
+    "*.{json,js,ts,md}": ["prettier --write", "git add"]
   }
 }

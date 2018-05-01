@@ -22,9 +22,7 @@ describe('jquery', () => {
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(200);
         expect(xhr.statusText).to.eq('OK');
-        expect(xhr.getAllResponseHeaders()).to.contain(
-          'content-length: 12\r\n'
-        );
+        expect(xhr.getAllResponseHeaders()).to.contain('content-length: 12\r\n');
         expect(data).to.eq('Hello World!');
       })
       .catch((xhr, status, error) => expect.fail(error));
@@ -50,9 +48,7 @@ describe('jquery', () => {
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(201);
         expect(xhr.statusText).to.eq('Created');
-        expect(xhr.getAllResponseHeaders()).to.contain(
-          'content-length: 12\r\n'
-        );
+        expect(xhr.getAllResponseHeaders()).to.contain('content-length: 12\r\n');
         expect(data).to.eq('Hello World!');
       })
       .catch((xhr, status, error) => expect.fail(error));
@@ -78,9 +74,7 @@ describe('jquery', () => {
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(200);
         expect(xhr.statusText).to.eq('OK');
-        expect(xhr.getAllResponseHeaders()).to.contain(
-          'content-length: 12\r\n'
-        );
+        expect(xhr.getAllResponseHeaders()).to.contain('content-length: 12\r\n');
         expect(data).to.eq('Hello World!');
       })
       .catch((xhr, status, error) => expect.fail(error));

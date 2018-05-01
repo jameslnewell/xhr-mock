@@ -6,32 +6,27 @@ import {
   MockResponse,
   MockURICriteria,
   MockHandler,
-  MockContext
+  MockContext,
+  MockContextWithSync
 } from './types';
 
-function getURIParams(
-  path: string,
-  pattern: string | RegExp
-): MockRequestParams | undefined {
+function getURIParams(path: string, pattern: string | RegExp): MockRequestParams | undefined {
   let keys: pathToRegExp.Key[] = [];
   const regexp = pathToRegExp(pattern, keys);
   const match = regexp.exec(path);
   if (match) {
-    return keys.reduce(
-      (params: MockRequestParams, key: pathToRegExp.Key, i: number) => {
-        let value = match[i + 1];
-        if (value) {
-          value = decodeURIComponent(value);
-          if (key.repeat) {
-            params[key.name] = value;
-          } else {
-            params[key.name] = value;
-          }
+    return keys.reduce((params: MockRequestParams, key: pathToRegExp.Key, i: number) => {
+      let value = match[i + 1];
+      if (value) {
+        value = decodeURIComponent(value);
+        if (key.repeat) {
+          params[key.name] = value;
+        } else {
+          params[key.name] = value;
         }
-        return params;
-      },
-      {}
-    );
+      }
+      return params;
+    }, {});
   } else {
     return undefined;
   }
@@ -42,7 +37,7 @@ export function createHandler(
   uri: MockURICriteria,
   handlerOrResponse: MockHandler | Partial<MockResponse>
 ): MockHandler {
-  return (req: MockRequest, ctx: MockContext) => {
+  return (req: MockRequest, ctx: MockContextWithSync) => {
     let uriParams: MockRequestParams | undefined;
 
     // match the method

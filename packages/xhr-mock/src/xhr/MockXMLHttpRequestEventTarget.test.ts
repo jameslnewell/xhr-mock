@@ -1,5 +1,5 @@
-import MockEvent from './MockEvent';
-import MockXMLHttpRequestEventTarget from './MockXMLHttpRequestEventTarget';
+import {MockEvent} from './MockEvent';
+import {MockXMLHttpRequestEventTarget} from './MockXMLHttpRequestEventTarget';
 
 describe('MockXMLHttpRequestEventTarget', () => {
   it('should call onabort', () => {

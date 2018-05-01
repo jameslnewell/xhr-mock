@@ -1,10 +1,9 @@
-import {RequestWithParams} from '../types';
-import Router from '../router';
+import {MockRequestWithParams, MockRouter} from '../router';
 import createFetchFunction from './index';
 
-function router() {
-  return new Router()
-    .get('/api/user/:id', (req: RequestWithParams) => ({
+function createRouter() {
+  return new MockRouter()
+    .get('/api/user/:id', (req: MockRequestWithParams) => ({
       body: JSON.stringify({
         id: req.params.id,
         name: 'John',
@@ -21,12 +20,12 @@ function router() {
 
 describe('createFetchFunction()', () => {
   it('should get', async () => {
-    const fetch = createFetchFunction(router());
+    const fetch = createFetchFunction(createRouter());
     const res = await fetch('/api/user/123');
   });
 
   it('should post', async () => {
-    const fetch = createFetchFunction(router());
+    const fetch = createFetchFunction(createRouter());
     const res = await fetch('/api/user', {method: 'post'});
   });
 });

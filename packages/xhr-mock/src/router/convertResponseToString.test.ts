@@ -1,4 +1,3 @@
-import {Response} from '../types';
 import {convertResponseToString} from './convertResponseToString';
 
 describe('convertResponseToString()', () => {

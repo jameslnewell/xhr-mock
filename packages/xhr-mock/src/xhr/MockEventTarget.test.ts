@@ -1,5 +1,5 @@
-import MockEvent from './MockEvent';
-import MockEventTarget from './MockEventTarget';
+import {MockEvent} from './MockEvent';
+import {MockEventTarget} from './MockEventTarget';
 
 describe('MockEventTarget', () => {
   it('should call the listener once when added once', () => {

@@ -1,4 +1,3 @@
-import {Request} from '../types';
 import {convertRequestToString} from './convertRequestToString';
 
 describe('convertRequestToString()', () => {

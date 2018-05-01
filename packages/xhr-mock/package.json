@@ -19,10 +19,7 @@
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
+  "files": ["lib", "dist"],
   "browser": {
     "./lib/proxy/index.js": "./lib/proxy/index.browser.js"
   },
@@ -33,18 +30,18 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
-    "@alexlur/rollup-plugin-typescript": "^1.0.4",
+    "rollup-typescript": "^1.1.2",
     "@types/jest": "^22.2.0",
     "@types/node": "^9.3.0",
     "@types/statuses": "^1.3.0",
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "jest": "^22.0.5",
-    "rollup": "^0.53.3",
-    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup": "^0.58.2",
+    "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.0.0",
     "ts-jest": "^22.0.1",
     "tslint": "^5.9.1",
-    "typescript": "2.7.2"
+    "typescript": "^2.8.3"
   },
   "scripts": {
     "clean": "rm -rf ./lib ./dist",

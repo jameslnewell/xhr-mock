@@ -1,4 +1,4 @@
-export * from './types';
+
 export { once } from './utils/once';
 export { delay } from './utils/delay';
 export { proxy } from './utils/proxy';

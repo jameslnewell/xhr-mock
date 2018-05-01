@@ -1,12 +1,12 @@
 {
-  "name": "@xhr-mock/vendor-tests",
+  "name": "@xhr-mock/tests",
   "private": true,
   "dependencies": {
     "@types/url-search-params": "^0.10.1",
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "core-js": "^2.5.3",
     "jquery": "^3.2.1",
-    "rxjs": "^5.5.6",
+    "rxjs": "^6.0.0",
     "superagent": "^3.8.2",
     "url-search-params": "^0.10.0",
     "xhr-mock": "^2.3.2"
@@ -14,16 +14,16 @@
   "devDependencies": {
     "@types/chai": "^4.1.0",
     "@types/jquery": "^3.2.17",
-    "@types/mocha": "^2.2.46",
+    "@types/mocha": "^5.2.0",
     "@types/superagent": "^3.5.6",
     "chai": "^4.1.2",
     "concurrently": "^3.5.1",
     "glob": "^7.1.2",
-    "testem": "^1.18.4",
-    "ts-loader": "^3.2.0",
+    "testem": "^2.4.0",
+    "ts-loader": "^4.2.0",
     "tslint": "^5.9.1",
-    "typescript": "2.7.2",
-    "webpack": "^3.10.0"
+    "typescript": "^2.8.3",
+    "webpack": "^4.6.0"
   },
   "scripts": {
     "clean": "rm -rf ./dist",

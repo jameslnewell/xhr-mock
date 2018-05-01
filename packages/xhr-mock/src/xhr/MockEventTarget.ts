@@ -1,6 +1,6 @@
-import MockEvent from './MockEvent';
+import {MockEvent} from './MockEvent';
 
-export default class MockEventTarget implements EventTarget {
+export class MockEventTarget implements EventTarget {
   private listeners?: {
     [type: string]: EventListenerOrEventListenerObject[];
   } = {};

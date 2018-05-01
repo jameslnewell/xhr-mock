@@ -1,7 +1,7 @@
-import {Request, Response, Context} from './types';
+import {MockRequest, MockResponse, MockContextWithSync} from './types';
 import {createHandler} from './createHandler';
 
-const req: Request = {
+const req: MockRequest = {
   version: '1.1',
   method: 'get',
   uri: '/foo/bar',
@@ -9,7 +9,7 @@ const req: Request = {
   body: undefined
 };
 
-const res: Response = {
+const res: MockResponse = {
   version: '1.1',
   status: 200,
   reason: 'OK',
@@ -17,7 +17,7 @@ const res: Response = {
   body: undefined
 };
 
-const ctx: Context = {
+const ctx: MockContextWithSync = {
   sync: false
 };
 
@@ -103,27 +103,15 @@ describe('createRouteHandler()', () => {
   });
 
   it('should match the uri', () => {
-    expect(
-      createHandler('get', '/foo/bar', alwaysReturnsResponseHandler)(req, ctx)
-    ).toEqual(res);
-    expect(
-      createHandler('get', '/foo/:bar', alwaysReturnsResponseHandler)(req, ctx)
-    ).toEqual(res);
-    expect(
-      createHandler('get', /bar/i, alwaysReturnsResponseHandler)(req, ctx)
-    ).toEqual(res);
+    expect(createHandler('get', '/foo/bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
+    expect(createHandler('get', '/foo/:bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
+    expect(createHandler('get', /bar/i, alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
   });
 
   it('should not match the uri', () => {
-    expect(
-      createHandler('get', '/foo/baz', alwaysReturnsResponseHandler)(req, ctx)
-    ).toBeUndefined();
-    expect(
-      createHandler('get', '/bar/:foo', alwaysReturnsResponseHandler)(req, ctx)
-    ).toBeUndefined();
-    expect(
-      createHandler('get', /abc/i, alwaysReturnsResponseHandler)(req, ctx)
-    ).toBeUndefined();
+    expect(createHandler('get', '/foo/baz', alwaysReturnsResponseHandler)(req, ctx)).toBeUndefined();
+    expect(createHandler('get', '/bar/:foo', alwaysReturnsResponseHandler)(req, ctx)).toBeUndefined();
+    expect(createHandler('get', /abc/i, alwaysReturnsResponseHandler)(req, ctx)).toBeUndefined();
   });
 
   it('should call callback', () => {

@@ -1,4 +1,4 @@
-import typescript from '@alexlur/rollup-plugin-typescript';
+import typescript from 'rollup-typescript';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 
