@@ -7,7 +7,7 @@ type RealXHRMock = {
   error?: Error;
   status: number;
   statusText: string;
-  responseText: string;
+  response: any;
   setRequestHeader: jest.Mock<void>;
   getAllResponseHeaders: jest.Mock<string>;
   open: jest.Mock<void>;
@@ -27,7 +27,7 @@ jest.mock('./XHRMock', () => {
       mock = {
         status: 200,
         statusText: '',
-        responseText: '',
+        response: null,
         setRequestHeader: jest.fn(),
         getAllResponseHeaders: jest.fn<string>().mockReturnValue(''),
         open: jest.fn(),
@@ -128,14 +128,34 @@ describe('proxy.browser', () => {
     );
   });
 
-  it('should set the body', async () => {
+  it('should set the body when .response is text', async () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    xhr.responseText = 'Hello World!';
+    xhr.response = 'Hello World!';
     await proxy(req, res);
 
     expect(res.body()).toEqual('Hello World!');
+  });
+
+  it('should set the body when response is null', async () => {
+    const req = new MockRequest();
+    const res = new MockResponse();
+
+    xhr.response = null;
+    await proxy(req, res);
+
+    expect(res.body()).toEqual(null);
+  });
+
+  it('should set the body when response is an array', async () => {
+    const req = new MockRequest();
+    const res = new MockResponse();
+
+    xhr.response = [];
+    await proxy(req, res);
+
+    expect(res.body()).toEqual([]);
   });
 
   it('should error', async () => {

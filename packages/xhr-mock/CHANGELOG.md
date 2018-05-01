@@ -1,5 +1,9 @@
 # Change log
 
+# 2.3.2
+
+* fix: proxy all response bodies, not just text ([#62](https://github.com/jameslnewell/xhr-mock/issues/62))
+
 # 2.3.1
 
 * fix: format the default error message better ([#57](https://github.com/jameslnewell/xhr-mock/issues/57#issuecomment-376489889))

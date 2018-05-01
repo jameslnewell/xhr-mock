@@ -29,7 +29,7 @@ export default function(
         .status(xhr.status)
         .reason(xhr.statusText)
         .headers(parseHeaders(xhr.getAllResponseHeaders()))
-        .body(xhr.responseText);
+        .body(xhr.response);
       resolve(res);
     };
 
