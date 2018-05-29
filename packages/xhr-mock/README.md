@@ -373,6 +373,32 @@ xhr2.open('GET', 'https://jsonplaceholder.typicode.com/users/1');
 xhr2.send();
 ```
 
+### Delaying requests
+
+Requests can be delayed using our handy `delay` utility.
+
+```js
+import mock, {delay} from 'xhr-mock';
+
+mock.setup();
+
+// delay the request for three seconds
+mock.post('/', delay({status: 201}, 3000));
+```
+
+### Once off requests
+
+Requests can be made on one off occasions using our handy `once` utility.
+
+```js
+import mock, {once} from 'xhr-mock';
+
+mock.setup();
+
+// the response will only be returned the first time a request is made
+mock.post('/', once({status: 201}));
+```
+
 ## License
 
 MIT Licensed. Copyright (c) James Newell 2014.
