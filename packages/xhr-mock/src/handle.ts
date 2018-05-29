@@ -2,14 +2,11 @@ import {MockFunction} from './types';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 import {MockError} from './MockError';
+import {isPromiseLike} from './isPromiseLike';
 
 const NO_RESPONSE_ERROR = new MockError(
   'No handler returned a response for the request.'
 );
-
-function isPromise(arg: any): arg is Promise<MockResponse | undefined> {
-  return arg && (arg as Promise<MockResponse | undefined>).then !== undefined;
-}
 
 export function sync(
   handlers: MockFunction[],
@@ -20,7 +17,7 @@ export function sync(
     const result = handlers[i](request, response);
 
     if (result) {
-      if (isPromise(result)) {
+      if (isPromiseLike(result)) {
         throw new MockError(
           'A handler returned a Promise<MockResponse> for a synchronous request.'
         );

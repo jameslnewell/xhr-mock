@@ -7,7 +7,7 @@ export interface MockURL {
   host?: string;
   port?: number;
   path?: string;
-  query?: {};
+  query?: {[name: string]: string};
   hash?: string;
   toString(): string;
 }

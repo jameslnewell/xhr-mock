@@ -1,5 +1,10 @@
 # Change log
 
+# 2.4.0
+
+* added `once` and `delay` utility functions.
+* changed the signature of `MockURL.query` from `{}` to `{[name: string]: string}`
+
 # 2.3.2
 
 * fix: proxy all response bodies, not just text ([#62](https://github.com/jameslnewell/xhr-mock/issues/62))

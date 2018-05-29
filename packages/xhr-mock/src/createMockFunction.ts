@@ -2,29 +2,7 @@ import {Mock, MockObject, MockFunction} from './types';
 import {formatURL} from './MockURL';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
-
-function createResponseFromObject(object: MockObject) {
-  const {status, reason, headers, body} = object;
-  const response = new MockResponse();
-
-  if (status) {
-    response.status(status);
-  }
-
-  if (reason) {
-    response.reason(reason);
-  }
-
-  if (headers) {
-    response.headers(headers);
-  }
-
-  if (body) {
-    response.body(body);
-  }
-
-  return response;
-}
+import {createResponseFromObject} from './createResponseFromObject';
 
 export default function(
   method: string,
