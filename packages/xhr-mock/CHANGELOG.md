@@ -7,6 +7,7 @@
 * breaking: route handlers will no longer receive the response, they should create the response
 * addition: router methods e.g. `.get('/app/:id')` will parse the the url uring `path-to-regex` and populate `Request.params` with the result
 * addition: improved error reporting
+* addition: browserproxy now supports synchronous requests
 
 ### Internal
 

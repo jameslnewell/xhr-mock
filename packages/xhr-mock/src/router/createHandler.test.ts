@@ -106,6 +106,7 @@ describe('createRouteHandler()', () => {
     expect(createHandler('get', '/foo/bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
     expect(createHandler('get', '/foo/:bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
     expect(createHandler('get', /bar/i, alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
+    expect(createHandler('get', 'http://example.com/foo/bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
   });
 
   it('should not match the uri', () => {

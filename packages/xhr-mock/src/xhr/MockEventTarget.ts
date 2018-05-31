@@ -7,7 +7,7 @@ export class MockEventTarget implements EventTarget {
 
   addEventListener(
     type: string,
-    listener?: EventListenerOrEventListenerObject,
+    listener: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions
   ): void {
     this.listeners = this.listeners || {};

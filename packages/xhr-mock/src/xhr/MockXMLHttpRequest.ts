@@ -45,8 +45,7 @@ function calculateProgress(req: MockRequest | MockResponse) {
 }
 
 // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
-export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
-  implements XMLHttpRequest {
+export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements XMLHttpRequest {
   static readonly UNSENT = ReadyState.UNSENT;
   static readonly OPENED = ReadyState.OPENED;
   static readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
@@ -100,7 +99,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   // @ts-ignore: wants a NodeJS.Timer because of @types/node
   private _timeoutTimer: number;
 
-  constructor(router: MockRouter) {
+  constructor(router: MockRouter = defaultRouter) {
     super();
     this.router = router;
   }
@@ -111,9 +110,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   set timeout(timeout: number) {
     if (timeout !== 0 && this.isSynchronous) {
-      throw new MockError(
-        'Timeouts cannot be set for synchronous requests made from a document.'
-      );
+      throw new MockError('Timeouts cannot be set for synchronous requests made from a document.');
     }
     this._timeout = timeout;
   }
@@ -400,9 +397,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     // if the synchronous flag is set, throw an exception exception
     if (this.isSynchronous) {
-      throw new MockError(
-        'An error occurred whilst sending a synchronous request.'
-      );
+      throw new MockError('An error occurred whilst sending a synchronous request.');
     }
 
     // fire an event named readystatechange
@@ -423,9 +418,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       this.upload.dispatchEvent(new MockProgressEvent(event, uploadProgress));
 
       // fire a progress event named loadend on the XMLHttpRequestUpload object with 0 and 0
-      this.upload.dispatchEvent(
-        new MockProgressEvent('loadend', uploadProgress)
-      );
+      this.upload.dispatchEvent(new MockProgressEvent('loadend', uploadProgress));
     }
 
     const downloadProgress = calculateProgress(this.res);
@@ -603,9 +596,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   send(body?: any): void {
     // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
-      throw new MockError(
-        'Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().'
-      );
+      throw new MockError('Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().');
     }
 
     // if the send() flag is set, throw an InvalidStateError exception
@@ -627,8 +618,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
         // Set mimeType to `text/html` if body is an HTML document, and to `application/xml` otherwise. Then append `;charset=UTF-8` to mimeType.
         // Set request body to body, serialized, converted to Unicode, and utf-8 encoded.
         encoding = 'UTF-8';
-        mimeType =
-          body instanceof XMLDocument ? 'application/xml' : 'text/html';
+        mimeType = body instanceof XMLDocument ? 'application/xml' : 'text/html';
       } else {
         // If body is a string, set encoding to `UTF-8`.
         // Set request body and mimeType to the result of extracting body.
@@ -656,9 +646,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       // chrome seems to forget the second case ^^^
       const contentType = this.req.headers['content-type'];
       if (!contentType) {
-        this.req.headers['content-type'] = encoding
-          ? `${mimeType}; charset=${encoding}`
-          : mimeType;
+        this.req.headers['content-type'] = encoding ? `${mimeType}; charset=${encoding}` : mimeType;
       }
 
       this.req.body = body;

@@ -53,15 +53,16 @@ export function createHandler(
         return undefined;
       }
     } else {
-      const parsedURI = parse(uri);
+      const parsedMatchURI = parse(uri);
+      const parsedRequestURI = parse(uri);
 
       // TODO: match the host
       // if (req.headers.host && req.headers.host !== parsedURI.host) {
       //   return undefined;
       // }
 
-      // match the URI
-      uriParams = getURIParams(req.uri, parsedURI.pathname);
+      // match the URI path
+      uriParams = getURIParams(parsedRequestURI.pathname, parsedMatchURI.pathname);
       if (!uriParams) {
         return undefined;
       }

@@ -16,26 +16,19 @@ export class MockEvent implements Event {
   readonly AT_TARGET: number;
   readonly BUBBLING_PHASE: number;
   readonly CAPTURING_PHASE: number;
+  readonly NONE: number;
 
   constructor(type: string, eventInitDict?: EventInit) {
     this.type = type || '';
     if (eventInitDict) {
-      const {
-        scoped = false,
-        bubbles = false,
-        cancelable = false
-      } = eventInitDict;
+      const {scoped = false, bubbles = false, cancelable = false} = eventInitDict;
       this.scoped = scoped;
       this.bubbles = bubbles;
       this.cancelable = cancelable;
     }
   }
 
-  initEvent(
-    eventTypeArg: string,
-    canBubbleArg: boolean,
-    cancelableArg: boolean
-  ): void {
+  initEvent(eventTypeArg: string, canBubbleArg: boolean, cancelableArg: boolean): void {
     throw new Error();
   }
 

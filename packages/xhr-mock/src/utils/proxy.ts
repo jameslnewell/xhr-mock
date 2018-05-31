@@ -1,51 +1,58 @@
+import * as url from 'url';
 import * as http from 'http';
 import * as https from 'https';
-import MockRequest from './MockRequest';
-import MockResponse from './MockResponse';
+import { MockError } from '../MockError';
+import { MockRequest, MockResponse, MockContextWithSync } from '../router';
 
-export function proxy(
-  req: MockRequest,
-  res: MockResponse
-): Promise<MockResponse> {
+export function proxy(req: MockRequest, ctx: MockContextWithSync): Promise<Partial<MockResponse>> {
+  if (ctx.sync) {
+    throw new MockError('Synchronus requests are not supported by proxy() in NodeJS.');
+  }
+
   return new Promise((resolve, reject) => {
+    const urlinfo = url.parse(req.uri);
+
     const options = {
-      method: req.method(),
-      protocol: `${req.url().protocol}:`,
-      hostname: req.url().host,
-      port: req.url().port,
-      auth: `${req.url().username} ${req.url().password}`,
-      path: req.url().path,
-      headers: req.headers()
+      method: req.method,
+      // protocol: `${urlinfo.protocol}:`,
+      hostname: urlinfo.host,
+      port: urlinfo.port,
+      auth: `${urlinfo.username} ${urlinfo.password}`,
+      path: urlinfo.path,
+      headers: req.headers
     };
 
-    const requestFn =
-      req.url().protocol === 'https' ? https.request : http.request;
+    const createRequest = urlinfo.protocol === 'https:' ? https.request : http.request;
 
-    const httpReq = requestFn(options, httpRes => {
-      res.status(httpRes.statusCode || 0).reason(httpRes.statusMessage || '');
-
-      Object.keys(httpRes.headers).forEach(name => {
-        const value = httpRes.headers[name];
-        res.header(name, Array.isArray(value) ? value[0] : value || '');
+    const proxyRequest = createRequest(options, proxyResponse => {
+      let body = '';
+      proxyResponse.setEncoding('utf8');
+      proxyResponse.on('data', chunk => {
+        body += chunk.toString();
       });
-
-      let resBody = '';
-      httpRes.setEncoding('utf8');
-      httpRes.on('data', chunk => {
-        resBody += chunk.toString();
-      });
-      httpRes.on('end', () => {
-        res.body(resBody);
-        resolve(res);
+      proxyResponse.on('end', () => {
+        console.log('END');
+        resolve({
+          status: proxyResponse.statusCode,
+          reason: proxyResponse.statusMessage,
+          headers: Object.keys(proxyResponse.headers).reduce(
+            (accum: { [name: string]: string | string[] | undefined }, name: string) => {
+              accum[name] = proxyResponse.headers[name];
+              return accum;
+            },
+            {}
+          ),
+          body: body
+        });
       });
     });
 
-    httpReq.on('error', reject);
+    proxyRequest.on('error', reject);
 
-    const reqBody = req.body();
+    const reqBody = req.body;
     if (reqBody !== undefined && reqBody !== null) {
-      httpReq.write(reqBody);
+      proxyRequest.write(reqBody);
     }
-    httpReq.end();
+    proxyRequest.end();
   });
 }

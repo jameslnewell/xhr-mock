@@ -1,8 +1,7 @@
 import * as http from 'http';
 import * as https from 'https';
-import MockRequest from './MockRequest';
-import MockResponse from './MockResponse';
-import proxy from './proxy';
+import {MockRequest, MockResponse, MockContextWithSync} from '../router';
+import {proxy} from '.';
 
 // declare module 'http' {
 //   export function __reset(): void;
@@ -52,18 +51,37 @@ describe('proxy', () => {
   //   https.__reset();
   // });
 
-  it('should call http.request() with the method, URL and headers', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
+  it('should throw when the request is synchronous', async () => {
+    expect(() =>
+      proxy(
+        {
+          version: '1.1',
+          method: 'put',
+          uri: 'https://httpbin.org/put',
+          headers: {},
+          body: null
+        },
+        {sync: true}
+      )
+    ).toThrow();
+  });
 
-    req
-      .method('PUT')
-      .url('http://httpbin.org/put')
-      .header('foo', 'bar')
-      .header('bar', 'foo');
-    await proxy(req, res);
+  it('should call create a HTTP request with the method, headers and body', async () => {
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'http://httpbin.org/put',
+        headers: {
+          foo: 'bar',
+          bar: 'foo'
+        },
+        body: null
+      },
+      {sync: false}
+    );
 
-    const body = res.body() || '';
+    const body = res.body || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
         url: 'http://httpbin.org/put',
@@ -75,83 +93,104 @@ describe('proxy', () => {
     );
   });
 
-  it('should call https.request() with the method, URL and headers', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
+  it('should create a HTTPS request with the method, headers and body', async () => {
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'https://httpbin.org/put',
+        headers: {
+          'Content-Length': '12'
+        },
+        body: 'Hello World!'
+      },
+      {sync: false}
+    );
 
-    req
-      .method('PUT')
-      .url('https://httpbin.org/put')
-      .header('foo', 'bar')
-      .header('bar', 'foo');
-    await proxy(req, res);
-
-    const body = res.body() || '';
+    const body = res.body || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
         url: 'https://httpbin.org/put',
         headers: expect.objectContaining({
-          Foo: 'bar',
-          Bar: 'foo'
-        })
-      })
-    );
-  });
-
-  it('should call send() with a body', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
-
-    req
-      .method('PUT')
-      .url('http://httpbin.org/put')
-      .header('Content-Length', '12')
-      .body('Hello World!');
-    await proxy(req, res);
-
-    const body = res.body() || '';
-    expect(JSON.parse(body)).toEqual(
-      expect.objectContaining({
-        url: 'http://httpbin.org/put',
+          'Content-Length': '12'
+        }),
         data: 'Hello World!'
       })
     );
   });
 
-  it('should call send() without a body', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
+  it('should create a request with a body', async () => {
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'https://httpbin.org/put',
+        headers: {
+          'content-length': '12'
+        },
+        body: 'Hello World!'
+      },
+      {sync: false}
+    );
 
-    req.method('PUT').url('http://httpbin.org/put');
-    await proxy(req, res);
-
-    const body = res.body() || '';
+    const body = res.body || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
-        url: 'http://httpbin.org/put',
+        url: 'https://httpbin.org/put',
+        data: 'Hello World!'
+      })
+    );
+  });
+
+  it('should create a request without a body', async () => {
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'https://httpbin.org/put',
+        headers: {},
+        body: null
+      },
+      {sync: false}
+    );
+
+    const body = res.body || '';
+    expect(JSON.parse(body)).toEqual(
+      expect.objectContaining({
+        url: 'https://httpbin.org/put',
         data: ''
       })
     );
   });
 
   it('should set the reason', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'https://httpbin.org/put',
+        headers: {},
+        body: null
+      },
+      {sync: false}
+    );
 
-    req.method('PUT').url('http://httpbin.org/put');
-    await proxy(req, res);
-
-    expect(res.reason()).toEqual('OK');
+    expect(res.reason).toEqual('OK');
   });
 
   it('should set the headers', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'https://httpbin.org/put',
+        headers: {},
+        body: null
+      },
+      {sync: false}
+    );
 
-    req.method('PUT').url('http://httpbin.org/put');
-    await proxy(req, res);
-
-    expect(res.headers()).toEqual(
+    expect(res.headers).toEqual(
       expect.objectContaining({
         'content-type': 'application/json',
         'content-length': expect.any(String)
@@ -160,24 +199,33 @@ describe('proxy', () => {
   });
 
   it('should set the body', async () => {
-    const req = new MockRequest();
-    const res = new MockResponse();
+    const res = await proxy(
+      {
+        version: '1.1',
+        method: 'put',
+        uri: 'https://httpbin.org/put',
+        headers: {},
+        body: null
+      },
+      {sync: false}
+    );
 
-    req.method('PUT').url('http://httpbin.org/put');
-    await proxy(req, res);
-
-    expect(res.body()).toBeDefined();
+    expect(res.body).toBeDefined();
   });
 
   it('should error', async () => {
     expect.assertions(1);
-    const req = new MockRequest();
-    const res = new MockResponse();
-
-    req.method('DELETE').url('invalid://blah');
-
     try {
-      await proxy(req, res);
+      const res = await proxy(
+        {
+          version: '1.1',
+          method: 'delete',
+          uri: 'invalid://blah',
+          headers: {},
+          body: null
+        },
+        {sync: false}
+      );
     } catch (error) {
       expect(error).not.toBeUndefined();
     }
