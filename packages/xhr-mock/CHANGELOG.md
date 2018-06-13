@@ -1,5 +1,9 @@
 # Change log
 
+# 2.4.1
+
+* fix: check for DOM specific classes before checking for an instance of them so that environments without them e.g. `mocha` without `jsdom` mostly works
+
 # 2.4.0
 
 * added `once` and `delay` utility functions.

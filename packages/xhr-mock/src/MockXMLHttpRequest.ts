@@ -17,7 +17,6 @@ const notImplementedError = new MockError(
 // implemented according to https://xhr.spec.whatwg.org/
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
-const USE_URL_SEARCH_PARAMS = typeof URLSearchParams !== 'undefined';
 
 export enum ReadyState {
   UNSENT = 0,
@@ -642,7 +641,11 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     let encoding;
     let mimeType;
     if (body !== null && body !== undefined) {
-      if (body instanceof Document) {
+      if (
+        typeof Document !== 'undefined' &&
+        typeof XMLDocument !== 'undefined' &&
+        body instanceof Document
+      ) {
         // Set encoding to `UTF-8`.
         // Set mimeType to `text/html` if body is an HTML document, and to `application/xml` otherwise. Then append `;charset=UTF-8` to mimeType.
         // Set request body to body, serialized, converted to Unicode, and utf-8 encoded.
@@ -654,11 +657,17 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
         // Set request body and mimeType to the result of extracting body.
         // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
 
-        if (body instanceof Blob) {
+        if (typeof Blob !== 'undefined' && body instanceof Blob) {
           mimeType = body.type;
-        } else if (body instanceof FormData) {
+        } else if (
+          typeof FormData !== 'undefined' &&
+          body instanceof FormData
+        ) {
           mimeType = 'multipart/form-data; boundary=----XHRMockFormBoundary';
-        } else if (USE_URL_SEARCH_PARAMS && body instanceof URLSearchParams) {
+        } else if (
+          typeof URLSearchParams !== 'undefined' &&
+          body instanceof URLSearchParams
+        ) {
           encoding = 'UTF-8';
           mimeType = 'application/x-www-form-urlencoded';
         } else if (typeof body === 'string') {
