@@ -1,21 +1,13 @@
 language: node_js
 node_js:
-  - "6"
   - "8"
+  - "10"
 
+# https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-the-Firefox-addon-in-headless-mode
+env:
+  - MOZ_HEADLESS=1
 addons:
-  apt:
-    packages:
-      - xvfb
-
-# so chrome works
-# sudo: false
-
-# https://docs.travis-ci.com/user/gui-and-headless-browsers/
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
+  firefox: latest
 
 script:
   - yarn
