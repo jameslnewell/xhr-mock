@@ -33,5 +33,5 @@
     "test:watch": "concurrently 'webpack --watch' testem",
     "ci": "yarn run clean && yarn run lint && yarn run check && yarn run test"
   },
-  "version": "2.3.2"
+  "version": "2.4.1-preview.1"
 }
