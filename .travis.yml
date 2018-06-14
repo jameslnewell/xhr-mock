@@ -6,7 +6,7 @@ node_js:
 # https://docs.travis-ci.com/user/gui-and-headless-browsers/#Using-the-Firefox-addon-in-headless-mode
 addons:
   chrome: stable
-  firefox: latest
+  # firefox: latest
 
 before_script:
   - "export DISPLAY=:99.0"
