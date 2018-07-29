@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="246px" height="61px" viewBox="30.5 123.5 246 61" enable-background="new 30.5 123.5 246 61" xml:space="preserve">
-	 <g transform="matrix(0.380748, 0, 0, 0.810206, 91.978867, 58.587025)">
-	 	<title>Layer 1</title>
-	 	<polyline stroke-linecap="round" id="svg_7" points="529.5,339.5 529.5,339.5 " fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="none"/>
-	 	<path id="svg_18" d="M 349.77 69.583 C 375.388 8.907 473.195 34.618 472.031 34.103 C 473.195 34.618 504.778 31.675 528.565 31.16 C 503.229 47.454 489.497 90.151 480.182 93.236 C 470.868 96.321 626.895 252.636 163.468 215.614" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#BBBBBB"/>
-	 	<path id="svg_20" d="m177.642854,125.357208" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="5" stroke="null" fill="#000000"/>
-	 	<path id="svg_23" d="m-108.5,24.5" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#444444"/>
-	 	<path id="svg_25" d="m-99.5,76.5" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#444444"/>
-	 	<path id="svg_28" d="m274.642854,167.357208" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#999999"/>
-	 	<path id="svg_29" d="M 351.525 62.998 C 359.146 -6.091 474.95 28.034 473.786 27.518 C 474.95 28.034 558.786 15.692 557.623 15.178 C 558.786 15.692 443.316 68.007 434 71.093 C 424.686 74.178 516.868 216.228 165.223 209.03" stroke-opacity="null" stroke-width="5" stroke="null" fill="#666666"/>
-	 	<path id="svg_30" d="M 168.459 208.242 L -108.5 279.127 L -71.905 298.96 L 187.586 218.893 L 182.598 207.873 L 168.459 208.242 Z" stroke-opacity="null" stroke-width="5" stroke="null" fill="#666666"/>
-	 	<line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_36" y2="258.963" x2="479.375" y1="210.406" x1="426.428" fill-opacity="null" stroke-width="6" fill="none" transform="matrix(0.999845, 0.007491, -0.041274, 0.999845, 9.756465, -3.356279)"/>
-	 	<ellipse ry="4.408" rx="9.149" id="svg_39" cy="41.496" cx="410.484" stroke-width="8" fill="#B8874D"/>
-	 	<line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_40" y2="250.111" x2="546.052" y1="255.987" x1="477.853" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none"/>
-	 	<line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_41" y2="261.651" x2="483.32" y1="267.459" x1="433.957" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none" transform="matrix(0.819544, -0.244112, 1.34507, 0.819544, -273.080947, 159.699501)"/>
-	 	<line stroke-linecap="null" stroke-linejoin="null" id="svg_42" y2="242.766" x2="410.541" y1="214.852" x1="402.998" fill-opacity="null" stroke-opacity="null" stroke-width="6" stroke="#666666" fill="none"/>
-	 	<line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_44" y2="244.318" x2="417.173" y1="248.255" x1="370.051" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none" transform="matrix(0.844628, -0.251584, 1.139196, 0.844628, -219.412378, 137.292462)"/>
-	 	<line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_45" y2="236.992" x2="452.515" y1="242.845" x1="413.858" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none" transform="matrix(0.941807, 0.143206, -0.789075, 0.941807, 214.522332, -48.07334)"/>
-	 	<path stroke="#000000" id="svg_46" d="M 283.817 167.832 C 322.948 180.804 409.711 132.62 428.782 136.622 C 447.852 140.623 286.568 252.218 237.571 268.355 C 188.575 284.492 244.686 154.861 283.817 167.832 Z" stroke-width="5" fill="#000000"/>
-	 </g>
-<text transform="matrix(1 0 0 1 71.5 177.5)" fill="#FFFFFF" font-family="'MyriadPro-Regular'" font-size="50">xhr-mock</text>
+<svg version="1.1" id="Layer_1" x="0px" y="0px" width="246px" height="61px" viewBox="30.5 123.5 246 61" enable-background="new 30.5 123.5 246 61" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(0.081589, 0, 0, 0.173616, 39.935879, 130.580322)">
+    <title>Logo</title>
+    <polyline stroke-linecap="round" id="svg_7" points="529.5,339.5 529.5,339.5 " fill-opacity="null" stroke-opacity="null" stroke-width="0" stroke="#000" fill="none"/>
+    <path id="svg_18" d="M 349.77 69.583 C 375.388 8.907 473.195 34.618 472.031 34.103 C 473.195 34.618 504.778 31.675 528.565 31.16 C 503.229 47.454 489.497 90.151 480.182 93.236 C 470.868 96.321 626.895 252.636 163.468 215.614" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#BBBBBB"/>
+    <path id="svg_20" d="m177.642854,125.357208" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="5" stroke="null" fill="#000000"/>
+    <path id="svg_23" d="m-108.5,24.5" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#444444"/>
+    <path id="svg_25" d="m-99.5,76.5" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#444444"/>
+    <path id="svg_28" d="m274.642854,167.357208" opacity="0.5" stroke-opacity="null" stroke-width="5" stroke="null" fill="#999999"/>
+    <path id="svg_29" d="M 351.525 62.998 C 359.146 -6.091 474.95 28.034 473.786 27.518 C 474.95 28.034 558.786 15.692 557.623 15.178 C 558.786 15.692 443.316 68.007 434 71.093 C 424.686 74.178 516.868 216.228 165.223 209.03" stroke-opacity="null" stroke-width="5" stroke="null" fill="#666666"/>
+    <path id="svg_30" d="M 168.459 208.242 L -108.5 279.127 L -71.905 298.96 L 187.586 218.893 L 182.598 207.873 L 168.459 208.242 Z" stroke-opacity="null" stroke-width="5" stroke="null" fill="#666666"/>
+    <line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_36" y2="258.963" x2="479.375" y1="210.406" x1="426.428" fill-opacity="null" stroke-width="6" fill="none" transform="matrix(0.999845, 0.007491, -0.041274, 0.999845, 9.756465, -3.356279)"/>
+    <ellipse ry="4.408" rx="9.149" id="svg_39" cy="41.496" cx="410.484" stroke-width="8" fill="#B8874D"/>
+    <line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_40" y2="250.111" x2="546.052" y1="255.987" x1="477.853" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none"/>
+    <line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_41" y2="261.651" x2="483.32" y1="267.459" x1="433.957" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none" transform="matrix(0.819544, -0.244112, 1.34507, 0.819544, -273.080947, 159.699501)"/>
+    <line stroke-linecap="null" stroke-linejoin="null" id="svg_42" y2="242.766" x2="410.541" y1="214.852" x1="402.998" fill-opacity="null" stroke-opacity="null" stroke-width="6" stroke="#666666" fill="none"/>
+    <line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_44" y2="244.318" x2="417.173" y1="248.255" x1="370.051" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none" transform="matrix(0.844628, -0.251584, 1.139196, 0.844628, -219.412378, 137.292462)"/>
+    <line stroke="#666666" stroke-linecap="null" stroke-linejoin="null" id="svg_45" y2="236.992" x2="452.515" y1="242.845" x1="413.858" fill-opacity="null" stroke-opacity="null" stroke-width="6" fill="none" transform="matrix(0.941807, 0.143206, -0.789075, 0.941807, 214.522332, -48.07334)"/>
+    <path stroke="#000000" id="svg_46" d="M 283.817 167.832 C 322.948 180.804 409.711 132.62 428.782 136.622 C 447.852 140.623 286.568 252.218 237.571 268.355 C 188.575 284.492 244.686 154.861 283.817 167.832 Z" stroke-width="5" fill="#000000"/>
+  </g>
+  <text style="fill: rgb(255, 255, 255); font-family: MyriadPro-Regular; font-size: 49px; white-space: pre;" x="84.493" y="176.282">xhr-mock</text>
 </svg>
