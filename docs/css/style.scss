@@ -1,0 +1,26 @@
+---
+layout: null
+sitemap: false
+---
+
+$brand-colour: #FF8B84;
+
+$nav-header-height: 70px;
+$nav-background-color: #FFF3F2;
+$nav-width: 210px;
+
+$space: 20px;
+
+$mobile-break: 700px;
+
+{% if site.baseurl %}
+	$base-url: {{ site.baseurl }};
+{% else %}
+	$base-url: '';
+{% endif %}
+
+@import "mixins";
+@import "main";
+@import "borland";
+@import "monaki";
+@import "cloudcannon";
