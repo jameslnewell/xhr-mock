@@ -7,20 +7,21 @@ parameters:
 content_markdown: |-
   The first piece of code ()./createUser.js) makes a new `XMLHttpRequest`, while the second (./createUser.test.js) tests it with the xhr-mock object, `mock.post`
 
+  <!--
+  // First off lets write some code that uses `XMLHttpRequest`
+  // we could have just as easily use Axios, jQuery, Superagent
+  // or another package here instead of using the native XMLHttpRequest object
+
   xhr.open opens a request to create a user
   xhr.setRequestHeader sets the value of the content in json
   xhr.send  
 
   In the second piece of code, we are testing what has been written, with a request for the user "john."
   If the request header's content type is in JSON, requesting the user "john", the response should be the data id: abc-123
-  Having set the value of out request header, the expected
+  Having set the value of out request header, the expected -->
 left_code_blocks:
   - code_block: |-
 
-
-      // First off lets write some code that uses `XMLHttpRequest`
-      // we could have just as easily use Axios, jQuery, Superagent
-      // or another package here instead of using the native XMLHttpRequest object
 
       export default function createUser(reqdata) {
         return new Promise((resolve, reject) => {
