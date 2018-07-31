@@ -1,12 +1,15 @@
 ---
 title: MockRequest
 position: 1.2
-type: 
+type:
 description:
 parameters:
   - name:
     content:
 content_markdown: |-
+
+  The following methods make requests to the mock server:
+
   | Command | Description |
   | --- | --- |
   | .method() : string | Get the request method. |

@@ -1,6 +1,6 @@
 ---
 title: MockResponse
-position: 1.4
+position: 1.3
 type:
 description:
 parameters:
@@ -9,6 +9,9 @@ parameters:
   - name:
     content:
 content_markdown: |-
+
+  The following methods get the responses to the mock server:
+
   | Command | Description |
   | --- | --- |
   | .status() : number | Get the response status. |

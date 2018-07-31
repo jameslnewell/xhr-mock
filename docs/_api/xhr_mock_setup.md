@@ -11,6 +11,7 @@ parameters:
 content_markdown: |-
   Utility for mocking `XMLHttpRequest`
 
+  The following objects are used to set up the mock server:
 
   | Command | Description |
   | --- | --- |

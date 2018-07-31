@@ -5,14 +5,24 @@ parameters:
   - name:
     content:
 content_markdown: |-
-  First off lets write some code that uses `XMLHttpRequest`...
+  The first piece of code ()./createUser.js) makes a new `XMLHttpRequest`, while the second (./createUser.test.js) tests it with the xhr-mock object, `mock.post`
 
+  xhr.open opens a request to create a user
+  xhr.setRequestHeader sets the value of the content in json
+  xhr.send  
+
+  In the second piece of code, we are testing what has been written, with a request for the user "john."
+  If the request header's content type is in JSON, requesting the user "john", the response should be the data id: abc-123
+  Having set the value of out request header, the expected
 left_code_blocks:
   - code_block: |-
+
+
+      // First off lets write some code that uses `XMLHttpRequest`
       // we could have just as easily use Axios, jQuery, Superagent
       // or another package here instead of using the native XMLHttpRequest object
 
-      export default function(data) {
+      export default function createUser(reqdata) {
         return new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.onreadystatechange = () => {
@@ -36,13 +46,13 @@ left_code_blocks:
           };
           xhr.open('post', '/api/user');
           xhr.setRequestHeader('Content-Type', 'application/json');
-          xhr.send(JSON.stringify({data: data}));
+          xhr.send(JSON.stringify({data: reqdata}));
         });
       }
     title: ./createUser.js
     language: javascript
   - code_block: |-
-      //Now lets test the code we've written...
+      // Now lets test the code we've written...
       import mock from 'xhr-mock';
       import createUser from './createUser';
 
@@ -56,12 +66,14 @@ left_code_blocks:
         it('should send the data as JSON', async () => {
           expect.assertions(2);
 
+
+          // set up: accept request for John, response abc-123
           mock.post('/api/user', (req, res) => {
             expect(req.header('Content-Type')).toEqual('application/json');
             expect(req.body()).toEqual('{"data":{"name":"John"}}');
             return res.status(201).body('{"data":{"id":"abc-123"}}');
           });
-
+            // request John
             await createUser({name: 'John'});
           });
 
