@@ -7,7 +7,7 @@ parameters:
 content_markdown: |-
   ##### With a Bundler
 
-  If you are using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) then install `xhr-mock` using `yarn` or `npm`:
+  If you are using a bundler like [Webpack](https://www.npmjs.com/package/webpack) or [Browserify](https://www.npmjs.com/package/browserify) install `xhr-mock` using `yarn` or `npm`:
 
   ```bash
   yarn add --dev xhr-mock
@@ -28,7 +28,7 @@ content_markdown: |-
   ```
 
 
-  Start using the global, `XHRMock`, in your scripts!  
+  You can now start using the global, `XHRMock`, in your scripts!  
 
 left_code_blocks:
   - code_block:

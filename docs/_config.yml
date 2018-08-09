@@ -22,9 +22,6 @@ collections:
   howto:
     title: HowTo
     position: 3
-  license:
-    title: License
-    position: 4
 plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
@@ -52,11 +49,6 @@ defaults:
   -
     scope:
       type: "howto"
-    values:
-      _hide_content: true
-  -
-    scope:
-      type: "licenses"
     values:
       _hide_content: true
 
