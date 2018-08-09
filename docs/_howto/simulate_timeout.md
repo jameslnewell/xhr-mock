@@ -8,7 +8,7 @@ parameters:
   - name:
     content:
 content_markdown: |-
-  Return a `Promise` that never resolves or rejects.
+  Returns a `Promise` that never resolves or rejects.
 
   A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time anyway.
   {: .info }
@@ -28,5 +28,5 @@ left_code_blocks:
         xhr.send();
     title: Simulate Timeout
     language: javascript  
-    
+
 ---

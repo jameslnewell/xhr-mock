@@ -28,7 +28,7 @@ content_markdown: |-
   ```
 
 
-  Now you can start using the global, `XHRMock`, in your scripts.    
+  Start using the global, `XHRMock`, in your scripts!  
 
 left_code_blocks:
   - code_block:

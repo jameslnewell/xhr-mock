@@ -9,7 +9,7 @@ parameters:
   - name:
     content:
 content_markdown: |-
-  Set the `Content-Length` header and send a body. `xhr-mock` will emit `ProgressEvent`s.
+  Sets the `Content-Length` header and sends a body. `xhr-mock` will emit `ProgressEvent`s.
 
 left_code_blocks:
   - code_block: |-
