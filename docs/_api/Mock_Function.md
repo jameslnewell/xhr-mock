@@ -7,7 +7,7 @@ parameters:
 content_markdown: |-
   #### MockFunction
     * __description:__
-      * function object that is being used by XHRMock object for processing requests
+      * function object used by XHRMock object for processing requests
     * __parameters__:
       * req: MockRequest object
       * res: MockResponse object
