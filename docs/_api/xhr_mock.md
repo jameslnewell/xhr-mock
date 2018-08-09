@@ -2,14 +2,15 @@
 title: XHRMock
 position: 1.1
 type:
-description: Utility for mocking XMLHttpRequest
+description:
 parameters:
   - name:
     content:
   - name:
     content:
 content_markdown: |-
-  The following methods are used to mock the XMLHttpRequest server:   <!--include parameters, description, return like in MOCKXML-->
+  <!-- Utility for mocking XMLHttpRequest -->
+  The following methods are used to mock the `XMLHttpRequest` server:  
 
   ##### .setup()
     * __description:__

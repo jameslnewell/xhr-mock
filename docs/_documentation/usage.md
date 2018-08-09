@@ -18,14 +18,14 @@ content_markdown: |-
 
   (Note: we could have just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object)
 
-    + `xhr.open` opens the request to create a new user.
-    + `xhr.setRequestHeader` sets the RequestHeader to be returned in JSON.
+    + `xhr.open` opens the request.
+    + `xhr.setRequestHeader` sets the RequestHeader in JSON.
     + `xhr.send` sends the data request.
 
 
-  The second code, `./createUser.test.js`, shows unit tests using `xhr-mock` that replaces `XMLHttpRequest` with `MockXMLHttpRequest`.
+  The second code, `./createUser.test.js`, shows unit tests using `xhr-mock` which replaces `XMLHttpRequest` with `MockXMLHttpRequest`.
 
-  `mock.post` requests the mock user, expecting the RequestHeader to equal JSON, expecting the requested data to equal "John", and if these are both true, returns the id "abc-123"
+  `mock.post` requests the user. It expects RequestHeader in JSON and the requested data to equal "John". If these are both true, the id "abc-123" is retuned.
 
 left_code_blocks:
   - code_block: |-

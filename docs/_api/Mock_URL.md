@@ -8,30 +8,30 @@ content_markdown: |-
   #### MockUrl
 
   ##### .protocol
-    * property .protocol is a string and not required.
+    * property .protocol is a **string** and not required.
 
   ##### .username
-    * property .username is a string and not required.
+    * property .username is a **string** and not required.
 
   ##### .password
-    * property .password is a string and not required.
+    * property .password is a **string** and not required.
 
   ##### .host
-    * property .host is a string and not required.
+    * property .host is a **string** and not required.
 
   ##### .path
-    * property .path is a string and not required.
+    * property .path is a **string** and not required.
 
   ##### .port
-    * property .port is a number and is not required.
+    * property .port is a **number** and is not required.
 
   ##### .query
     * {[name: string]: string};
 
   ##### .hash
-    * property .hash is a string and is not required.
+    * property .hash is a **string** and is not required.
 
   ##### .toString()
-    * method .toString is a string and is not required.
+    * method .toString is a **string** and is not required.
 
 ---

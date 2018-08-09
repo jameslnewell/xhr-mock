@@ -2,12 +2,14 @@
 title: MockXMLHttpRequest
 position: 1.2
 type:
-description: Replaces `XMLHttpRequest` object.
+description:
 parameters:
   - name:
     content:
 content_markdown: |-
-  Refer to `xhr-mock.setup()` and `xhr-mock.teardown()` in the `xhr-mock` table.
+  Replaces `XMLHttpRequest` object.
+
+  Refer to `xhr-mock.setup()` and `xhr-mock.teardown()` in the XHRMock section. 
 
   #### MockRequest
   The following methods make requests to the mock server:
