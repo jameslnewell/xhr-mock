@@ -24,13 +24,13 @@ content_markdown: |-
 
   <!--Registers mock as a factory function by passing it as a parameter to the .post function. When XHRMock receives POST request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.-->
 
-  + `mock.setup` replaces the real XHR object with the mock XHR object before each test.
-  + `mock.post` registers the url to the request handler. (?POST method)
+  + `mock.setup` replaces the real XHR object with the mock XHR object (`xhr-mock`) before each test.
+  + `mock.post` registers the url to the request handler using the `POST` method
   + `createUser` method is called passing the parameter "John"
-  + `XHRMock` processes the request to the url (?POST method)
+  + `XHRMock` processes the request to the url using the `POST` method
     * If the request header is in JSON
     * If the request data is equal to "John"
-  + the response `id: "abc-123"` is returned.
+  + the response id: "abc-123" is returned.
 
   <!-- If the RequestHeader in JSON and the requested data to equal "John". If these are both true, the id "abc-123" is retuned. -->
 
