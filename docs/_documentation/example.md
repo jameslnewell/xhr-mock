@@ -8,24 +8,31 @@ content_markdown: |-
 
   <!-- Study the following example codes:
   The first is a piece of code that uses `XMLHttpRequest`.
-  Note: we could have just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object)
   The second piece of code tests the first using xhr-mock. -->
-
-
-  Study the following example codes:
 
   `./createUser.js` demonstrates a use case of `XMLHttpRequest`.
 
-  (Note: we could have just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object)
+   We could have just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object)
+   {: .info }
 
     + `xhr.open` opens the request.
     + `xhr.setRequestHeader` sets the RequestHeader in JSON.
     + `xhr.send` sends the data request.
 
 
-  The second code, `./createUser.test.js`, shows unit tests using `xhr-mock` which replaces `XMLHttpRequest` with `MockXMLHttpRequest`.
+  `./createUser.test.js`, shows unit tests using `xhr-mock` which replaces `XMLHttpRequest` with `MockXMLHttpRequest`.
 
-  `mock.post` requests the user. It expects RequestHeader in JSON and the requested data to equal "John". If these are both true, the id "abc-123" is retuned.
+  <!--Registers mock as a factory function by passing it as a parameter to the .post function. When XHRMock receives POST request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.-->
+
+  + `mock.setup` replaces the real XHR object with the mock XHR object before each test.
+  + `mock.post` registers the url to the request handler. (?POST method)
+  + `createUser` method is called passing the parameter "John"
+  + `XHRMock` processes the request to the url (?POST method)
+    * If the request header is in JSON
+    * If the request data is equal to "John"
+  + the response `id: "abc-123"` is returned.
+
+  <!-- If the RequestHeader in JSON and the requested data to equal "John". If these are both true, the id "abc-123" is retuned. -->
 
 left_code_blocks:
   - code_block: |-

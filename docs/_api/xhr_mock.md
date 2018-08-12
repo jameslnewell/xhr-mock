@@ -10,7 +10,7 @@ parameters:
     content:
 content_markdown: |-
   <!-- Utility for mocking XMLHttpRequest -->
-  The following methods are used to mock the `XMLHttpRequest` server:  
+  Methods used to mock the `XMLHttpRequest` object:  
 
   ##### .setup()
     * __description:__
