@@ -14,7 +14,7 @@ content_markdown: |-
     * [jQuery](https://www.npmjs.com/package/jquery)
     * [Superagent](https://www.npmjs.com/package/superagent)
 
-    * May also work with other libraries built on `XMLHttpRequest`.
+  May also work with other libraries built on `XMLHttpRequest`.
 
   Standard compliant ([http://xhr.spec.whatwg.org/](http://xhr.spec.whatwg.org/)).
 

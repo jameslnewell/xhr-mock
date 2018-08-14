@@ -32,6 +32,6 @@ content_markdown: |-
     * property .hash is a **string** and is not required.
 
   ##### .toString()
-    * method .toString is a **string** and is not required.
+    * method .toString formats and returns the url as a string 
 
 ---

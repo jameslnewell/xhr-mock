@@ -9,16 +9,15 @@ parameters:
 content_markdown: |-
   Replaces `XMLHttpRequest` object.
 
-  Refer to `xhr-mock.setup()` and `xhr-mock.teardown()` in the XHRMock section. 
+  Refer to `xhr-mock.setup()` and `xhr-mock.teardown()` in the XHRMock section.
 
   #### MockRequest
-  The following methods make requests to the mock server:
 
   ##### .method() : *requestMethod*
     * __description:__
       * Gets the request method.
     * __return:__
-      * method: returns method as a string in the form of `DELETE`, `GET`, `HEAD`, `OPTIONS`, `POST`, or `PUT`.  
+      * method: returns method as a string in one of the following: `DELETE`, `GET`, `HEAD`, `OPTIONS`, `POST`, or `PUT`.  
 
 
   ##### .url() : *MockURL*
@@ -70,8 +69,7 @@ content_markdown: |-
       * body: string  
 
   #### MockResponse
-  The following methods get the responses to the mock server:
-
+  
   ##### .status() : *value*
     * __description:__
       * Gets the response status.

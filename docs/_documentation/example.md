@@ -12,12 +12,12 @@ content_markdown: |-
 
   `./createUser.js` demonstrates a use case of `XMLHttpRequest`.
 
-   We could have just as easily use Axios, jQuery, Superagent or another package here instead of using the native XMLHttpRequest object)
+   Axios, jQuery, Superagent or another package can also be used instead of the native XMLHttpRequest object.
    {: .info }
 
-    + `xhr.open` opens the request.
-    + `xhr.setRequestHeader` sets the RequestHeader in JSON.
-    + `xhr.send` sends the data request.
+    + `xhr.open` initializes the request to the url.
+    + `xhr.setRequestHeader` indicates the request body will be in JSON.
+    + `xhr.send` sends the request body.
 
 
   `./createUser.test.js`, shows unit tests using `xhr-mock` which replaces `XMLHttpRequest` with `MockXMLHttpRequest`.
@@ -25,14 +25,13 @@ content_markdown: |-
   <!--Registers mock as a factory function by passing it as a parameter to the .post function. When XHRMock receives POST request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.-->
 
   + `mock.setup` replaces the real XHR object with the mock XHR object (`xhr-mock`) before each test.
-  + `mock.post` registers the url to the request handler using the `POST` method
+  + `mock.post` registers the url and `POST` method to the request handler  
   + `createUser` method is called passing the parameter "John"
-  + `XHRMock` processes the request to the url using the `POST` method
-    * If the request header is in JSON
+  + `XHRMock` processes the request to the url
+    * If the value of the request header is in "json"
     * If the request data is equal to "John"
-  + the response id: "abc-123" is returned.
-
-  <!-- If the RequestHeader in JSON and the requested data to equal "John". If these are both true, the id "abc-123" is retuned. -->
+  + the response `"id": "abc-123"` is returned.
+  + `mock.teardown` clears the mock XHR object, and reverts back to the real XHR object after each test. 
 
 left_code_blocks:
   - code_block: |-
