@@ -29,7 +29,7 @@ content_markdown: |-
       * Registers mock as a factory function by passing it as a parameter
         to the .get function. When XHRMock receives GET request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.
     * __parameters__:
-      * the url is passed into the function as either a string or in `RegExp` object.
+      * the url is passed into the function as either a string or a `RegExp` object.
       * mock is a factory function, `MockFunction`, passed into the .get function as a parameter.
 
   ##### .post( *url* \| *regex* , *mock* )
@@ -37,7 +37,7 @@ content_markdown: |-
       * Registers mock as a factory function by passing it as a parameter
       to the .post function. When XHRMock receives POST request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.
     * __parameters__:
-      * the url is passed into the function as either a string or in regex as an object.
+      * the url is passed into the function as either a string or a `RegExp` object.
       * mock is a factory function, `MockFunction`, passed into the .post function as a parameter.
 
   ##### .patch( *url* \| *regex* , *mock* )

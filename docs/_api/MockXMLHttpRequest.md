@@ -7,9 +7,9 @@ parameters:
   - name:
     content:
 content_markdown: |-
-  Replaces `XMLHttpRequest` object.
+  MockXMLHttpRequest replaces XMLHttpRequest object.
 
-  Refer to `xhr-mock.setup()` and `xhr-mock.teardown()` in the XHRMock section.
+  For `xhr-mock.setup()` and `xhr-mock.teardown()` refer to XHRMock.
 
   #### MockRequest
 
@@ -69,7 +69,7 @@ content_markdown: |-
       * body: string  
 
   #### MockResponse
-  
+
   ##### .status() : *value*
     * __description:__
       * Gets the response status.

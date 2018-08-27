@@ -12,7 +12,7 @@ left_code_blocks:
 
       mock.setup();
 
-      // delay the request for three seconds
+      // delays the request for three seconds.
       mock.post('/', delay({status: 201}, 3000));
     title: Delay Request
     language: javascript

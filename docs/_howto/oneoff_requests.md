@@ -13,7 +13,7 @@ left_code_blocks:
 
       mock.setup();
 
-      // the response will only be returned the first time a request is made
+      // the response will only be returned the first time a request is made.
       mock.post('/', once({status: 201}));
     title: One-off Request
     language: javascript

@@ -5,7 +5,7 @@ parameters:
   - name:
     content:
 content_markdown: |-
-  This is a utility for mocking `XMLHttpRequest`.
+  This is a utility for mocking XMLHttpRequest.
   It's useful for testing, or prototyping while your backend is still being built.
 
   It Works in NodeJS and in the browser, and is compatible with:
@@ -14,13 +14,11 @@ content_markdown: |-
     * [jQuery](https://www.npmjs.com/package/jquery)
     * [Superagent](https://www.npmjs.com/package/superagent)
 
-  May also work with other libraries built on `XMLHttpRequest`.
+  It may also work with other libraries built on XMLHttpRequest.
 
   Standard compliant ([http://xhr.spec.whatwg.org/](http://xhr.spec.whatwg.org/)).
 
-  [XHR-Mock GitHub Page](https://github.com/jameslnewell/xhr-mock/tree/master/packages/xhr-mock)
-
-  Copyright (c) 2014 James Newell
+  For more information, go to the [XHR-Mock GitHub Page](https://github.com/jameslnewell/xhr-mock/tree/master/packages/xhr-mock)
 
 left_code_blocks:
   - code_block:

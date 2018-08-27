@@ -10,7 +10,7 @@ parameters:
 content_markdown: |-
   Returns a `Promise` that never resolves or rejects.
 
-  A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time anyway.
+  A number of major libraries don't use the `timeout` event and use `setTimeout()` instead. Therefore, in order to mock timeouts in major libraries, we have to wait for the specified amount of time.
   {: .info }
 
 left_code_blocks:
