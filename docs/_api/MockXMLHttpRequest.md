@@ -25,7 +25,7 @@ content_markdown: |-
     * __description:__
       * Gets the request MockURL object.
     * __return:__
-      * MockURL object
+      * MockURL object.
 
   ##### .header( *name* , *value* )
     * __description:__

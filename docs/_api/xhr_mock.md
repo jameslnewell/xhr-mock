@@ -45,7 +45,7 @@ content_markdown: |-
       * Registers mock as a factory function by passing it as a parameter
         to the .patch function. When XHRMock receives PATCH request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.
     * __parameters__:
-      * the url is passed into the function as either a string or in regex as an object.
+      * the url is passed into the function as either a string or a `RegExp` object.
       * mock is a factory function, `MockFunction`, passed into the .patch function as a parameter.
 
   ##### .delete( *url* \| *regex* , *mock* )
@@ -53,7 +53,7 @@ content_markdown: |-
       * Registers mock as a factory function by passing it as a parameter
       to the .delete function. When XHRMock receives DELETE request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.
     * __parameters__:
-      * the url is passed into the function as either a string or in regex as an object.
+      * the url is passed into the function as either a string or a `RegExp` object.
       * mock is a factory function, `MockFunction`, passed into the .delete function as a parameter.
 
   ##### .use( *method* , *url* \| *regex* , *mock* )
@@ -62,7 +62,7 @@ content_markdown: |-
       to the .use function. When XHRMock receives USE request, it then uses the registered mock function to process the request. If the request is as expected, the mock returns a response. For greater detail, look at the source code.
     * __parameters__:
       * the method is passed as a string.
-      * the url is passed into the function as either a string or in regex as an object.
+      * the url is passed into the function as either a string or a `RegExp` object.
       * mock is a factory function, `MockFunction`, passed into the .use function as a parameter.
 
   ##### .use( *mock* )

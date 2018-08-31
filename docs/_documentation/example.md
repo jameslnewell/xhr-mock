@@ -6,10 +6,6 @@ parameters:
     content:
 content_markdown: |-
 
-  <!-- Study the following example codes:
-  The first is a piece of code that uses [XMLHttpRequest]().
-  The second piece of code tests the first using xhr-mock. -->
-
   `./createUser.js` demonstrates a use case of [XMLHttpRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest).
 
    Axios, jQuery, Superagent or another package can also be used instead of the native XMLHttpRequest object.
