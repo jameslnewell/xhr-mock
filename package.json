@@ -17,6 +17,12 @@
     "ci": "lerna run ci"
   },
   "lint-staged": {
-    "*.{js,json,ts,md}": ["prettier --write", "git add"]
+    "*.{js,json,ts,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "devDependencies": {
+    "typedoc": "^0.12.0"
   }
 }
