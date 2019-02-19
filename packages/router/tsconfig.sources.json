@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "./lib",
+    "target": "esnext"
+  },
+  "include": ["typings/**/*.d.ts", "src/**/*.ts"],
+  "exclude": ["src/**/*.test.*"]
+}

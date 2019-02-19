@@ -1,0 +1,60 @@
+{
+  "name": "xhr-mock",
+  "version": "3.0.0-preview.3",
+  "description": "Utility for mocking XMLHttpRequest.",
+  "keywords": [
+    "mock",
+    "xhr",
+    "test",
+    "fake",
+    "request",
+    "ajax",
+    "browser",
+    "xmlhttprequest",
+    "jquery",
+    "superagent",
+    "axios",
+    "rxjs"
+  ],
+  "repository": "jameslnewell/xhr-mock",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "browser": {
+    "./lib/utils/proxy.js": "./lib/utils/proxy.browser.js"
+  },
+  "dependencies": {
+    "@types/statuses": "^1.5.0",
+    "global": "^4.3.2",
+    "path-to-regexp": "^3.0.0",
+    "statuses": "^1.5.0",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.6",
+    "jest": "^24.1.0",
+    "rollup": "^1.2.2",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "rollup-typescript": "^1.2.0",
+    "ts-jest": "^24.0.0",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
+  },
+  "scripts": {
+    "clean": "rm -rf ./lib ./dist",
+    "check:linting:sources": "tslint --config tslint.sources.json --project tsconfig.sources.json",
+    "check:linting:tests": "tslint --config tslint.tests.json --project tsconfig.tests.json",
+    "check:typing:sources": "tsc --noEmit --project tsconfig.sources.json",
+    "check:typing:tests": "tsc --noEmit --project tsconfig.tests.json",
+    "check": "yarn run check:linting:sources && yarn run check:linting:tests && yarn run check:typing:sources && yarn run check:typing:tests",
+    "build:cjs": "tsc --pretty --declaration",
+    "build:umd": "rollup --config",
+    "build": "yarn run build:cjs && yarn run build:umd",
+    "test": "jest"
+  },
+  "license": "MIT"
+}
