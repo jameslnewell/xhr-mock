@@ -47,8 +47,11 @@ describe('xhr-mock', () => {
     it('when the request errored', () => {
       expect.assertions(1);
 
+      mock.error(() => {
+        /* do nothing */
+      });
       mock.get('/', () => {
-        throw new Error();
+        throw new Error('😵');
       });
 
       const xhr = new XMLHttpRequest();
@@ -271,6 +274,9 @@ describe('xhr-mock', () => {
     });
 
     it('when the request errored', () => {
+      mock.error(() => {
+        /* do nothing */
+      });
       mock.get('/', () => Promise.reject(new Error('😵')));
 
       const xhr = new XMLHttpRequest();

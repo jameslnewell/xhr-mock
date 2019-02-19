@@ -9,7 +9,7 @@
     "rxjs": "^6.0.0",
     "superagent": "^3.8.2",
     "url-search-params": "^0.10.0",
-    "xhr-mock": "^2.3.2"
+    "xhr-mock": "^2.4.1"
   },
   "devDependencies": {
     "@types/chai": "^4.1.0",
@@ -33,5 +33,5 @@
     "test:watch": "concurrently 'webpack --watch' testem",
     "ci": "yarn run clean && yarn run lint && yarn run check && yarn run test"
   },
-  "version": "2.3.2"
+  "version": "2.4.1"
 }

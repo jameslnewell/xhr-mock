@@ -42,7 +42,10 @@ describe('how to', () => {
   });
 
   it('should simulate an error', async () => {
-    mock.get('/', () => Promise.reject(new Error()));
+    mock.error(() => {
+      /* do nothing */
+    });
+    mock.get('/', () => Promise.reject(new Error('😵')));
 
     const xhr = new XMLHttpRequest();
     xhr.onerror = event => console.log('error');
