@@ -1,28 +1,41 @@
 {
   "name": "xhr-mock-monorepo",
   "private": true,
-  "dependencies": {
-    "husky": "^0.14.3",
-    "lerna": "^2.11.0",
-    "lint-staged": "^7.0.5",
-    "prettier": "^1.9.2",
-    "tslint": "^5.9.1",
-    "tslint-microsoft-contrib": "^5.0.3",
-    "typescript": "^2.8.1"
-  },
+  "version": "1.0.0",
   "workspaces": {
-    "packages": ["packages/*"],
-    "nohoist": ["**/@types/**"]
+    "packages": [
+      "xhr-mock",
+      "examples",
+      "tests",
+      "website"
+    ],
+    "nohoist": [
+      "**/@types/**"
+    ]
+  },
+  "dependencies": {
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.4",
+    "prettier": "^1.16.4",
+    "tslint": "^5.12.1",
+    "tslint-microsoft-contrib": "^6.0.0",
+    "typescript": "^3.3.3"
   },
   "scripts": {
-    "clean": "lerna run clean",
-    "build": "lerna run build",
-    "test": "lerna run test",
-    "precommit": "lint-staged",
-    "publish": "yarn run ci && lerna publish",
-    "ci": "lerna run ci"
+    "clean": "yarn workspaces run clean",
+    "build": "yarn workspaces run build",
+    "test": "yarn workspaces run test",
+    "publish": "yarn run publish"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
-    "*.{json,js,ts,md}": ["prettier --write", "git add"]
+    "*.{json,js,ts,tsx,md}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
