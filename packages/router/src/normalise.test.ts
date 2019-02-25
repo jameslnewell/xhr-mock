@@ -2,50 +2,57 @@ import {normaliseRequest, normaliseResponse} from './normalise';
 
 describe('normaliseRequest()', () => {
   it('should set the default version', () => {
-    const req = {};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {};
+    expect(normaliseRequest(request)).toMatchObject({
       version: '1.1'
     });
   });
 
   it('should set the default method', () => {
-    const req = {};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {};
+    expect(normaliseRequest(request)).toMatchObject({
       method: 'GET'
     });
   });
 
   it('should set the default uri', () => {
-    const req = {};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {};
+    expect(normaliseRequest(request)).toMatchObject({
       uri: '/'
     });
   });
 
+  it('should set the default parameters', () => {
+    const request = {};
+    expect(normaliseRequest(request)).toMatchObject({
+      params: {}
+    });
+  });
+
   it('should set the default headers', () => {
-    const req = {};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {};
+    expect(normaliseRequest(request)).toMatchObject({
       headers: {}
     });
   });
 
   it('should set the default body', () => {
-    const req = {};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {};
+    expect(normaliseRequest(request)).toMatchObject({
       body: undefined
     });
   });
 
   it('should uppercase the method', () => {
-    const req = {method: 'post'};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {method: 'post'};
+    expect(normaliseRequest(request)).toMatchObject({
       method: 'POST'
     });
   });
 
   it('should lowercase the headers', () => {
-    const req = {headers: {'Content-Type': 'application/json'}};
-    expect(normaliseRequest(req)).toMatchObject({
+    const request = {headers: {'Content-Type': 'application/json'}};
+    expect(normaliseRequest(request)).toMatchObject({
       headers: {'content-type': 'application/json'}
     });
   });

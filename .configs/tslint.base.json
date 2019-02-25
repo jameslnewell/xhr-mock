@@ -1,0 +1,10 @@
+{
+  "extends": ["@jameslnewell/tslint-config"],
+  "rules": {
+    // stupid
+    "member-ordering": false,
+
+    // nitpicky
+    "comment-format": false
+  }
+}

@@ -1,65 +1,53 @@
 import {convertResponseToString} from './convertResponseToString';
 
+const minimalResponse = {
+  version: '1.1',
+  status: 200,
+  reason: 'OK',
+  headers: {},
+  body: undefined
+};
+
 describe('convertResponseToString()', () => {
   it('should have no headers and no body', () => {
-    const res = {
-      version: '1.1',
-      status: 200,
-      reason: 'OK',
-      headers: {},
-      body: undefined
+    const response = {
+      ...minimalResponse
     };
-    const out = `HTTP/1.1 200 OK
-
-`;
-    expect(convertResponseToString(res)).toEqual(out);
+    const expected = `HTTP/1.1 200 OK\n\n`;
+    expect(convertResponseToString(response)).toEqual(expected);
   });
 
   it('should have headers', () => {
-    const res = {
-      version: '1.1',
-      status: 200,
-      reason: 'OK',
+    const response = {
+      ...minimalResponse,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
-      },
-      body: undefined
+      }
     };
-    const out = `HTTP/1.1 200 OK
-Content-Type: application/json; charset=UTF-8
-
-`;
-    expect(convertResponseToString(res)).toEqual(out);
+    const expected = `HTTP/1.1 200 OK\nContent-Type: application/json; charset=UTF-8\n\n`;
+    expect(convertResponseToString(response)).toEqual(expected);
   });
 
   it('should have a body', () => {
-    const res = {
-      version: '1.1',
-      status: 200,
-      reason: 'OK',
-      headers: {},
+    const response = {
+      ...minimalResponse,
       body: '<html></html>'
     };
-    const out = `HTTP/1.1 200 OK
+    const expected = `HTTP/1.1 200 OK
 
 <html></html>`;
-    expect(convertResponseToString(res)).toEqual(out);
+    expect(convertResponseToString(response)).toEqual(expected);
   });
 
   it('should have headers and a body', () => {
-    const res = {
-      version: '1.1',
-      status: 200,
-      reason: 'OK',
+    const response = {
+      ...minimalResponse,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
       body: '<html></html>'
     };
-    const out = `HTTP/1.1 200 OK
-Content-Type: application/json; charset=UTF-8
-
-<html></html>`;
-    expect(convertResponseToString(res)).toEqual(out);
+    const expected = `HTTP/1.1 200 OK\nContent-Type: application/json; charset=UTF-8\n\n<html></html>`;
+    expect(convertResponseToString(response)).toEqual(expected);
   });
 });

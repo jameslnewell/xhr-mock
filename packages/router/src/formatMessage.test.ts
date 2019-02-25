@@ -2,20 +2,21 @@ import {formatMessage} from './formatMessage';
 
 describe('formatMessage()', () => {
   it('should contain the request string', () => {
-    const req = {
+    const request = {
       version: '1.1',
       method: 'GET',
       uri: '/foo/bar',
+      params: {},
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: new Blob()
+      body: ''
     };
     const err = new Error('Uh oh!');
 
     const formatted = formatMessage('None of the registered handlers returned a response', {
-      req,
-      err
+      request,
+      error: err
     });
 
     expect(formatted).toContain('GET /foo/bar HTTP/1.1');
@@ -23,26 +24,27 @@ describe('formatMessage()', () => {
   });
 
   it('should contain the response string', () => {
-    const req = {
+    const request = {
       version: '1.1',
       method: 'GET',
       uri: '/foo/bar',
+      params: {},
       headers: {},
       body: undefined
     };
-    const res = {
+    const response = {
       version: '1.1',
       status: 200,
       reason: 'OK',
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
-      body: new Blob()
+      body: ''
     };
 
     const formatted = formatMessage('None of the registered handlers returned a response', {
-      req,
-      res
+      request,
+      response
     });
 
     expect(formatted).toContain('HTTP/1.1 200 OK');
@@ -50,18 +52,19 @@ describe('formatMessage()', () => {
   });
 
   it('should contain the error message and stack trace', () => {
-    const req = {
+    const request = {
       version: '1.1',
       method: 'GET',
       uri: '/foo/bar',
+      params: {},
       headers: {},
       body: undefined
     };
-    const err = new Error('Uh oh!');
+    const error = new Error('Uh oh!');
 
     const formatted = formatMessage('None of the registered handlers returned a response', {
-      req,
-      err
+      request,
+      error
     });
 
     expect(formatted).toContain('Uh oh');

@@ -1,30 +1,33 @@
-import {MockRequest, MockResponse} from './types';
+import {Request, Response} from './types';
 import {convertRequestToString} from './convertRequestToString';
 import {convertResponseToString} from './convertResponseToString';
 
-function indentLines(string: string, indent: number): string {
-  return string
+function indentLines(content: string, indent: number): string {
+  return content
     .split('\n')
     .map((line, index) => Array(indent + 1).join(' ') + line)
     .join('\n');
 }
 
-function formatRequest(req: MockRequest) {
-  return indentLines(convertRequestToString(req).trim(), 4);
+function formatRequest(request: Request) {
+  return indentLines(convertRequestToString(request).trim(), 4);
 }
 
-function formatResponse(res: MockResponse) {
-  return indentLines(convertResponseToString(res).trim(), 4);
+function formatResponse(response: Response) {
+  return indentLines(convertResponseToString(response).trim(), 4);
 }
 
-function formatError(err: Error): string {
-  return indentLines((err && err.stack) || (err && err.message) || `Error: ${err}`, 4);
+function formatError(error: Error): string {
+  return indentLines((error && error.stack) || (error && error.message) || `Error: ${error}`, 4);
 }
 
-export function formatMessage(msg: string, {req, res, err}: {req: MockRequest; res?: MockResponse; err?: Error}) {
+export function formatMessage(
+  msg: string,
+  {request, response, error}: {request: Request; response?: Response; error?: Error}
+) {
   return `xhr-mock: ${msg}
 
-${formatRequest(req)}
-${res ? `\n${formatResponse(res)}` : ''}${err ? `\n${formatError(err)}` : ''}
+${formatRequest(request)}
+${response ? `\n${formatResponse(response)}` : ''}${error ? `\n${formatError(error)}` : ''}
 `;
 }

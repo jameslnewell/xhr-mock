@@ -1,8 +1,9 @@
-import {MockRequest} from './types';
+import {Request} from './types';
 
-export function convertRequestToString(req: MockRequest): string {
-  const headers = Object.keys(req.headers).map(name => `${name}: ${req.headers[name]}`);
-  const bodyLine = `\n${req.body ? req.body : ''}`;
-  return `${req.method} ${req.uri} HTTP/${req.version}
-${headers.length ? `${headers.join('\n')}\n` : ''}${bodyLine}`;
+export function convertRequestToString(request: Request): string {
+  const headers = Object.keys(request.headers).map(name => `${name}: ${request.headers[name]}`);
+  const methodLine = `${request.method} ${request.uri} HTTP/${request.version}\n`;
+  const headerLine = headers.length ? `${headers.join('\n')}\n` : '';
+  const bodyLine = `\n${request.body ? request.body : ''}`;
+  return `${methodLine}${headerLine}${bodyLine}`;
 }

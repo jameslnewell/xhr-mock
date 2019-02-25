@@ -1,61 +1,58 @@
-export interface MockHeaders {
+export enum Mode {
+  SYNC,
+  ASYNC
+}
+
+export interface Headers {
   [name: string]: string;
 }
 
-export interface MockRequest {
+export interface Parameters {
+  [name: string]: string;
+}
+
+export interface Request {
   version: string;
   method: string;
   uri: string;
-  headers: MockHeaders;
+  params: Parameters;
+  headers: Headers;
   body: any;
 }
 
-export interface MockRequestParams {
-  [name: string]: string;
-}
-
-export interface MockRequestWithParams extends MockRequest {
-  params: MockRequestParams;
-}
-
-export interface MockResponse {
+export interface Response {
   version: string;
   status: number;
   reason: string;
-  headers: MockHeaders;
+  headers: Headers;
   body: any;
 }
 
-export interface MockContext {}
-
-export interface MockContextWithSync {
-  sync: boolean;
+export interface Context {
+  mode: Mode;
 }
 
-export type MockMethodCriteria = string;
-export type MockURICriteria = string | RegExp;
+export type MethodPattern = '*' | string;
+export type PathPattern = string | RegExp;
 
-export type MockHandler = (
-  req: MockRequest,
-  ctx: MockContextWithSync
-) => Partial<MockResponse> | undefined | Promise<Partial<MockResponse> | undefined>;
+export type Middleware = (
+  request: Request,
+  context: Context
+) => Partial<Response> | undefined | Promise<Partial<Response> | undefined>;
 
-export type MockBeforeCallbackEvent = {
-  req: MockRequest;
-  ctx: MockContextWithSync;
-};
-export type MockBeforeCallback = (event: MockBeforeCallbackEvent) => void;
+export interface BeforeEvent {
+  context: Context;
+  request: Request;
+}
 
-export type MockAfterCallbackEvent = {
-  req: MockRequest;
-  res: MockResponse;
-  ctx: MockContextWithSync;
-};
-export type MockAfterCallback = (event: MockAfterCallbackEvent) => void;
+export interface AfterEvent {
+  context: Context;
+  request: Request;
+  response: Response;
+}
 
-export type MockErrorCallbackEvent = {
-  req: MockRequest;
-  err: Error;
-  ctx: MockContextWithSync;
-};
-export type MockErrorCallback = (event: MockErrorCallbackEvent) => void;
+export interface ErrorEvent {
+  context: Context;
+  request: Request;
+  error: any;
+}

@@ -1,8 +1,9 @@
-import {MockResponse} from './types';
+import {Response} from './types';
 
-export function convertResponseToString(res: MockResponse): string {
-  const headers = Object.keys(res.headers).map(name => `${name}: ${res.headers[name]}`);
-  const bodyLine = `\n${res.body ? res.body : ''}`;
-  return `HTTP/${res.version} ${res.status} ${res.reason}
-${headers.length ? `${headers.join('\n')}\n` : ''}${bodyLine}`;
+export function convertResponseToString(response: Response): string {
+  const headers = Object.keys(response.headers).map(name => `${name}: ${response.headers[name]}`);
+  const statusLine = `HTTP/${response.version} ${response.status} ${response.reason}\n`;
+  const headerLine = headers.length ? `${headers.join('\n')}\n` : '';
+  const bodyLine = `\n${response.body ? response.body : ''}`;
+  return `${statusLine}${headerLine}${bodyLine}`;
 }

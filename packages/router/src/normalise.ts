@@ -1,12 +1,12 @@
 import * as statuses from 'statuses';
-import {MockHeaders, MockRequest, MockResponse} from './types';
+import {Headers, Request, Response} from './types';
 
 function normaliseMethod(method: string): string {
   return method.toUpperCase();
 }
 
-function normaliseHeaders(headers: MockHeaders): MockHeaders {
-  return Object.keys(headers).reduce((newHeaders: MockHeaders, name: string) => {
+function normaliseHeaders(headers: Headers): Headers {
+  return Object.keys(headers).reduce((newHeaders: Headers, name: string) => {
     newHeaders[name.toLowerCase()] = headers[name];
     return newHeaders;
   }, {});
@@ -16,10 +16,11 @@ function getReasonById(status: number): string {
   return statuses[status] || '';
 }
 
-export function normaliseRequest(req: Partial<MockRequest>): MockRequest {
+export function normaliseRequest(req: Partial<Request>): Request {
   return {
     version: '1.1',
     uri: '/',
+    params: {},
     body: undefined,
     ...req,
     method: normaliseMethod(req.method || 'GET'),
@@ -27,7 +28,7 @@ export function normaliseRequest(req: Partial<MockRequest>): MockRequest {
   };
 }
 
-export function normaliseResponse(res: Partial<MockResponse>): MockResponse {
+export function normaliseResponse(res: Partial<Response>): Response {
   return {
     version: '1.1',
     status: 200,

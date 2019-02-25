@@ -1,12 +1,14 @@
 {
   "name": "@xhr-mock/router",
   "version": "1.0.0",
-  "description": "Router for handling requests and responses.",
+  "description": "A router for dispatching requests and responses.",
   "keywords": [
     "mock",
     "xhr",
     "fetch",
-    "router"
+    "router",
+    "request",
+    "response"
   ],
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
@@ -16,21 +18,14 @@
   ],
   "dependencies": {
     "@types/statuses": "^1.5.0",
-    "global": "^4.3.2",
+    "@types/url-parse": "^1.4.3",
     "path-to-regexp": "^3.0.0",
     "statuses": "^1.5.0",
-    "url": "^0.11.0"
+    "mitt": "^1.1.3",
+    "url-parse": "^1.4.4"
   },
   "scripts": {
-    "clean": "rm -rf ./lib ./dist",
-    "check:linting:sources": "tslint --config tslint.sources.json --project tsconfig.sources.json",
-    "check:linting:tests": "tslint --config tslint.tests.json --project tsconfig.tests.json",
-    "check:typing:sources": "tsc --noEmit --project tsconfig.sources.json",
-    "check:typing:tests": "tsc --noEmit --project tsconfig.tests.json",
-    "check": "yarn run check:linting:sources && yarn run check:linting:tests && yarn run check:typing:sources && yarn run check:typing:tests",
-    "build:cjs": "tsc --pretty --declaration",
-    "build": "yarn run build:cjs",
-    "test": "jest"
+    "build": "tsc --project tsconfig.json"
   },
   "license": "MIT"
 }

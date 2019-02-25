@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": ["../packages/router/typings/**/*.d.ts", "../packages/router/src/**/*.ts"],
+  "exclude": ["../packages/router/src/**/*.test.ts"]
+}

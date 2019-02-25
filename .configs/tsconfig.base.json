@@ -1,11 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["esnext", "dom"],
-    "module": "commonjs",
+    "lib": ["esnext"],
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "target": "es5"
+    "strict": true,
+    "strictNullChecks": true
   },
   "exclude": ["node_modules"]
 }

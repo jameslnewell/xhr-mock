@@ -1,2 +1,5 @@
+import 'url-polyfill';
 export * from './types';
-export {MockRouter} from './MockRouter';
+import {Router} from './Router';
+
+export default Router;
