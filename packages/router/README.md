@@ -19,11 +19,12 @@ const router = new Router().get('/', {status: 200, body: 'Hello World!'}).use(re
   status: 200,
   body: JSON.stringify(req)
 }));
+
 const response = router.handle(
   Mode.SYNC,
   {
     method: 'get',
-    uri: '/foo/bar'
+    url: '/foo/bar'
   },
   {}
 );

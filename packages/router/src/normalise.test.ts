@@ -15,10 +15,10 @@ describe('normaliseRequest()', () => {
     });
   });
 
-  it('should set the default uri', () => {
+  it('should set the default url', () => {
     const request = {};
     expect(normaliseRequest(request)).toMatchObject({
-      uri: '/'
+      url: '/'
     });
   });
 

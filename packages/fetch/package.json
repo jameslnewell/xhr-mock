@@ -1,0 +1,27 @@
+{
+  "name": "@xhr-mock/fetch",
+  "version": "1.0.0",
+  "description": "A mock for fetch.",
+  "keywords": [
+    "mock",
+    "xhr",
+    "fetch",
+    "router",
+    "request",
+    "response"
+  ],
+  "repository": "jameslnewell/xhr-mock",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@xhr-mock/router": "^1.0.0",
+    "global": "^4.3.2"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "license": "MIT"
+}

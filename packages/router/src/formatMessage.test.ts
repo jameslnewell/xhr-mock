@@ -5,7 +5,7 @@ describe('formatMessage()', () => {
     const request = {
       version: '1.1',
       method: 'GET',
-      uri: '/foo/bar',
+      url: '/foo/bar',
       params: {},
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
@@ -27,7 +27,7 @@ describe('formatMessage()', () => {
     const request = {
       version: '1.1',
       method: 'GET',
-      uri: '/foo/bar',
+      url: '/foo/bar',
       params: {},
       headers: {},
       body: undefined
@@ -55,7 +55,7 @@ describe('formatMessage()', () => {
     const request = {
       version: '1.1',
       method: 'GET',
-      uri: '/foo/bar',
+      url: '/foo/bar',
       params: {},
       headers: {},
       body: undefined

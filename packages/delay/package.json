@@ -1,0 +1,26 @@
+{
+  "name": "@xhr-mock/delay",
+  "version": "1.0.0",
+  "description": "A utility for delaying the execution of a middleware.",
+  "keywords": [
+    "mock",
+    "xhr",
+    "fetch",
+    "router",
+    "request",
+    "response"
+  ],
+  "repository": "jameslnewell/xhr-mock",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@xhr-mock/router": "^1.0.0"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "license": "MIT"
+}

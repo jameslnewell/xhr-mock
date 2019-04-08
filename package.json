@@ -5,8 +5,6 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "examples",
-      "tests",
       "website"
     ],
     "nohoist": [

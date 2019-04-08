@@ -1,10 +1,13 @@
 module.exports = {
   rootDir: '..',
   preset: 'ts-jest',
-  testMatch: ['<rootDir>/packages/router/src/**/*.test.ts'],
+  testEnvironment: 'node',
+  testMatch: ['<rootDir>/packages/*/src/**/*.test.ts'],
+  modulePathIgnorePatterns: ['proxy'],
   globals: {
     'ts-jest': {
-      tsConfig: '.configs/tsconfig.tests.json'
+      tsConfig: '.configs/tsconfig.tests.json',
+      diagnostics: false
     }
   }
 };

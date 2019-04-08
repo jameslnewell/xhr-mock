@@ -1,0 +1,27 @@
+{
+  "name": "@xhr-mock/proxy",
+  "version": "1.0.0",
+  "description": "A utility for proxying requests to real servers.",
+  "keywords": [
+    "mock",
+    "xhr",
+    "fetch",
+    "router",
+    "request",
+    "response"
+  ],
+  "repository": "jameslnewell/xhr-mock",
+  "main": "lib/index.js",
+  "browser": "lib/index.browser.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@xhr-mock/router": "^1.0.0"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json"
+  },
+  "license": "MIT"
+}

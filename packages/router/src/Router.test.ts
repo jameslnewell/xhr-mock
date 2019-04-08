@@ -5,7 +5,7 @@ import {Router} from './Router';
 const defaultRequest: Request = {
   version: '1.1',
   method: 'GET',
-  uri: '/foo/bar',
+  url: '/foo/bar',
   params: {},
   headers: {},
   body: undefined
@@ -100,7 +100,7 @@ describe('Router', () => {
 
     it('should normalise the request', () => {
       const middleware = jest.fn().mockReturnValue({});
-      const request = {method: 'put', uri: '/abc'};
+      const request = {method: 'put', url: '/abc'};
       const router = createMockRouter();
       router.put('/abc', middleware);
       router.handle(Mode.SYNC, request, defaultContext);
@@ -108,7 +108,7 @@ describe('Router', () => {
         {
           version: '1.1',
           method: 'PUT',
-          uri: '/abc',
+          url: '/abc',
           params: {},
           headers: {},
           body: undefined
@@ -228,7 +228,7 @@ describe('Router', () => {
 
     it('should normalise the request', async () => {
       const middleware = jest.fn().mockReturnValue({});
-      const request = {method: 'put', uri: '/abc'};
+      const request = {method: 'put', url: '/abc'};
       const router = createMockRouter();
       router.put('/abc', middleware);
       await router.handle(Mode.ASYNC, request, defaultContext);
@@ -236,7 +236,7 @@ describe('Router', () => {
         {
           version: '1.1',
           method: 'PUT',
-          uri: '/abc',
+          url: '/abc',
           params: {},
           headers: {},
           body: undefined

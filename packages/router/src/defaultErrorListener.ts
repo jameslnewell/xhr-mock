@@ -2,7 +2,7 @@ import {ErrorEvent} from './types';
 import {RouterError} from './RouterError';
 import {formatMessage} from './formatMessage';
 
-export function defaultErrorListener(event: ErrorEvent) {
+export function defaultErrorListener<C>(event: ErrorEvent<C>) {
   const {request, error} = event;
   if (error instanceof RouterError) {
     // tslint:disable: no-console

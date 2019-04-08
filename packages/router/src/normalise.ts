@@ -19,7 +19,7 @@ function getReasonById(status: number): string {
 export function normaliseRequest(req: Partial<Request>): Request {
   return {
     version: '1.1',
-    uri: '/',
+    url: '/',
     params: {},
     body: undefined,
     ...req,

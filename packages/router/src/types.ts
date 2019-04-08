@@ -14,7 +14,7 @@ export interface Parameters {
 export interface Request {
   version: string;
   method: string;
-  uri: string;
+  url: string;
   params: Parameters;
   headers: Headers;
   body: any;
@@ -28,31 +28,31 @@ export interface Response {
   body: any;
 }
 
-export interface Context {
+export type Context<C extends {} = {}> = {
   mode: Mode;
-}
+} & C;
 
 export type MethodPattern = '*' | string;
 export type PathPattern = string | RegExp;
 
-export type Middleware = (
+export type Middleware<C extends {} = {}> = (
   request: Request,
-  context: Context
+  context: Context<C>
 ) => Partial<Response> | undefined | Promise<Partial<Response> | undefined>;
 
-export interface BeforeEvent {
-  context: Context;
+export interface BeforeEvent<C extends {} = {}> {
+  context: Context<C>;
   request: Request;
 }
 
-export interface AfterEvent {
-  context: Context;
+export interface AfterEvent<C extends {} = {}> {
+  context: Context<C>;
   request: Request;
   response: Response;
 }
 
-export interface ErrorEvent {
-  context: Context;
+export interface ErrorEvent<C extends {} = {}> {
+  context: Context<C>;
   request: Request;
   error: any;
 }

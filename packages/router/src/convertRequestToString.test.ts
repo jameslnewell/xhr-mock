@@ -1,9 +1,10 @@
 import {convertRequestToString} from './convertRequestToString';
 
-const minimalRequest = {
+const defaultRequest = {
   version: '1.1',
   method: 'GET',
-  uri: '/',
+  url: '/',
+  params: {},
   headers: {},
   body: undefined
 };
@@ -11,7 +12,7 @@ const minimalRequest = {
 describe('convertRequestToString()', () => {
   it('should have no headers and no body', () => {
     const request = {
-      ...minimalRequest
+      ...defaultRequest
     };
     const expected = `GET / HTTP/1.1\n\n`;
     expect(convertRequestToString(request)).toEqual(expected);
@@ -19,7 +20,7 @@ describe('convertRequestToString()', () => {
 
   it('should have headers', () => {
     const request = {
-      ...minimalRequest,
+      ...defaultRequest,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },
@@ -31,7 +32,7 @@ describe('convertRequestToString()', () => {
 
   it('should have a body', () => {
     const request = {
-      ...minimalRequest,
+      ...defaultRequest,
       body: '<html></html>'
     };
     const expected = `GET / HTTP/1.1\n\n<html></html>`;
@@ -40,7 +41,7 @@ describe('convertRequestToString()', () => {
 
   it('should have headers and a body', () => {
     const request = {
-      ...minimalRequest,
+      ...defaultRequest,
       headers: {
         'Content-Type': 'application/json; charset=UTF-8'
       },

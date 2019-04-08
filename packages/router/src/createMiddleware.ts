@@ -14,25 +14,25 @@ function methodMatches(pattern: MethodPattern, request: Request): string | undef
   return undefined;
 }
 
-function uriMatches(pattern: PathPattern, request: Request): {uri: string; params: Parameters} | undefined {
-  // get the actual URI and default any missing values
-  const actualURI = new URL(request.uri, {hostname: request.headers.host});
+function urlMatches(pattern: PathPattern, request: Request): {url: string; params: Parameters} | undefined {
+  // get the actual URL and default any missing values
+  const actualURL = new URL(request.url, {hostname: request.headers.host});
 
-  // get the expected URI
-  const expectedURI = !(pattern instanceof RegExp) ? new URL(pattern, {}) : undefined;
+  // get the expected URL
+  const expectedURL = !(pattern instanceof RegExp) ? new URL(pattern, {}) : undefined;
 
   // match the protocol, host and port
-  if (expectedURI) {
+  if (expectedURL) {
     // TODO: protocol
-    if (expectedURI.hostname && expectedURI.host !== actualURI.host) {
+    if (expectedURL.hostname && expectedURL.host !== actualURL.host) {
       return undefined;
     }
   }
 
   // match the path
   const keys: pathToRegExp.Key[] = [];
-  const regexp = pathToRegExp(expectedURI ? expectedURI.pathname : pattern, keys); // TODO: cache the regexp
-  const match = regexp.exec(actualURI.pathname);
+  const regexp = pathToRegExp(expectedURL ? expectedURL.pathname : pattern, keys); // TODO: cache the regexp
+  const match = regexp.exec(actualURL.pathname);
   if (!match) {
     return undefined;
   }
@@ -51,25 +51,25 @@ function uriMatches(pattern: PathPattern, request: Request): {uri: string; param
   }, {});
 
   return {
-    uri: request.uri,
+    url: request.url,
     params
   };
 }
 
-export function createMiddleware(
+export function createMiddleware<C>(
   method: string,
   path: PathPattern,
-  middlewareOrResponse: Middleware | Partial<Response>
-): Middleware {
-  return (request: Request, context: Context) => {
+  middlewareOrResponse: Middleware<C> | Partial<Response>
+): Middleware<C> {
+  return (request: Request, context: Context<C>) => {
     // match the method
     const methodMatch = methodMatches(method, request);
     if (!methodMatch) {
       return undefined;
     }
 
-    const uriMatch = uriMatches(path, request);
-    if (!uriMatch) {
+    const urlMatch = urlMatches(path, request);
+    if (!urlMatch) {
       return undefined;
     }
 
@@ -78,7 +78,7 @@ export function createMiddleware(
       // add the params matched from the path to the request
       const reqWithPathParams = {
         ...request,
-        params: uriMatch.params
+        params: urlMatch.params
       };
       return middlewareOrResponse(reqWithPathParams, context);
     }

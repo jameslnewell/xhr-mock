@@ -5,7 +5,7 @@ import {createMiddleware} from './createMiddleware';
 const defaultRequest: Request = {
   version: '1.1',
   method: 'get',
-  uri: '/foo/bar',
+  url: '/foo/bar',
   params: {},
   headers: {},
   body: undefined
