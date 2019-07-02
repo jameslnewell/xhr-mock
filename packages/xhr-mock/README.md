@@ -399,6 +399,23 @@ mock.setup();
 mock.post('/', once({status: 201}));
 ```
 
+### send a sequence of responses
+
+In case you need to return a different response each time a request is made, you may use the `sequence` utility.
+
+```js
+import mock, {sequence} from 'xhr-mock';
+
+mock.setup();
+
+mock.post('/', sequence([
+  {status: 200}, // the first request will receive a response with status 200
+  {status: 500}  // the second request will receive a response with status 500
+                 // if a third request is made, no response will be sent
+  ]
+));
+```
+
 ## License
 
 MIT Licensed. Copyright (c) James Newell 2014.
