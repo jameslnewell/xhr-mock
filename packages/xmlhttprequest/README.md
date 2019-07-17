@@ -2,20 +2,27 @@
 
 [![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
 
-A utility for delaying the execution of a middleware.
+A mock for XMLHttpRequest.
+
+> Attempts to adhere to https://xhr.spec.whatwg.org/
 
 ## Installation
 
 ```bash
-yarn add @xhr-mock/xmlhtprequest
+yarn add @xhr-mock/xmlhttprequest
 ```
 
 ## Usage
 
 ```js
-import mock from '@xhr-mock/xmlhtprequest';
+import Router from '@xhr-mock/router';
+import mock from '@xhr-mock/xmlhttprequest';
+
+mock.router = new Router();
 
 mock.setup();
+
+// make calls to XMLHttpRequest
 
 mock.teardown();
 ```

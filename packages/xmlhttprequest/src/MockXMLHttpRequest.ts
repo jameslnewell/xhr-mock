@@ -1,15 +1,14 @@
-import {MockRequest, MockResponse, MockContext, MockRouter} from '../router';
-import {MockError} from '../MockError';
+import Router, {Request, Response, Mode} from '@xhr-mock/router';
+import {MockError} from './MockError';
 import {MockEvent} from './MockEvent';
 import {MockProgressEvent} from './MockProgressEvent';
 import {MockXMLHttpRequestUpload} from './MockXMLHttpRequestUpload';
 import {MockXMLHttpRequestEventTarget} from './MockXMLHttpRequestEventTarget';
+import {calculateProgress} from './calculateProgress';
 
 const notImplementedError = new MockError(
   "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
 );
-
-// implemented according to https://xhr.spec.whatwg.org/
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
 
@@ -21,72 +20,49 @@ export enum ReadyState {
   DONE = 4
 }
 
-function calculateProgress(req: MockRequest | MockResponse) {
-  const header = req.headers['content-length'];
-  const body = req.body;
-
-  let lengthComputable = false;
-  let total = 0;
-
-  if (header) {
-    const contentLength = parseInt(header, 10);
-    if (contentLength !== NaN) {
-      lengthComputable = true;
-      total = contentLength;
-    }
-  }
-
-  return {
-    lengthComputable,
-    loaded: (body && body.length) || 0, //FIXME: Measure bytes not (unicode) chars
-    total
-  };
-}
-
-// @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
 export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements XMLHttpRequest {
-  static readonly UNSENT = ReadyState.UNSENT;
-  static readonly OPENED = ReadyState.OPENED;
-  static readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
-  static readonly LOADING = ReadyState.LOADING;
-  static readonly DONE = ReadyState.DONE;
+  public static router: Router;
 
-  readonly UNSENT = ReadyState.UNSENT;
-  readonly OPENED = ReadyState.OPENED;
-  readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
-  readonly LOADING = ReadyState.LOADING;
-  readonly DONE = ReadyState.DONE;
+  public static readonly UNSENT = ReadyState.UNSENT;
+  public static readonly OPENED = ReadyState.OPENED;
+  public static readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
+  public static readonly LOADING = ReadyState.LOADING;
+  public static readonly DONE = ReadyState.DONE;
 
-  onreadystatechange: (this: XMLHttpRequest, ev: Event) => any;
+  public readonly UNSENT = ReadyState.UNSENT;
+  public readonly OPENED = ReadyState.OPENED;
+  public readonly HEADERS_RECEIVED = ReadyState.HEADERS_RECEIVED;
+  public readonly LOADING = ReadyState.LOADING;
+  public readonly DONE = ReadyState.DONE;
+
+  public onreadystatechange: (this: XMLHttpRequest, ev: Event) => any;
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
-  withCredentials: boolean = false;
+  public withCredentials: boolean = false;
 
-  private router: MockRouter;
-
-  private req: MockRequest = {
+  private req: Request = {
     version: '1.1',
     method: 'GET',
-    uri: '',
+    url: '',
+    params: {},
     headers: {},
     body: undefined
   };
 
-  private res: MockResponse = {
+  private res: Response = {
     version: '1.1',
     status: 200,
-    reason: 'OK',
+    reason: 'Ok',
     headers: {},
     body: undefined
   };
 
-  responseType: XMLHttpRequestResponseType = '';
-  responseURL: string = '';
-  private _timeout: number = 0;
+  public responseType: XMLHttpRequestResponseType = '';
+  public responseURL: string = '';
   // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
-  upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
-  readyState: ReadyState = MockXMLHttpRequest.UNSENT;
+  public upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
+  public readyState: ReadyState = MockXMLHttpRequest.UNSENT;
 
   // flags
   private isSynchronous: boolean = false;
@@ -96,18 +72,14 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
   private isTimedOut: boolean = false;
 
   // @ts-ignore: wants a NodeJS.Timer because of @types/node
-  private _timeoutTimer: number;
+  private timeoutTimer: number;
+  private _timeout: number = 0;
 
-  constructor(router: MockRouter = defaultRouter) {
-    super();
-    this.router = router;
-  }
-
-  get timeout(): number {
+  public get timeout(): number {
     return this._timeout;
   }
 
-  set timeout(timeout: number) {
+  public set timeout(timeout: number) {
     if (timeout !== 0 && this.isSynchronous) {
       throw new MockError('Timeouts cannot be set for synchronous requests made from a document.');
     }
@@ -115,7 +87,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
   }
 
   // https://xhr.spec.whatwg.org/#the-response-attribute
-  get response(): any {
+  public get response(): any {
     if (this.responseType === '' || this.responseType === 'text') {
       if (this.readyState !== this.LOADING && this.readyState !== this.DONE) {
         return '';
@@ -168,23 +140,23 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     return body || null;
   }
 
-  get responseText(): string {
+  public get responseText(): string {
     return this.res.body || '';
   }
 
-  get responseXML(): Document | null {
+  public get responseXML(): Document | null {
     throw notImplementedError;
   }
 
-  get status(): number {
+  public get status(): number {
     return this.res.status;
   }
 
-  get statusText(): string {
+  public get statusText(): string {
     return this.res.reason;
   }
 
-  getAllResponseHeaders(): string {
+  public getAllResponseHeaders(): string {
     // I'm pretty sure this fn can return null, but TS types say no
     // if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
     //   return null;
@@ -197,7 +169,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     return result;
   }
 
-  getResponseHeader(name: string): null | string {
+  public getResponseHeader(name: string): null | string {
     if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
       return null;
     }
@@ -205,7 +177,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     return this.res.headers[name.toLowerCase()];
   }
 
-  setRequestHeader(name: string, value: string): void {
+  public setRequestHeader(name: string, value: string): void {
     if (this.readyState < MockXMLHttpRequest.OPENED) {
       throw new MockError('xhr must be OPENED.');
     }
@@ -213,11 +185,11 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     this.req.headers[name] = value;
   }
 
-  overrideMimeType(mime: string): void {
+  public overrideMimeType(mime: string): void {
     throw notImplementedError;
   }
 
-  open(
+  public open(
     method: string,
     url: string,
     async: boolean = true,
@@ -266,7 +238,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       version: '1.1',
       method,
       headers: {},
-      uri: url, // TODO: full url with username and pw
+      params: {},
+      url, // TODO: full url with username and pw
       body: undefined
     };
     this.applyNetworkError();
@@ -285,7 +258,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     // let response be the result of fetching req
     let res;
     try {
-      res = this.router.routeSync(this.req, {sync: true});
+      res = MockXMLHttpRequest.router.handleSync(this.req, {});
 
       // if the timeout attribute value is not zero, then set the timed out flag and terminate fetching if it has not returned within the amount of milliseconds from the timeout.
       // TODO: check if timeout was elapsed
@@ -340,17 +313,17 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
 
     if (this._timeout !== 0) {
       // @ts-ignore: wants a NodeJS.Timer because of @types/node
-      this._timeoutTimer = setTimeout(() => {
+      this.timeoutTimer = setTimeout(() => {
         this.isTimedOut = true;
         this.handleError();
       }, this._timeout);
     }
 
     try {
-      const res = await this.router.routeAsync(this.req, {sync: false});
+      const res = MockXMLHttpRequest.router.handleAsync(Mode.ASYNC, this.req, {});
 
       //we've received a response before the timeout so we don't want to timeout
-      clearTimeout(this._timeoutTimer);
+      clearTimeout(this.timeoutTimer);
 
       if (this.isAborted || this.isTimedOut) {
         return; // these cases will already have been handled
@@ -360,7 +333,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       this.receiveResponse(res);
     } catch (error) {
       //we've received an error before the timeout so we don't want to timeout
-      clearTimeout(this._timeoutTimer);
+      clearTimeout(this.timeoutTimer);
 
       if (this.isAborted || this.isTimedOut) {
         return; // these cases will already have been handled
@@ -590,9 +563,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
   }
 
   // https://xhr.spec.whatwg.org/#event-xhr-loadstart
-  send(): void;
-  send(body?: any): void;
-  send(body?: any): void {
+  public send(body?: any): void {
     // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
       throw new MockError('Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().');
@@ -677,9 +648,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     }
   }
 
-  abort(): void {
+  public abort(): void {
     //we've cancelling the response before the timeout period so we don't want to timeout
-    clearTimeout(this._timeoutTimer);
+    clearTimeout(this.timeoutTimer);
 
     // terminate the ongoing fetch with the aborted flag set
     this.isAborted = true;
@@ -702,7 +673,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     }
   }
 
-  msCachingEnabled() {
+  public msCachingEnabled() {
     return false;
   }
 }

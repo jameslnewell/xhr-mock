@@ -1,5 +1,5 @@
-import {MockRequest, MockRouter} from '../router';
-import {MockError} from '../MockError';
+import {MockRequest, MockRouter} from '../../../xhr-mock/src/router';
+import {MockError} from '../../../xhr-mock/src/MockError';
 import {MockEvent} from './MockEvent';
 import {MockProgressEvent} from './MockProgressEvent';
 import {MockXMLHttpRequest} from './MockXMLHttpRequest';

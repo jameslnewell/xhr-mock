@@ -79,7 +79,7 @@ export class Facade {
     }
 
     // route the request to a response
-    const response = await this.router.handle(Mode.ASYNC, request, context);
+    const response = await this.router.handleAsync(request, context);
 
     // create a response object
     return new Response(response.body, {

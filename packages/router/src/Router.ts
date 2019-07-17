@@ -3,7 +3,7 @@ import {MethodPattern, PathPattern, Request, Response, Context, Middleware, Mode
 import {RouterError} from './RouterError';
 import {createMiddleware} from './createMiddleware';
 import {isPromise} from './isPromise';
-import {normaliseRequest, normaliseResponse} from './normalise';
+import {normaliseRequest, normaliseResponse, normaliseContext} from './normalise';
 import {defaultErrorListener} from './defaultErrorListener';
 
 export class Router<C extends {} = {}> {
@@ -106,11 +106,11 @@ export class Router<C extends {} = {}> {
     return this;
   }
 
-  private handleSync(request: Request, context: Context<C>): Response {
+  public handleSync(request: Partial<Request>, context: C & Partial<Context<C>>): Response {
     this.emitter.emit('before', {request, context});
     try {
       for (const middleware of this.middleware) {
-        const response = middleware(request, context);
+        const response = middleware(normaliseRequest(request), normaliseContext(context));
         if (!response) {
           continue;
         }
@@ -138,11 +138,11 @@ export class Router<C extends {} = {}> {
     }
   }
 
-  private async handleAsync(request: Request, context: Context<C>): Promise<Response> {
+  public async handleAsync(request: Partial<Request>, context: C & Partial<Context<C>>): Promise<Response> {
     this.emitter.emit('before', {request, context});
     try {
       for (const middleware of this.middleware) {
-        const response = await middleware(request, context);
+        const response = await middleware(normaliseRequest(request), normaliseContext(context));
         if (!response) {
           continue;
         }
@@ -162,19 +162,6 @@ export class Router<C extends {} = {}> {
         context
       });
       throw error;
-    }
-  }
-
-  public handle(mode: Mode.SYNC, request: Partial<Request>, context: C & Partial<Context<C>>): Response;
-  public handle(mode: Mode.ASYNC, request: Partial<Request>, context: C & Partial<Context<C>>): Promise<Response>;
-  public handle(mode: Mode, request: Partial<Request>, context: C & Partial<Context<C>>): Response | Promise<Response> {
-    const normalisedRequest = normaliseRequest(request);
-    if (mode === Mode.SYNC) {
-      const normalisedContext = {...context, mode};
-      return this.handleSync(normalisedRequest, normalisedContext);
-    } else {
-      const normalisedContext = {...context, mode};
-      return this.handleAsync(normalisedRequest, normalisedContext);
     }
   }
 }

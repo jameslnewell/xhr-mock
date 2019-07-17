@@ -1,13 +1,11 @@
-import {MockEvent} from './MockEvent';
-
 export class MockEventTarget implements EventTarget {
   private listeners?: {
     [type: string]: EventListenerOrEventListenerObject[];
   } = {};
 
-  addEventListener(
+  public addEventListener(
     type: string,
-    listener: EventListenerOrEventListenerObject,
+    listener: EventListenerOrEventListenerObject | null,
     options?: boolean | AddEventListenerOptions
   ): void {
     this.listeners = this.listeners || {};
@@ -26,9 +24,9 @@ export class MockEventTarget implements EventTarget {
     }
   }
 
-  removeEventListener(
+  public removeEventListener(
     type: string,
-    listener?: EventListenerOrEventListenerObject,
+    listener: EventListenerOrEventListenerObject | null = null,
     options?: boolean | EventListenerOptions
   ): void {
     this.listeners = this.listeners || {};
@@ -47,7 +45,7 @@ export class MockEventTarget implements EventTarget {
     }
   }
 
-  dispatchEvent(event: Event): boolean {
+  public dispatchEvent(event: Event): boolean {
     this.listeners = this.listeners || {};
 
     //set the event target

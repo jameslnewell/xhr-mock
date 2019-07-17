@@ -16,15 +16,15 @@ yarn add @xhr-mock/fetch
 
 ```js
 import Router from '@xhr-mock/router';
-import FetchMock from '@xhr-mock/fetch';
+import mock from '@xhr-mock/fetch';
 
-FetchMock.router = new Router();
+mock.router = new Router();
 
-FetchMock.setup();
+mock.setup();
 
 // make calls to fetch()
 
-FetchMock.teardown();
+mock.teardown();
 ```
 
 ## API
