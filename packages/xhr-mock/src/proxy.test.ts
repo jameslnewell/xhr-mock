@@ -66,7 +66,7 @@ describe('proxy', () => {
     const body = res.body() || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
-        url: 'http://httpbin.org/put',
+        url: 'https://httpbin.org/put',
         headers: expect.objectContaining({
           Foo: 'bar',
           Bar: 'foo'
@@ -112,7 +112,7 @@ describe('proxy', () => {
     const body = res.body() || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
-        url: 'http://httpbin.org/put',
+        url: 'https://httpbin.org/put',
         data: 'Hello World!'
       })
     );
@@ -128,7 +128,7 @@ describe('proxy', () => {
     const body = res.body() || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
-        url: 'http://httpbin.org/put',
+        url: 'https://httpbin.org/put',
         data: ''
       })
     );
@@ -148,7 +148,7 @@ describe('proxy', () => {
     const req = new MockRequest();
     const res = new MockResponse();
 
-    req.method('PUT').url('http://httpbin.org/put');
+    req.method('PUT').url('https://httpbin.org/put');
     await proxy(req, res);
 
     expect(res.headers()).toEqual(

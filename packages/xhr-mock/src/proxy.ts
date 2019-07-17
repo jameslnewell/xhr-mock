@@ -13,11 +13,11 @@ export default function(
       protocol: `${req.url().protocol}:`,
       hostname: req.url().host,
       port: req.url().port,
-      auth: `${req.url().username} ${req.url().password}`,
+      auth: req.url().username && `${req.url().username || ''}${req.url().password && ` ${req.url().password || ''}` || ''}`,
       path: req.url().path,
       headers: req.headers()
     };
-
+    
     const requestFn =
       req.url().protocol === 'https' ? https.request : http.request;
 
