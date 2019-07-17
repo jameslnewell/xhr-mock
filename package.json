@@ -14,9 +14,9 @@
   "dependencies": {
     "@jameslnewell/editor-config": "^1.0.1",
     "@jameslnewell/eslint-config": "^0.6.1",
-    "@jameslnewell/jest-preset-lint": "^1.1.0",
-    "@jameslnewell/jest-preset-test": "^3.0.0",
-    "@jameslnewell/jest-preset-type": "^1.0.1",
+    "@jameslnewell/jest-preset-lint": "^1.2.0",
+    "@jameslnewell/jest-preset-test": "^3.1.0",
+    "@jameslnewell/jest-preset-type": "^1.2.0",
     "@jameslnewell/prettier-config": "^1.0.1",
     "@jameslnewell/typescript-config": "^3.0.0",
     "@types/jest": "^24.0.15",

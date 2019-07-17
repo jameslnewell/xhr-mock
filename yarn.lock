@@ -160,25 +160,25 @@
     eslint-plugin-prettier "^3.1.0"
     eslint-plugin-react "^7.14.2"
 
-"@jameslnewell/jest-preset-lint@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@jameslnewell/jest-preset-lint/-/jest-preset-lint-1.1.0.tgz#b62596788e942e7fa9f7f2c3394a2e2412fe34d5"
-  integrity sha512-Kgn43wsu1/ADfCF7qGVEIeOHSsA595W4wPUTwr0uZqY4COvS3zFa56V/9WH69ddGrFDK5qjjZ0k7PlxsITs9Pg==
+"@jameslnewell/jest-preset-lint@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@jameslnewell/jest-preset-lint/-/jest-preset-lint-1.2.0.tgz#7fe0d52c9a49bcc1372fec0f5b6c90e026dbc0c8"
+  integrity sha512-JqVdSPu6P6Jiv6CXzhcoHE37I0RYAmd0LKnIwaLwxE7X7tknZQsL6O7Tz+XJIid+YTQTikV2ISXl9uJzRbRXlw==
   dependencies:
     jest-config "^24.8.0"
-    jest-runner-eslint "^0.7.3"
+    jest-runner-eslint "^0.7.4"
 
-"@jameslnewell/jest-preset-test@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@jameslnewell/jest-preset-test/-/jest-preset-test-3.0.0.tgz#a184f4f4bc67e75c9c8bbf42d262cfccbc3a70a4"
-  integrity sha512-BHsKc8zt9H+JQS11KglQq39imODahzRnYslvs6O7kYuaCElKwx6cTQAlq9orNkEgAZEvGAkgA5mQ+ZP/MRu+Ng==
+"@jameslnewell/jest-preset-test@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@jameslnewell/jest-preset-test/-/jest-preset-test-3.1.0.tgz#a4a599c4a55d2c95e853dae4057373dafefe7da3"
+  integrity sha512-ZE1xbW8RPR0eMcBbP9qTUACfCllY018imq+NZl01unrSYgevY2/9fsq9E/xA/dHeyN44XeSgDQQ0GBTTMWIXSg==
   dependencies:
     ts-jest "^24.0.2"
 
-"@jameslnewell/jest-preset-type@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@jameslnewell/jest-preset-type/-/jest-preset-type-1.0.1.tgz#4476c087c6c9327b007768c78b114ed97879cc77"
-  integrity sha512-F5XdalPYCGhUPJZyXtNBkjXksbUCfZRW/NqUhSRX3clNyFwrwx49cmm3J+6AvRKIijwjqjzdoOEd+dYAwcmrnA==
+"@jameslnewell/jest-preset-type@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@jameslnewell/jest-preset-type/-/jest-preset-type-1.2.0.tgz#e3801108e11ab4dcf7e7abea4af3988fa399637a"
+  integrity sha512-40KbcICTadu/+t+7htZ7VsgaRfgSr0wtIBekRDHKDV0zdRdLiNzar7SOVsdsbAdbnni5yJBxY8M8DKvIfdL1bQ==
   dependencies:
     jest-config "^24.8.0"
     jest-runner-tsc "^1.5.1"
@@ -2657,7 +2657,7 @@ jest-resolve@^24.8.0:
     jest-pnp-resolver "^1.2.1"
     realpath-native "^1.1.0"
 
-jest-runner-eslint@^0.7.3:
+jest-runner-eslint@^0.7.4:
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/jest-runner-eslint/-/jest-runner-eslint-0.7.4.tgz#8cbe693638f6a1efb1887a11dc118e6092b829a7"
   integrity sha512-vGmJwmXHi/p8uQksm2B+QhVazoh/fCQdn2R52n+F2RBzEnccIOL6gL5kSE5vkwis9d903VJjEsA+rKg6fEoRPg==
