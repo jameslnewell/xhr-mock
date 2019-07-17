@@ -57,7 +57,7 @@ describe('createUser()', () => {
     mock.post('/api/user', {
       status: 201,
       reason: 'Created',
-      body: '{"data":{"id":"abc-123"}}'
+      body: '{"data":{"id":"abc-123"}}',
     });
 
     const user = await createUser({name: 'John'});
@@ -71,7 +71,7 @@ describe('createUser()', () => {
     mock.post('/api/user', {
       status: 400,
       reason: 'Bad request',
-      body: '{"error":"A user named \\"John\\" already exists."}'
+      body: '{"error":"A user named \\"John\\" already exists."}',
     });
 
     try {

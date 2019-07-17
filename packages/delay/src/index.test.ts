@@ -7,7 +7,7 @@ const defaultRequest: Request = {
   url: '/',
   params: {},
   headers: {},
-  body: 'Hello World'
+  body: 'Hello World',
 };
 
 const defaultResponse: Response = {
@@ -15,11 +15,11 @@ const defaultResponse: Response = {
   status: 206,
   reason: 'Partial Content',
   headers: {},
-  body: 'Hello World'
+  body: 'Hello World',
 };
 
 const defaultContext: Context = {
-  mode: Mode.ASYNC
+  mode: Mode.ASYNC,
 };
 
 const ms = 250;
@@ -27,7 +27,10 @@ const ms = 250;
 describe('delay()', () => {
   it('should not delay the response when the middleware does not return a response', async () => {
     const start = Date.now();
-    const res = await delay(() => undefined, ms)(defaultRequest, defaultContext);
+    const res = await delay(() => undefined, ms)(
+      defaultRequest,
+      defaultContext,
+    );
     const finish = Date.now();
     expect(finish - start).toBeLessThanOrEqual(ms);
     expect(res).toBeUndefined();
@@ -35,7 +38,10 @@ describe('delay()', () => {
 
   it('should not delay the response when the middleware does not resolve a response', async () => {
     const start = Date.now();
-    const response = await delay(() => Promise.resolve(undefined), ms)(defaultRequest, defaultContext);
+    const response = await delay(() => Promise.resolve(undefined), ms)(
+      defaultRequest,
+      defaultContext,
+    );
     const finish = Date.now();
     expect(finish - start).toBeLessThanOrEqual(ms);
     expect(response).toBeUndefined();
@@ -43,7 +49,10 @@ describe('delay()', () => {
 
   it('should delay the response when the middleware is a response', async () => {
     const start = Date.now();
-    const res = await delay(defaultResponse, ms)(defaultRequest, defaultContext);
+    const res = await delay(defaultResponse, ms)(
+      defaultRequest,
+      defaultContext,
+    );
     const finish = Date.now();
     expect(finish - start).toBeGreaterThanOrEqual(ms);
     expect(res).toEqual(defaultResponse);
@@ -51,7 +60,10 @@ describe('delay()', () => {
 
   it('should delay the response when the middleware returns a response', async () => {
     const start = Date.now();
-    const res = await delay(() => defaultResponse, ms)(defaultRequest, defaultContext);
+    const res = await delay(() => defaultResponse, ms)(
+      defaultRequest,
+      defaultContext,
+    );
     const finish = Date.now();
     expect(finish - start).toBeGreaterThanOrEqual(ms);
     expect(res).toEqual(defaultResponse);
@@ -59,7 +71,10 @@ describe('delay()', () => {
 
   it('should delay the response when the middleware resolves a response', async () => {
     const start = Date.now();
-    const res = await delay(() => Promise.resolve(defaultResponse), ms)(defaultRequest, defaultContext);
+    const res = await delay(() => Promise.resolve(defaultResponse), ms)(
+      defaultRequest,
+      defaultContext,
+    );
     const finish = Date.now();
     expect(finish - start).toBeGreaterThanOrEqual(ms);
     expect(res).toEqual(defaultResponse);

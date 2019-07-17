@@ -7,14 +7,14 @@ function createRouter() {
       body: JSON.stringify({
         id: req.params.id,
         name: 'John',
-        email: 'john@gmail.com'
-      })
+        email: 'john@gmail.com',
+      }),
     }))
     .post('/api/user', {
-      status: 201
+      status: 201,
     })
     .use(() => ({
-      status: 404
+      status: 404,
     }));
 }
 

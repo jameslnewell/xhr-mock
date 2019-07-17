@@ -13,7 +13,8 @@ describe('how to', () => {
     mock.post('/', {});
 
     const xhr = new XMLHttpRequest();
-    xhr.upload.onprogress = event => console.log('upload progress:', event.loaded, '/', event.total);
+    xhr.upload.onprogress = event =>
+      console.log('upload progress:', event.loaded, '/', event.total);
     xhr.open('POST', '/');
     xhr.setRequestHeader('Content-Length', '12');
     xhr.send('Hello World!');
@@ -22,11 +23,12 @@ describe('how to', () => {
   it('should report download progress', async () => {
     mock.get('/', {
       headers: {'Content-Length': '12'},
-      body: 'Hello World!'
+      body: 'Hello World!',
     });
 
     const xhr = new XMLHttpRequest();
-    xhr.onprogress = event => console.log('download progress:', event.loaded, '/', event.total);
+    xhr.onprogress = event =>
+      console.log('download progress:', event.loaded, '/', event.total);
     xhr.open('GET', '/');
     xhr.send();
   });

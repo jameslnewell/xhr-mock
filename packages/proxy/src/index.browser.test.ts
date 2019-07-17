@@ -8,9 +8,9 @@ const defaultRequest: Request = {
   params: {},
   headers: {
     foo: 'bar',
-    bar: 'foo'
+    bar: 'foo',
   },
-  body: 'Hello World'
+  body: 'Hello World',
 };
 
 const defaultResponse: Response = {
@@ -19,11 +19,11 @@ const defaultResponse: Response = {
   reason: 'Partial Response',
   headers: {
     foo: 'bar',
-    bar: 'foo'
+    bar: 'foo',
   },
   body: {
-    message: 'Hello World!'
-  }
+    message: 'Hello World!',
+  },
 };
 
 function createContext(error: boolean = false): Context {
@@ -43,7 +43,7 @@ function createContext(error: boolean = false): Context {
   });
 
   return {
-    mode: Mode.ASYNC
+    mode: Mode.ASYNC,
   };
 }
 

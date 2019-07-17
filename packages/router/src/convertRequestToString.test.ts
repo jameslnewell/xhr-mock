@@ -6,13 +6,13 @@ const defaultRequest = {
   url: '/',
   params: {},
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 describe('convertRequestToString()', () => {
   it('should have no headers and no body', () => {
     const request = {
-      ...defaultRequest
+      ...defaultRequest,
     };
     const expected = `GET / HTTP/1.1\n\n`;
     expect(convertRequestToString(request)).toEqual(expected);
@@ -22,9 +22,9 @@ describe('convertRequestToString()', () => {
     const request = {
       ...defaultRequest,
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: undefined
+      body: undefined,
     };
     const expected = `GET / HTTP/1.1\nContent-Type: application/json; charset=UTF-8\n\n`;
     expect(convertRequestToString(request)).toEqual(expected);
@@ -33,7 +33,7 @@ describe('convertRequestToString()', () => {
   it('should have a body', () => {
     const request = {
       ...defaultRequest,
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const expected = `GET / HTTP/1.1\n\n<html></html>`;
     expect(convertRequestToString(request)).toEqual(expected);
@@ -43,9 +43,9 @@ describe('convertRequestToString()', () => {
     const request = {
       ...defaultRequest,
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const expected = `GET / HTTP/1.1\nContent-Type: application/json; charset=UTF-8\n\n<html></html>`;
     expect(convertRequestToString(request)).toEqual(expected);

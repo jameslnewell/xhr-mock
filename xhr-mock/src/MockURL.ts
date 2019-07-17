@@ -29,7 +29,10 @@ export function parseURL(url: string): MockURL {
   const parsedURL = parse(url, true);
 
   if (parsedURL.protocol) {
-    urlObject.protocol = parsedURL.protocol.substr(0, parsedURL.protocol.length - 1);
+    urlObject.protocol = parsedURL.protocol.substr(
+      0,
+      parsedURL.protocol.length - 1,
+    );
   }
 
   if (parsedURL.auth) {
@@ -68,12 +71,15 @@ export function parseURL(url: string): MockURL {
 export function formatURL(url: MockURL): string {
   const obj = {
     protocol: url.protocol,
-    auth: url.username && url.password ? `${url.username}:${url.password}` : url.username,
+    auth:
+      url.username && url.password
+        ? `${url.username}:${url.password}`
+        : url.username,
     hostname: url.host,
     port: typeof url.port === 'number' ? String(url.port) : url.port,
     pathname: url.path,
     query: url.query,
-    hash: url.hash
+    hash: url.hash,
   };
   return format(obj);
 }

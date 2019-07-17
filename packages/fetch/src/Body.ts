@@ -45,7 +45,10 @@ export class Body {
 
   public async text(): Promise<string> {
     // TODO:
-    if (typeof this.bodyInit !== 'undefined' && typeof this.bodyInit !== 'string') {
+    if (
+      typeof this.bodyInit !== 'undefined' &&
+      typeof this.bodyInit !== 'string'
+    ) {
       throw createBodyConversionError();
     }
     this.isBodyUsed = true;

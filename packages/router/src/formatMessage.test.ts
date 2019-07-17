@@ -8,19 +8,24 @@ describe('formatMessage()', () => {
       url: '/foo/bar',
       params: {},
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: ''
+      body: '',
     };
     const err = new Error('Uh oh!');
 
-    const formatted = formatMessage('None of the registered handlers returned a response', {
-      request,
-      error: err
-    });
+    const formatted = formatMessage(
+      'None of the registered handlers returned a response',
+      {
+        request,
+        error: err,
+      },
+    );
 
     expect(formatted).toContain('GET /foo/bar HTTP/1.1');
-    expect(formatted).toContain('Content-Type: application/json; charset=UTF-8');
+    expect(formatted).toContain(
+      'Content-Type: application/json; charset=UTF-8',
+    );
   });
 
   it('should contain the response string', () => {
@@ -30,25 +35,30 @@ describe('formatMessage()', () => {
       url: '/foo/bar',
       params: {},
       headers: {},
-      body: undefined
+      body: undefined,
     };
     const response = {
       version: '1.1',
       status: 200,
       reason: 'OK',
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: ''
+      body: '',
     };
 
-    const formatted = formatMessage('None of the registered handlers returned a response', {
-      request,
-      response
-    });
+    const formatted = formatMessage(
+      'None of the registered handlers returned a response',
+      {
+        request,
+        response,
+      },
+    );
 
     expect(formatted).toContain('HTTP/1.1 200 OK');
-    expect(formatted).toContain('Content-Type: application/json; charset=UTF-8');
+    expect(formatted).toContain(
+      'Content-Type: application/json; charset=UTF-8',
+    );
   });
 
   it('should contain the error message and stack trace', () => {
@@ -58,14 +68,17 @@ describe('formatMessage()', () => {
       url: '/foo/bar',
       params: {},
       headers: {},
-      body: undefined
+      body: undefined,
     };
     const error = new Error('Uh oh!');
 
-    const formatted = formatMessage('None of the registered handlers returned a response', {
-      request,
-      error
-    });
+    const formatted = formatMessage(
+      'None of the registered handlers returned a response',
+      {
+        request,
+        error,
+      },
+    );
 
     expect(formatted).toContain('Uh oh');
     expect(formatted).toContain('formatMessage.test.ts');

@@ -7,7 +7,7 @@ import {
   MockHandler,
   MockBeforeCallback,
   MockAfterCallback,
-  MockErrorCallback
+  MockErrorCallback,
 } from './types';
 export declare class MockRouter {
   private beforeHandlerCallback?;
@@ -19,8 +19,16 @@ export declare class MockRouter {
   after(callback: MockAfterCallback): this;
   error(callback: MockErrorCallback): this;
   use(handler: MockHandler): MockRouter;
-  use(method: MockMethodCriteria, uri: MockURICriteria, handler: MockHandler): MockRouter;
-  use(method: MockMethodCriteria, uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
+  use(
+    method: MockMethodCriteria,
+    uri: MockURICriteria,
+    handler: MockHandler,
+  ): MockRouter;
+  use(
+    method: MockMethodCriteria,
+    uri: MockURICriteria,
+    response: Partial<MockResponse>,
+  ): MockRouter;
   get(uri: MockURICriteria, handler: MockHandler): MockRouter;
   get(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   post(uri: MockURICriteria, handler: MockHandler): MockRouter;
@@ -32,5 +40,8 @@ export declare class MockRouter {
   delete(uri: MockURICriteria, handler: MockHandler): MockRouter;
   delete(uri: MockURICriteria, response: Partial<MockResponse>): MockRouter;
   routeSync(req: Partial<MockRequest>, ctx: MockContext): MockResponse;
-  routeAsync(req: Partial<MockRequest>, ctx: MockContext): Promise<MockResponse>;
+  routeAsync(
+    req: Partial<MockRequest>,
+    ctx: MockContext,
+  ): Promise<MockResponse>;
 }

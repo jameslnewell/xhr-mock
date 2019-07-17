@@ -1,5 +1,8 @@
 import mock, {MockResponse} from '../src';
-import {recordXHREventsAsync, recordXHREventsSync} from './util/recordXHREvents';
+import {
+  recordXHREventsAsync,
+  recordXHREventsSync,
+} from './util/recordXHREvents';
 
 // the expected output of these tests is recorded using:
 //   => https://codepen.io/jameslnewell/pen/RxQqzV?editors=0010
@@ -12,9 +15,9 @@ describe('xhr-mock', () => {
       mock.get('/', {
         status: 200,
         headers: {
-          'Content-Length': '12'
+          'Content-Length': '12',
         },
-        body: 'Hello World!'
+        body: 'Hello World!',
       });
 
       const xhr = new XMLHttpRequest();
@@ -30,17 +33,17 @@ describe('xhr-mock', () => {
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
+            total: 12,
+          },
         ],
         [
           'loadend',
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
-        ]
+            total: 12,
+          },
+        ],
       ]);
     });
 
@@ -71,9 +74,9 @@ describe('xhr-mock', () => {
       mock.get('/', {
         status: 200,
         headers: {
-          'Content-Length': '12'
+          'Content-Length': '12',
         },
-        body: 'Hello World!'
+        body: 'Hello World!',
       });
 
       const xhr = new XMLHttpRequest();
@@ -89,8 +92,8 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
+            total: 0,
+          },
         ],
         ['readystatechange', 2],
         ['readystatechange', 3],
@@ -99,8 +102,8 @@ describe('xhr-mock', () => {
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
+            total: 12,
+          },
         ],
         ['readystatechange', 4],
         [
@@ -108,17 +111,17 @@ describe('xhr-mock', () => {
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
+            total: 12,
+          },
         ],
         [
           'loadend',
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
-        ]
+            total: 12,
+          },
+        ],
       ]);
     });
 
@@ -126,9 +129,9 @@ describe('xhr-mock', () => {
       mock.post('/', {
         status: 200,
         headers: {
-          'Content-Length': '12'
+          'Content-Length': '12',
         },
-        body: 'Hello World!'
+        body: 'Hello World!',
       });
 
       const xhr = new XMLHttpRequest();
@@ -144,40 +147,40 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
+            total: 0,
+          },
         ],
         [
           'upload:loadstart',
           {
             lengthComputable: true,
             loaded: 0,
-            total: 6
-          }
+            total: 6,
+          },
         ],
         [
           'upload:progress',
           {
             lengthComputable: true,
             loaded: 6,
-            total: 6
-          }
+            total: 6,
+          },
         ],
         [
           'upload:load',
           {
             lengthComputable: true,
             loaded: 6,
-            total: 6
-          }
+            total: 6,
+          },
         ],
         [
           'upload:loadend',
           {
             lengthComputable: true,
             loaded: 6,
-            total: 6
-          }
+            total: 6,
+          },
         ],
         ['readystatechange', 2],
         ['readystatechange', 3],
@@ -186,8 +189,8 @@ describe('xhr-mock', () => {
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
+            total: 12,
+          },
         ],
         ['readystatechange', 4],
         [
@@ -195,17 +198,17 @@ describe('xhr-mock', () => {
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
+            total: 12,
+          },
         ],
         [
           'loadend',
           {
             lengthComputable: true,
             loaded: 12,
-            total: 12
-          }
-        ]
+            total: 12,
+          },
+        ],
       ]);
     });
 
@@ -225,8 +228,8 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
+            total: 0,
+          },
         ],
         ['readystatechange', 4],
         'timeout',
@@ -235,9 +238,9 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
-        ]
+            total: 0,
+          },
+        ],
       ]);
     });
 
@@ -257,8 +260,8 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
+            total: 0,
+          },
         ],
         ['readystatechange', 4],
         'abort',
@@ -267,9 +270,9 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
-        ]
+            total: 0,
+          },
+        ],
       ]);
     });
 
@@ -291,8 +294,8 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
+            total: 0,
+          },
         ],
         ['readystatechange', 4],
         'error',
@@ -301,9 +304,9 @@ describe('xhr-mock', () => {
           {
             lengthComputable: false,
             loaded: 0,
-            total: 0
-          }
-        ]
+            total: 0,
+          },
+        ],
       ]);
     });
   });

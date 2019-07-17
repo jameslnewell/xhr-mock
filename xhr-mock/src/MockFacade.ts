@@ -8,7 +8,7 @@ import {
   MockBeforeCallback,
   MockAfterCallback,
   MockErrorCallback,
-  MockRouter
+  MockRouter,
 } from './router';
 import {MockError} from './MockError';
 import {MockXMLHttpRequest} from './xhr/MockXMLHttpRequest';
@@ -65,12 +65,12 @@ export class MockFacade {
   use(
     method: MockMethodCriteria,
     uri: MockURLCriteria,
-    handlerOrResponse: MockHandler | Partial<MockResponse>
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
   ): MockFacade;
   use(
     methodOrHandler: MockMethodCriteria | MockHandler,
     url?: MockURLCriteria,
-    handlerOrResponse?: MockHandler | Partial<MockResponse>
+    handlerOrResponse?: MockHandler | Partial<MockResponse>,
   ): MockFacade {
     if (
       typeof methodOrHandler === 'string' &&
@@ -91,7 +91,10 @@ export class MockFacade {
     return this;
   }
 
-  get(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockFacade {
+  get(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.get(uri, handlerOrResponse);
       return this;
@@ -101,7 +104,10 @@ export class MockFacade {
     }
   }
 
-  post(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockFacade {
+  post(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.post(uri, handlerOrResponse);
       return this;
@@ -111,7 +117,10 @@ export class MockFacade {
     }
   }
 
-  put(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockFacade {
+  put(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.put(uri, handlerOrResponse);
       return this;
@@ -121,7 +130,10 @@ export class MockFacade {
     }
   }
 
-  patch(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockFacade {
+  patch(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.patch(uri, handlerOrResponse);
       return this;
@@ -131,7 +143,10 @@ export class MockFacade {
     }
   }
 
-  delete(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockFacade {
+  delete(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockFacade {
     if (typeof handlerOrResponse === 'function') {
       this.router.delete(uri, handlerOrResponse);
       return this;

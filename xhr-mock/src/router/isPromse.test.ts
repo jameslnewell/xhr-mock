@@ -8,8 +8,8 @@ describe('isPromise()', () => {
       isPromise(
         new Promise(() => {
           /* do nothing */
-        })
-      )
+        }),
+      ),
     ).toBeTruthy();
   });
 

@@ -6,7 +6,7 @@ const req: MockRequest = {
   method: 'get',
   uri: '/foo/bar',
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 const res: MockResponse = {
@@ -14,11 +14,11 @@ const res: MockResponse = {
   status: 200,
   reason: 'OK',
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 const ctx: MockContextWithSync = {
-  sync: false
+  sync: false,
 };
 
 const alwaysReturnsResponseHandler = () => res;
@@ -29,55 +29,55 @@ describe('createRouteHandler()', () => {
       createHandler('*', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'get'
+          method: 'get',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toEqual(res);
     expect(
       createHandler('get', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'get'
+          method: 'get',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toEqual(res);
     expect(
       createHandler('post', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'post'
+          method: 'post',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toEqual(res);
     expect(
       createHandler('put', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'put'
+          method: 'put',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toEqual(res);
     expect(
       createHandler('patch', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'patch'
+          method: 'patch',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toEqual(res);
     expect(
       createHandler('delete', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'delete'
+          method: 'delete',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toEqual(res);
   });
 
@@ -86,33 +86,51 @@ describe('createRouteHandler()', () => {
       createHandler('options', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'get'
+          method: 'get',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toBeUndefined();
     expect(
       createHandler('head', '/foo/bar', alwaysReturnsResponseHandler)(
         {
           ...req,
-          method: 'post'
+          method: 'post',
         },
-        ctx
-      )
+        ctx,
+      ),
     ).toBeUndefined();
   });
 
   it('should match the uri', () => {
-    expect(createHandler('get', '/foo/bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
-    expect(createHandler('get', '/foo/:bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
-    expect(createHandler('get', /bar/i, alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
-    expect(createHandler('get', 'http://example.com/foo/bar', alwaysReturnsResponseHandler)(req, ctx)).toEqual(res);
+    expect(
+      createHandler('get', '/foo/bar', alwaysReturnsResponseHandler)(req, ctx),
+    ).toEqual(res);
+    expect(
+      createHandler('get', '/foo/:bar', alwaysReturnsResponseHandler)(req, ctx),
+    ).toEqual(res);
+    expect(
+      createHandler('get', /bar/i, alwaysReturnsResponseHandler)(req, ctx),
+    ).toEqual(res);
+    expect(
+      createHandler(
+        'get',
+        'http://example.com/foo/bar',
+        alwaysReturnsResponseHandler,
+      )(req, ctx),
+    ).toEqual(res);
   });
 
   it('should not match the uri', () => {
-    expect(createHandler('get', '/foo/baz', alwaysReturnsResponseHandler)(req, ctx)).toBeUndefined();
-    expect(createHandler('get', '/bar/:foo', alwaysReturnsResponseHandler)(req, ctx)).toBeUndefined();
-    expect(createHandler('get', /abc/i, alwaysReturnsResponseHandler)(req, ctx)).toBeUndefined();
+    expect(
+      createHandler('get', '/foo/baz', alwaysReturnsResponseHandler)(req, ctx),
+    ).toBeUndefined();
+    expect(
+      createHandler('get', '/bar/:foo', alwaysReturnsResponseHandler)(req, ctx),
+    ).toBeUndefined();
+    expect(
+      createHandler('get', /abc/i, alwaysReturnsResponseHandler)(req, ctx),
+    ).toBeUndefined();
   });
 
   it('should call callback', () => {
@@ -123,10 +141,10 @@ describe('createRouteHandler()', () => {
 
   it('should return response', () => {
     const res = createHandler('get', '/foo/bar', {
-      status: 201
+      status: 201,
     })(req, ctx);
     expect(res).toEqual({
-      status: 201
+      status: 201,
     });
   });
 
@@ -135,9 +153,9 @@ describe('createRouteHandler()', () => {
       expect(req).toEqual(
         expect.objectContaining({
           params: {
-            thing: 'bar'
-          }
-        })
+            thing: 'bar',
+          },
+        }),
       );
       return undefined;
     });
@@ -147,9 +165,9 @@ describe('createRouteHandler()', () => {
     const res = createHandler('get', 'https://localhost:3000/foo/bar', {})(
       {
         ...req,
-        headers: {host: 'localhost:3000'}
+        headers: {host: 'localhost:3000'},
       },
-      {sync: true}
+      {sync: true},
     );
     expect(res).toEqual({});
   });

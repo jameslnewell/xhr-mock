@@ -7,7 +7,7 @@ const defaultRequest: Request = {
   url: '/',
   params: {},
   headers: {},
-  body: 'Hello World'
+  body: 'Hello World',
 };
 
 const defaultResponse: Response = {
@@ -15,11 +15,11 @@ const defaultResponse: Response = {
   status: 206,
   reason: 'Partial Content',
   headers: {},
-  body: 'Hello World'
+  body: 'Hello World',
 };
 
 const defaultContext: Context = {
-  mode: Mode.ASYNC
+  mode: Mode.ASYNC,
 };
 
 describe('once()', () => {

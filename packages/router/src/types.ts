@@ -1,6 +1,6 @@
 export enum Mode {
   SYNC,
-  ASYNC
+  ASYNC,
 }
 
 export interface Headers {
@@ -37,7 +37,7 @@ export type PathPattern = string | RegExp;
 
 export type Middleware<C extends {} = {}> = (
   request: Request,
-  context: Context<C>
+  context: Context<C>,
 ) => Partial<Response> | undefined | Promise<Partial<Response> | undefined>;
 
 export interface BeforeEvent<C extends {} = {}> {

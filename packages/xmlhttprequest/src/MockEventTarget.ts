@@ -6,7 +6,7 @@ export class MockEventTarget implements EventTarget {
   public addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void {
     this.listeners = this.listeners || {};
 
@@ -27,7 +27,7 @@ export class MockEventTarget implements EventTarget {
   public removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null = null,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void {
     this.listeners = this.listeners || {};
 

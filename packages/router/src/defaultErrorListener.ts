@@ -12,7 +12,12 @@ export function defaultErrorListener<C>(event: ErrorEvent<C>) {
   } else {
     // tslint:disable: no-console
     // @ts-ignore - need to specify dom or node to get this workinge
-    console.error(formatMessage('A middleware returned an error for the request.', {request, error}));
+    console.error(
+      formatMessage('A middleware returned an error for the request.', {
+        request,
+        error,
+      }),
+    );
     // tslint:enable: no-console
   }
 }

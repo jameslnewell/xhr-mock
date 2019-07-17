@@ -2,7 +2,7 @@ import {__replaceRealXHR} from './XHRMock';
 import {MockRequest, MockResponse, MockContextWithSync} from '../router';
 import {proxy} from './proxy.browser';
 
-type RealXHRMock = {
+interface RealXHRMock {
   error?: Error;
   status: number;
   statusText: string;
@@ -13,7 +13,7 @@ type RealXHRMock = {
   send: jest.Mock<void>;
   onerror?: jest.Mock<void>;
   onloadend?: jest.Mock<void>;
-};
+}
 
 declare module './XHRMock' {
   export function __replaceRealXHR(): RealXHRMock;
@@ -36,13 +36,13 @@ jest.mock('./XHRMock', () => {
           } else if (mock.onloadend) {
             mock.onloadend();
           }
-        })
+        }),
       };
       return mock;
     },
     default: {
-      RealXMLHttpRequest: jest.fn(() => mock)
-    }
+      RealXMLHttpRequest: jest.fn(() => mock),
+    },
   };
 });
 
@@ -122,8 +122,8 @@ describe('proxy.browser', () => {
     expect(res.headers()).toEqual(
       expect.objectContaining({
         foo: 'bar',
-        bar: 'foo'
-      })
+        bar: 'foo',
+      }),
     );
   });
 

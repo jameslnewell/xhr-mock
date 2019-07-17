@@ -29,22 +29,27 @@ export declare type MockMethodCriteria = string;
 export declare type MockURICriteria = string | RegExp;
 export declare type MockHandler = (
   req: MockRequest,
-  ctx: MockContextWithSync
-) => Partial<MockResponse> | undefined | Promise<Partial<MockResponse> | undefined>;
-export declare type MockBeforeCallbackEvent = {
+  ctx: MockContextWithSync,
+) =>
+  | Partial<MockResponse>
+  | undefined
+  | Promise<Partial<MockResponse> | undefined>;
+export interface type MockBeforeCallbackEvent {
   req: MockRequest;
   ctx: MockContextWithSync;
-};
-export declare type MockBeforeCallback = (event: MockBeforeCallbackEvent) => void;
-export declare type MockAfterCallbackEvent = {
+}
+export declare type MockBeforeCallback = (
+  event: MockBeforeCallbackEvent,
+) => void;
+export interface type MockAfterCallbackEvent {
   req: MockRequest;
   res: MockResponse;
   ctx: MockContextWithSync;
-};
+}
 export declare type MockAfterCallback = (event: MockAfterCallbackEvent) => void;
-export declare type MockErrorCallbackEvent = {
+export interface type MockErrorCallbackEvent {
   req: MockRequest;
   err: Error;
   ctx: MockContextWithSync;
-};
+}
 export declare type MockErrorCallback = (event: MockErrorCallbackEvent) => void;

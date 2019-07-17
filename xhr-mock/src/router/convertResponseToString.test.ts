@@ -7,7 +7,7 @@ describe('convertResponseToString()', () => {
       status: 200,
       reason: 'OK',
       headers: {},
-      body: undefined
+      body: undefined,
     };
     const out = `HTTP/1.1 200 OK
 
@@ -21,9 +21,9 @@ describe('convertResponseToString()', () => {
       status: 200,
       reason: 'OK',
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: undefined
+      body: undefined,
     };
     const out = `HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8
@@ -38,7 +38,7 @@ Content-Type: application/json; charset=UTF-8
       status: 200,
       reason: 'OK',
       headers: {},
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const out = `HTTP/1.1 200 OK
 
@@ -52,9 +52,9 @@ Content-Type: application/json; charset=UTF-8
       status: 200,
       reason: 'OK',
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const out = `HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8

@@ -30,9 +30,9 @@ describe('Facade', () => {
 
       expect(handler).toBeCalledWith(
         expect.objectContaining({
-          url: '/foo'
+          url: '/foo',
         }),
-        expect.objectContaining({})
+        expect.objectContaining({}),
       );
     });
 
@@ -42,9 +42,9 @@ describe('Facade', () => {
       expect(handler).toBeCalledWith(
         expect.objectContaining({
           method: 'POST',
-          url: '/foo'
+          url: '/foo',
         }),
-        expect.objectContaining({})
+        expect.objectContaining({}),
       );
     });
 
@@ -53,9 +53,9 @@ describe('Facade', () => {
 
       expect(handler).toBeCalledWith(
         expect.objectContaining({
-          url: '/foo'
+          url: '/foo',
         }),
-        expect.objectContaining({})
+        expect.objectContaining({}),
       );
     });
   });

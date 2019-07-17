@@ -4,15 +4,23 @@ import MockResponse from './MockResponse';
 import {MockError} from './MockError';
 import {isPromiseLike} from './isPromiseLike';
 
-const NO_RESPONSE_ERROR = new MockError('No handler returned a response for the request.');
+const NO_RESPONSE_ERROR = new MockError(
+  'No handler returned a response for the request.',
+);
 
-export function sync(handlers: MockFunction[], request: MockRequest, response: MockResponse): MockResponse {
+export function sync(
+  handlers: MockFunction[],
+  request: MockRequest,
+  response: MockResponse,
+): MockResponse {
   for (let i = 0; i < handlers.length; ++i) {
     const result = handlers[i](request, response);
 
     if (result) {
       if (isPromiseLike(result)) {
-        throw new MockError('A handler returned a Promise<MockResponse> for a synchronous request.');
+        throw new MockError(
+          'A handler returned a Promise<MockResponse> for a synchronous request.',
+        );
       }
       return result;
     }
@@ -20,7 +28,11 @@ export function sync(handlers: MockFunction[], request: MockRequest, response: M
   throw NO_RESPONSE_ERROR;
 }
 
-export function async(handlers: MockFunction[], request: MockRequest, response: MockResponse): Promise<MockResponse> {
+export function async(
+  handlers: MockFunction[],
+  request: MockRequest,
+  response: MockResponse,
+): Promise<MockResponse> {
   return handlers
     .reduce(
       (promise, handler) =>
@@ -30,7 +42,7 @@ export function async(handlers: MockFunction[], request: MockRequest, response: 
           }
           return result;
         }),
-      Promise.resolve(undefined)
+      Promise.resolve(undefined),
     )
     .then(result => {
       if (!result) {

@@ -22,7 +22,9 @@ describe('jquery', () => {
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(200);
         expect(xhr.statusText).to.eq('OK');
-        expect(xhr.getAllResponseHeaders()).to.contain('content-length: 12\r\n');
+        expect(xhr.getAllResponseHeaders()).to.contain(
+          'content-length: 12\r\n',
+        );
         expect(data).to.eq('Hello World!');
       })
       .catch((xhr, status, error) => expect.fail(error));
@@ -43,12 +45,14 @@ describe('jquery', () => {
     const res = await $.ajax({
       method: 'post',
       url: '/',
-      data: JSON.stringify({foo: 'bar'})
+      data: JSON.stringify({foo: 'bar'}),
     })
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(201);
         expect(xhr.statusText).to.eq('Created');
-        expect(xhr.getAllResponseHeaders()).to.contain('content-length: 12\r\n');
+        expect(xhr.getAllResponseHeaders()).to.contain(
+          'content-length: 12\r\n',
+        );
         expect(data).to.eq('Hello World!');
       })
       .catch((xhr, status, error) => expect.fail(error));
@@ -69,12 +73,14 @@ describe('jquery', () => {
     const res = await $.ajax({
       method: 'put',
       url: '/',
-      data: JSON.stringify({foo: 'bar'})
+      data: JSON.stringify({foo: 'bar'}),
     })
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(200);
         expect(xhr.statusText).to.eq('OK');
-        expect(xhr.getAllResponseHeaders()).to.contain('content-length: 12\r\n');
+        expect(xhr.getAllResponseHeaders()).to.contain(
+          'content-length: 12\r\n',
+        );
         expect(data).to.eq('Hello World!');
       })
       .catch((xhr, status, error) => expect.fail(error));
@@ -90,7 +96,7 @@ describe('jquery', () => {
 
     const res = await $.ajax({
       method: 'delete',
-      url: '/'
+      url: '/',
     })
       .then((data, status, xhr) => {
         expect(xhr.status).to.eq(204);
@@ -106,13 +112,13 @@ describe('jquery', () => {
 
     await $.ajax({
       url: '/',
-      timeout: 10
+      timeout: 10,
     }).then(
       () => expect.fail(),
       (xhr, status, error) => {
         expect(status).to.eq('timeout');
         expect(error).to.contain('');
-      }
+      },
     );
   });
 
@@ -124,7 +130,7 @@ describe('jquery', () => {
       (xhr, status, error) => {
         expect(status).to.eq('error');
         expect(error).to.contain('');
-      }
+      },
     );
   });
 });

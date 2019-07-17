@@ -18,16 +18,25 @@ function formatResponse(response: Response) {
 }
 
 function formatError(error: Error): string {
-  return indentLines((error && error.stack) || (error && error.message) || `Error: ${error}`, 4);
+  return indentLines(
+    (error && error.stack) || (error && error.message) || `Error: ${error}`,
+    4,
+  );
 }
 
 export function formatMessage(
   msg: string,
-  {request, response, error}: {request: Request; response?: Response; error?: Error}
+  {
+    request,
+    response,
+    error,
+  }: {request: Request; response?: Response; error?: Error},
 ) {
   return `xhr-mock: ${msg}
 
 ${formatRequest(request)}
-${response ? `\n${formatResponse(response)}` : ''}${error ? `\n${formatError(error)}` : ''}
+${response ? `\n${formatResponse(response)}` : ''}${
+    error ? `\n${formatError(error)}` : ''
+  }
 `;
 }

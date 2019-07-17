@@ -24,7 +24,7 @@ function getResponse(xhr: XMLHttpRequest): Partial<Response> {
     status: xhr.status,
     reason: xhr.statusText,
     headers: parseHeaders(xhr.getAllResponseHeaders()),
-    body: xhr.response
+    body: xhr.response,
   };
 }
 

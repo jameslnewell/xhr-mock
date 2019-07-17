@@ -21,7 +21,7 @@ export class MockProgressEvent extends MockEvent implements ProgressEvent {
     cancelableArg: boolean,
     lengthComputableArg: boolean,
     loadedArg: number,
-    totalArg: number
+    totalArg: number,
   ): void {
     throw new Error();
   }

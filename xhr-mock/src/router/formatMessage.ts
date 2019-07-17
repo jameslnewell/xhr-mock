@@ -18,10 +18,16 @@ function formatResponse(res: MockResponse) {
 }
 
 function formatError(err: Error): string {
-  return indentLines((err && err.stack) || (err && err.message) || `Error: ${err}`, 4);
+  return indentLines(
+    (err && err.stack) || (err && err.message) || `Error: ${err}`,
+    4,
+  );
 }
 
-export function formatMessage(msg: string, {req, res, err}: {req: MockRequest; res?: MockResponse; err?: Error}) {
+export function formatMessage(
+  msg: string,
+  {req, res, err}: {req: MockRequest; res?: MockResponse; err?: Error},
+) {
   return `xhr-mock: ${msg}
 
 ${formatRequest(req)}

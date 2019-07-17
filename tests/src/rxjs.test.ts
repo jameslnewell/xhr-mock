@@ -9,7 +9,7 @@ describe('rxjs', () => {
 
   it('should return a JSON object', done => {
     mock.post('/some-url', {
-      body: JSON.stringify({data: 'mockdata'})
+      body: JSON.stringify({data: 'mockdata'}),
     });
 
     ajax({
@@ -17,21 +17,21 @@ describe('rxjs', () => {
       body: {some: 'something'},
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      responseType: 'json'
+      responseType: 'json',
     }).subscribe({
       next: response => {
         try {
           expect(response.response).to.be.deep.equal({
-            data: 'mockdata'
+            data: 'mockdata',
           });
         } catch (error) {
           done(error);
         }
       },
       error: error => done(error),
-      complete: () => done()
+      complete: () => done(),
     });
   });
 });

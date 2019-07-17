@@ -26,7 +26,11 @@ const createXHR = () => {
 
   // record upload events
   const pushDownloadEvent = (event: MockEvent) =>
-    events.push(`xhr:${event.type}${event.type === 'readystatechange' ? `[${xhr.readyState}]` : ''}`);
+    events.push(
+      `xhr:${event.type}${
+        event.type === 'readystatechange' ? `[${xhr.readyState}]` : ''
+      }`,
+    );
   xhr.addEventListener('readystatechange', pushDownloadEvent);
   xhr.addEventListener('loadstart', pushDownloadEvent);
   xhr.addEventListener('progress', pushDownloadEvent);
@@ -34,7 +38,8 @@ const createXHR = () => {
   xhr.addEventListener('loadend', pushDownloadEvent);
 
   // record upload events
-  const pushUploadEvent = (event: MockEvent) => events.push(`upload:${event.type}`);
+  const pushUploadEvent = (event: MockEvent) =>
+    events.push(`upload:${event.type}`);
   xhr.upload.addEventListener('loadstart', pushUploadEvent);
   xhr.upload.addEventListener('progress', pushUploadEvent);
   xhr.upload.addEventListener('load', pushUploadEvent);
@@ -165,7 +170,9 @@ describe('MockXMLHttpRequest', () => {
       });
       xhr.open('get', '/');
       xhr.onloadend = () => {
-        expect(xhr.getResponseHeader('Content-Type')).toEqual('application/json');
+        expect(xhr.getResponseHeader('Content-Type')).toEqual(
+          'application/json',
+        );
         done();
       };
       xhr.onerror = failOnEvent(done);
@@ -180,13 +187,15 @@ describe('MockXMLHttpRequest', () => {
         return {
           headers: {
             'Content-Type': 'application/json',
-            'X-Powered-By': 'SecretSauce'
-          }
+            'X-Powered-By': 'SecretSauce',
+          },
         };
       });
       xhr.open('get', '/');
       xhr.onload = () => {
-        expect(xhr.getAllResponseHeaders()).toEqual('content-type: application/json\r\nx-powered-by: SecretSauce\r\n');
+        expect(xhr.getAllResponseHeaders()).toEqual(
+          'content-type: application/json\r\nx-powered-by: SecretSauce\r\n',
+        );
         done();
       };
       xhr.onerror = failOnEvent(done);
@@ -233,7 +242,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:readystatechange[1]', // OPENED
           'xhr:readystatechange[4]', // DONE
           'xhr:load',
-          'xhr:loadend'
+          'xhr:loadend',
         ]);
       });
 
@@ -246,7 +255,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:readystatechange[1]', // OPENED
           'xhr:readystatechange[4]', // DONE
           'xhr:load',
-          'xhr:loadend'
+          'xhr:loadend',
         ]);
       });
 
@@ -259,7 +268,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:readystatechange[1]', // OPENED
           'xhr:readystatechange[4]', // DONE
           'xhr:load',
-          'xhr:loadend'
+          'xhr:loadend',
         ]);
       });
     });
@@ -278,7 +287,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:readystatechange[3]', // LOADING
           'xhr:progress',
           'xhr:readystatechange[4]', // DONE
-          'xhr:load'
+          'xhr:load',
         ]);
         done();
       };
@@ -301,7 +310,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:readystatechange[3]', // LOADING
           'xhr:progress',
           'xhr:readystatechange[4]', // DONE
-          'xhr:load'
+          'xhr:load',
         ]);
         done();
       };
@@ -320,7 +329,7 @@ describe('MockXMLHttpRequest', () => {
           'xhr:readystatechange[3]', // LOADING
           'xhr:progress',
           'xhr:readystatechange[4]', // DONE
-          'xhr:load'
+          'xhr:load',
         ]);
         done();
       };
@@ -360,7 +369,7 @@ describe('MockXMLHttpRequest', () => {
       req =>
         new Promise(() => {
           /* do nothing */
-        })
+        }),
     );
     xhr.timeout = 100;
     xhr.ontimeout = () => {
@@ -381,7 +390,7 @@ describe('MockXMLHttpRequest', () => {
       req =>
         new Promise(() => {
           /* do nothing */
-        })
+        }),
     );
     xhr.timeout = 100;
     xhr.ontimeout = failOnEvent(done);
@@ -407,8 +416,8 @@ describe('MockXMLHttpRequest', () => {
     const {router, xhr} = createXHR();
     router.use(req => ({
       headers: {
-        'Content-Type': 'text/plain; charset=UTF-8'
-      }
+        'Content-Type': 'text/plain; charset=UTF-8',
+      },
     }));
     xhr.onload = successOnEvent(done);
     xhr.onerror = failOnEvent(done);
@@ -420,8 +429,8 @@ describe('MockXMLHttpRequest', () => {
     const {router, xhr} = createXHR();
     router.use(req => ({
       headers: {
-        'Content-Type': 'foo/bar'
-      }
+        'Content-Type': 'foo/bar',
+      },
     }));
     xhr.onload = successOnEvent(done);
     xhr.onerror = failOnEvent(done);

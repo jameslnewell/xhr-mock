@@ -52,7 +52,7 @@ export class Request extends Body implements Request {
       cache: this.cache,
       redirect: this.redirect,
       referrer: this.referrer,
-      integrity: this.integrity
+      integrity: this.integrity,
     });
   }
 }

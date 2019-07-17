@@ -23,7 +23,7 @@ describe('axios', () => {
     expect(res.status).to.eq(200);
     expect(res.statusText).to.eq('OK');
     expect(res.headers).to.deep.eq({
-      'content-length': '12'
+      'content-length': '12',
     });
     expect(res.data).to.eq('Hello World!');
   });
@@ -45,7 +45,7 @@ describe('axios', () => {
     expect(res.status).to.eq(201);
     expect(res.statusText).to.eq('Created');
     expect(res.headers).to.deep.eq({
-      'content-length': '12'
+      'content-length': '12',
     });
     expect(res.data).to.eq('Hello World!');
   });
@@ -67,7 +67,7 @@ describe('axios', () => {
     expect(res.status).to.eq(200);
     expect(res.statusText).to.eq('Created');
     expect(res.headers).to.deep.eq({
-      'content-length': '12'
+      'content-length': '12',
     });
     expect(res.data).to.eq('Hello World!');
   });

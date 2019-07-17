@@ -6,10 +6,13 @@ function normaliseMethod(method: string): string {
 }
 
 function normaliseHeaders(headers: MockHeaders): MockHeaders {
-  return Object.keys(headers).reduce((newHeaders: MockHeaders, name: string) => {
-    newHeaders[name.toLowerCase()] = headers[name];
-    return newHeaders;
-  }, {});
+  return Object.keys(headers).reduce(
+    (newHeaders: MockHeaders, name: string) => {
+      newHeaders[name.toLowerCase()] = headers[name];
+      return newHeaders;
+    },
+    {},
+  );
 }
 
 function getReasonById(status: number): string {
@@ -23,7 +26,7 @@ export function normaliseRequest(req: Partial<MockRequest>): MockRequest {
     body: undefined,
     ...req,
     method: normaliseMethod(req.method || 'GET'),
-    headers: normaliseHeaders(req.headers || {})
+    headers: normaliseHeaders(req.headers || {}),
   };
 }
 
@@ -34,6 +37,6 @@ export function normaliseResponse(res: Partial<MockResponse>): MockResponse {
     reason: getReasonById(res.status || 200),
     body: undefined,
     ...res,
-    headers: normaliseHeaders(res.headers || {})
+    headers: normaliseHeaders(res.headers || {}),
   };
 }

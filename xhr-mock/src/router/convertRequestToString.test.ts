@@ -7,7 +7,7 @@ describe('convertRequestToString()', () => {
       method: 'GET',
       url: '/',
       headers: {},
-      body: undefined
+      body: undefined,
     };
     const out = `GET / HTTP/1.1
 
@@ -21,9 +21,9 @@ describe('convertRequestToString()', () => {
       method: 'GET',
       url: '/',
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: undefined
+      body: undefined,
     };
     const out = `GET / HTTP/1.1
 Content-Type: application/json; charset=UTF-8
@@ -38,7 +38,7 @@ Content-Type: application/json; charset=UTF-8
       method: 'GET',
       url: '/',
       headers: {},
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const out = `GET / HTTP/1.1
 
@@ -52,9 +52,9 @@ Content-Type: application/json; charset=UTF-8
       method: 'GET',
       url: '/',
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const out = `GET / HTTP/1.1
 Content-Type: application/json; charset=UTF-8

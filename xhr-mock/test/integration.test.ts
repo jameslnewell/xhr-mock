@@ -98,7 +98,7 @@ describe('integration', () => {
     debugger;
     mock.get('https://reqres.in/api/users/1', {
       status: 200,
-      body: 'Hello World!'
+      body: 'Hello World!',
     });
 
     mock.use(proxy);
@@ -115,8 +115,8 @@ describe('integration', () => {
     expect(JSON.parse(ret2)).toEqual({
       data: expect.objectContaining({
         id: 2,
-        first_name: 'Janet'
-      })
+        first_name: 'Janet',
+      }),
     });
   });
 });

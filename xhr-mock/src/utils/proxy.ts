@@ -4,9 +4,14 @@ import * as https from 'https';
 import {MockError} from '../MockError';
 import {MockRequest, MockResponse, MockContextWithSync} from '../router';
 
-export function proxy(req: MockRequest, ctx: MockContextWithSync): Promise<Partial<MockResponse>> {
+export function proxy(
+  req: MockRequest,
+  ctx: MockContextWithSync,
+): Promise<Partial<MockResponse>> {
   if (ctx.sync) {
-    throw new MockError('Synchronus requests are not supported by proxy() in NodeJS.');
+    throw new MockError(
+      'Synchronus requests are not supported by proxy() in NodeJS.',
+    );
   }
 
   return new Promise((resolve, reject) => {
@@ -19,10 +24,11 @@ export function proxy(req: MockRequest, ctx: MockContextWithSync): Promise<Parti
       port: urlinfo.port,
       auth: `${urlinfo.username} ${urlinfo.password}`,
       path: urlinfo.path,
-      headers: req.headers
+      headers: req.headers,
     };
 
-    const createRequest = urlinfo.protocol === 'https:' ? https.request : http.request;
+    const createRequest =
+      urlinfo.protocol === 'https:' ? https.request : http.request;
 
     const proxyRequest = createRequest(options, proxyResponse => {
       let body = '';
@@ -36,13 +42,16 @@ export function proxy(req: MockRequest, ctx: MockContextWithSync): Promise<Parti
           status: proxyResponse.statusCode,
           reason: proxyResponse.statusMessage,
           headers: Object.keys(proxyResponse.headers).reduce(
-            (accum: {[name: string]: string | string[] | undefined}, name: string) => {
+            (
+              accum: {[name: string]: string | string[] | undefined},
+              name: string,
+            ) => {
               accum[name] = proxyResponse.headers[name];
               return accum;
             },
-            {}
+            {},
           ),
-          body: body
+          body: body,
         });
       });
     });

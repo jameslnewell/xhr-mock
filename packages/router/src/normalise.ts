@@ -24,7 +24,7 @@ export function normaliseRequest(req: Partial<Request>): Request {
     body: undefined,
     ...req,
     method: normaliseMethod(req.method || 'GET'),
-    headers: normaliseHeaders(req.headers || {})
+    headers: normaliseHeaders(req.headers || {}),
   };
 }
 
@@ -35,13 +35,15 @@ export function normaliseResponse(res: Partial<Response>): Response {
     reason: getReasonById(res.status || 200),
     body: undefined,
     ...res,
-    headers: normaliseHeaders(res.headers || {})
+    headers: normaliseHeaders(res.headers || {}),
   };
 }
 
-export function normaliseContext<C extends {}>(ctx: C & Partial<Context>): Context<C> {
+export function normaliseContext<C extends {}>(
+  ctx: C & Partial<Context>,
+): Context<C> {
   return {
     mode: Mode.ASYNC,
-    ...ctx
+    ...ctx,
   };
 }

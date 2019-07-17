@@ -59,10 +59,10 @@ describe('proxy', () => {
           method: 'put',
           uri: 'https://httpbin.org/put',
           headers: {},
-          body: null
+          body: null,
         },
-        {sync: true}
-      )
+        {sync: true},
+      ),
     ).toThrow();
   });
 
@@ -74,11 +74,11 @@ describe('proxy', () => {
         uri: 'http://httpbin.org/put',
         headers: {
           foo: 'bar',
-          bar: 'foo'
+          bar: 'foo',
         },
-        body: null
+        body: null,
       },
-      {sync: false}
+      {sync: false},
     );
 
     const body = res.body || '';
@@ -87,9 +87,9 @@ describe('proxy', () => {
         url: 'http://httpbin.org/put',
         headers: expect.objectContaining({
           Foo: 'bar',
-          Bar: 'foo'
-        })
-      })
+          Bar: 'foo',
+        }),
+      }),
     );
   });
 
@@ -100,11 +100,11 @@ describe('proxy', () => {
         method: 'put',
         uri: 'https://httpbin.org/put',
         headers: {
-          'Content-Length': '12'
+          'Content-Length': '12',
         },
-        body: 'Hello World!'
+        body: 'Hello World!',
       },
-      {sync: false}
+      {sync: false},
     );
 
     const body = res.body || '';
@@ -112,10 +112,10 @@ describe('proxy', () => {
       expect.objectContaining({
         url: 'https://httpbin.org/put',
         headers: expect.objectContaining({
-          'Content-Length': '12'
+          'Content-Length': '12',
         }),
-        data: 'Hello World!'
-      })
+        data: 'Hello World!',
+      }),
     );
   });
 
@@ -126,19 +126,19 @@ describe('proxy', () => {
         method: 'put',
         uri: 'https://httpbin.org/put',
         headers: {
-          'content-length': '12'
+          'content-length': '12',
         },
-        body: 'Hello World!'
+        body: 'Hello World!',
       },
-      {sync: false}
+      {sync: false},
     );
 
     const body = res.body || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
         url: 'https://httpbin.org/put',
-        data: 'Hello World!'
-      })
+        data: 'Hello World!',
+      }),
     );
   });
 
@@ -149,17 +149,17 @@ describe('proxy', () => {
         method: 'put',
         uri: 'https://httpbin.org/put',
         headers: {},
-        body: null
+        body: null,
       },
-      {sync: false}
+      {sync: false},
     );
 
     const body = res.body || '';
     expect(JSON.parse(body)).toEqual(
       expect.objectContaining({
         url: 'https://httpbin.org/put',
-        data: ''
-      })
+        data: '',
+      }),
     );
   });
 
@@ -170,9 +170,9 @@ describe('proxy', () => {
         method: 'put',
         uri: 'https://httpbin.org/put',
         headers: {},
-        body: null
+        body: null,
       },
-      {sync: false}
+      {sync: false},
     );
 
     expect(res.reason).toEqual('OK');
@@ -185,16 +185,16 @@ describe('proxy', () => {
         method: 'put',
         uri: 'https://httpbin.org/put',
         headers: {},
-        body: null
+        body: null,
       },
-      {sync: false}
+      {sync: false},
     );
 
     expect(res.headers).toEqual(
       expect.objectContaining({
         'content-type': 'application/json',
-        'content-length': expect.any(String)
-      })
+        'content-length': expect.any(String),
+      }),
     );
   });
 
@@ -205,9 +205,9 @@ describe('proxy', () => {
         method: 'put',
         uri: 'https://httpbin.org/put',
         headers: {},
-        body: null
+        body: null,
       },
-      {sync: false}
+      {sync: false},
     );
 
     expect(res.body).toBeDefined();
@@ -222,9 +222,9 @@ describe('proxy', () => {
           method: 'delete',
           uri: 'invalid://blah',
           headers: {},
-          body: null
+          body: null,
         },
-        {sync: false}
+        {sync: false},
       );
     } catch (error) {
       expect(error).not.toBeUndefined();

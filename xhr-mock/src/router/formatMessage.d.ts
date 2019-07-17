@@ -4,10 +4,10 @@ export declare function formatMessage(
   {
     req,
     res,
-    err
+    err,
   }: {
     req: MockRequest;
     res?: MockResponse;
     err?: Error;
-  }
+  },
 ): string;

@@ -37,25 +37,28 @@ export type MockURLCriteria = string | RegExp;
 
 export type MockHandler = (
   req: MockRequest,
-  ctx: MockContextWithSync
-) => Partial<MockResponse> | undefined | Promise<Partial<MockResponse> | undefined>;
+  ctx: MockContextWithSync,
+) =>
+  | Partial<MockResponse>
+  | undefined
+  | Promise<Partial<MockResponse> | undefined>;
 
-export type MockBeforeCallbackEvent = {
+export interface MockBeforeCallbackEvent {
   req: MockRequest;
   ctx: MockContextWithSync;
-};
+}
 export type MockBeforeCallback = (event: MockBeforeCallbackEvent) => void;
 
-export type MockAfterCallbackEvent = {
+export interface MockAfterCallbackEvent {
   req: MockRequest;
   res: MockResponse;
   ctx: MockContextWithSync;
-};
+}
 export type MockAfterCallback = (event: MockAfterCallbackEvent) => void;
 
-export type MockErrorCallbackEvent = {
+export interface MockErrorCallbackEvent {
   req: MockRequest;
   err: Error;
   ctx: MockContextWithSync;
-};
+}
 export type MockErrorCallback = (event: MockErrorCallbackEvent) => void;

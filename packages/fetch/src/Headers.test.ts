@@ -83,14 +83,14 @@ describe('Headers', () => {
       const headers = new Headers({
         a: '1',
         b: '2',
-        c: '3'
+        c: '3',
       });
       headers.forEach(fn);
       expect(fn).toHaveBeenCalledTimes(3);
       expect(fn.mock.calls).toEqual([
         expect.arrayContaining(['1', 'a']),
         expect.arrayContaining(['2', 'b']),
-        expect.arrayContaining(['3', 'c'])
+        expect.arrayContaining(['3', 'c']),
       ]);
     });
   });

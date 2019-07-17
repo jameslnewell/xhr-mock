@@ -22,7 +22,7 @@ export class Response extends Body implements Response {
     return new Response(this.bodyInit, {
       status: this.status,
       statusText: this.statusText,
-      headers: this.headers
+      headers: this.headers,
     });
   }
 

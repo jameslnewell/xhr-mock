@@ -8,7 +8,7 @@ function setHeaders(req: MockRequest, xhr: XMLHttpRequest): void {
   });
 }
 
-function parseHeaders(string: String): {} {
+function parseHeaders(string: string): {} {
   const headers: {[name: string]: string} = {};
   const lines = string.split('\r\n');
   lines.forEach(line => {
@@ -25,13 +25,13 @@ function getResponse(xhr: XMLHttpRequest): Partial<MockResponse> {
     status: xhr.status,
     reason: xhr.statusText,
     headers: parseHeaders(xhr.getAllResponseHeaders()),
-    body: xhr.response
+    body: xhr.response,
   };
 }
 
 export function proxy(
   req: MockRequest,
-  ctx: MockContextWithSync
+  ctx: MockContextWithSync,
 ): Partial<MockResponse> | Promise<Partial<MockResponse>> {
   const xhr: XMLHttpRequest = new XHRMock.RealXMLHttpRequest();
   if (ctx.sync) {

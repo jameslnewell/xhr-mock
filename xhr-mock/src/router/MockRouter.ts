@@ -9,7 +9,7 @@ import {
   MockAfterCallback,
   MockErrorCallback,
   MockErrorCallbackEvent,
-  MockAfterCallbackEvent
+  MockAfterCallbackEvent,
 } from './types';
 import {MockError} from '../MockError';
 import {createHandler} from './createHandler';
@@ -19,7 +19,9 @@ import {normaliseRequest, normaliseResponse} from './normalise';
 
 function afterLogger(event: MockAfterCallbackEvent) {
   const {req, res} = event;
-  console.info(formatMessage('A handler returned a response for the request.', {req, res}));
+  console.info(
+    formatMessage('A handler returned a response for the request.', {req, res}),
+  );
 }
 
 function errorLogger(event: MockErrorCallbackEvent) {
@@ -27,7 +29,9 @@ function errorLogger(event: MockErrorCallbackEvent) {
   if (err instanceof MockError) {
     console.error(formatMessage(err.message, {req}));
   } else {
-    console.error(formatMessage('A handler returned an error for the request.', {req, err}));
+    console.error(
+      formatMessage('A handler returned an error for the request.', {req, err}),
+    );
   }
 }
 
@@ -61,17 +65,31 @@ export class MockRouter {
   }
 
   use(handler: MockHandler): MockRouter;
-  use(method: MockMethodCriteria, uri: MockURLCriteria, handler: MockHandler): MockRouter;
-  use(method: MockMethodCriteria, uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
+  use(
+    method: MockMethodCriteria,
+    uri: MockURLCriteria,
+    handler: MockHandler,
+  ): MockRouter;
+  use(
+    method: MockMethodCriteria,
+    uri: MockURLCriteria,
+    response: Partial<MockResponse>,
+  ): MockRouter;
   use(
     methodOrHandler: MockMethodCriteria | MockHandler,
     uri?: MockURLCriteria,
-    handlerOrResponse?: MockHandler | Partial<MockResponse>
+    handlerOrResponse?: MockHandler | Partial<MockResponse>,
   ): MockRouter {
     if (typeof methodOrHandler === 'function' && !uri && !handlerOrResponse) {
       this.handlers.push(methodOrHandler);
-    } else if (typeof methodOrHandler === 'string' && uri && handlerOrResponse) {
-      this.handlers.push(createHandler(methodOrHandler, uri, handlerOrResponse));
+    } else if (
+      typeof methodOrHandler === 'string' &&
+      uri &&
+      handlerOrResponse
+    ) {
+      this.handlers.push(
+        createHandler(methodOrHandler, uri, handlerOrResponse),
+      );
     } else {
       throw new MockError('Invalid parameters.');
     }
@@ -80,7 +98,10 @@ export class MockRouter {
 
   get(uri: MockURLCriteria, handler: MockHandler): MockRouter;
   get(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  get(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockRouter {
+  get(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
     if (typeof handlerOrResponse === 'function') {
@@ -93,7 +114,10 @@ export class MockRouter {
 
   post(uri: MockURLCriteria, handler: MockHandler): MockRouter;
   post(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  post(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockRouter {
+  post(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
     if (typeof handlerOrResponse === 'function') {
@@ -106,7 +130,10 @@ export class MockRouter {
 
   put(uri: MockURLCriteria, handler: MockHandler): MockRouter;
   put(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  put(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockRouter {
+  put(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
     if (typeof handlerOrResponse === 'function') {
@@ -119,7 +146,10 @@ export class MockRouter {
 
   patch(uri: MockURLCriteria, handler: MockHandler): MockRouter;
   patch(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  patch(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockRouter {
+  patch(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
     if (typeof handlerOrResponse === 'function') {
@@ -132,7 +162,10 @@ export class MockRouter {
 
   delete(uri: MockURLCriteria, handler: MockHandler): MockRouter;
   delete(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  delete(uri: MockURLCriteria, handlerOrResponse: MockHandler | Partial<MockResponse>): MockRouter {
+  delete(
+    uri: MockURLCriteria,
+    handlerOrResponse: MockHandler | Partial<MockResponse>,
+  ): MockRouter {
     // this branch is used to get around the weak type Partial<Response>
     // @see https://blog.mariusschulz.com/2017/12/01/typescript-2-4-weak-type-detection
     if (typeof handlerOrResponse === 'function') {
@@ -157,7 +190,7 @@ export class MockRouter {
         }
         if (isPromise(res)) {
           throw new MockError(
-            'A handler returned a response asynchronously while the request is being routed synchronously.'
+            'A handler returned a response asynchronously while the request is being routed synchronously.',
           );
         }
         const fullResponse = normaliseResponse(res);
@@ -165,7 +198,7 @@ export class MockRouter {
           this.afterHandlerCallback({
             req: fullRequest,
             res: fullResponse,
-            ctx: fullContext
+            ctx: fullContext,
           });
         }
         return fullResponse;
@@ -176,14 +209,17 @@ export class MockRouter {
         this.handlerErrorCallback({
           req: fullRequest,
           err: err,
-          ctx: fullContext
+          ctx: fullContext,
         });
       }
       throw err;
     }
   }
 
-  async routeAsync(req: Partial<MockRequest>, ctx: MockContext): Promise<MockResponse> {
+  async routeAsync(
+    req: Partial<MockRequest>,
+    ctx: MockContext,
+  ): Promise<MockResponse> {
     const fullRequest = normaliseRequest(req);
     const fullContext = {...ctx, sync: false};
     if (this.beforeHandlerCallback) {
@@ -200,7 +236,7 @@ export class MockRouter {
               return handler(fullRequest, fullContext);
             }
           }),
-        Promise.resolve(undefined)
+        Promise.resolve(undefined),
       );
 
       if (res) {
@@ -209,7 +245,7 @@ export class MockRouter {
           this.afterHandlerCallback({
             req: fullRequest,
             res: fullResponse,
-            ctx: fullContext
+            ctx: fullContext,
           });
         }
         return fullResponse;

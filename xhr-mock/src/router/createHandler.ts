@@ -7,26 +7,32 @@ import {
   MockURLCriteria,
   MockHandler,
   MockContext,
-  MockContextWithSync
+  MockContextWithSync,
 } from './types';
 
-function getURIParams(path: string, pattern: string | RegExp): MockRequestParams | undefined {
-  let keys: pathToRegExp.Key[] = [];
+function getURIParams(
+  path: string,
+  pattern: string | RegExp,
+): MockRequestParams | undefined {
+  const keys: pathToRegExp.Key[] = [];
   const regexp = pathToRegExp(pattern, keys);
   const match = regexp.exec(path);
   if (match) {
-    return keys.reduce((params: MockRequestParams, key: pathToRegExp.Key, i: number) => {
-      let value = match[i + 1];
-      if (value) {
-        value = decodeURIComponent(value);
-        if (key.repeat) {
-          params[key.name] = value;
-        } else {
-          params[key.name] = value;
+    return keys.reduce(
+      (params: MockRequestParams, key: pathToRegExp.Key, i: number) => {
+        let value = match[i + 1];
+        if (value) {
+          value = decodeURIComponent(value);
+          if (key.repeat) {
+            params[key.name] = value;
+          } else {
+            params[key.name] = value;
+          }
         }
-      }
-      return params;
-    }, {});
+        return params;
+      },
+      {},
+    );
   } else {
     return undefined;
   }
@@ -35,7 +41,7 @@ function getURIParams(path: string, pattern: string | RegExp): MockRequestParams
 export function createHandler(
   method: string,
   uri: MockURLCriteria,
-  handlerOrResponse: MockHandler | Partial<MockResponse>
+  handlerOrResponse: MockHandler | Partial<MockResponse>,
 ): MockHandler {
   return (req: MockRequest, ctx: MockContextWithSync) => {
     let uriParams: MockRequestParams | undefined;
@@ -62,7 +68,10 @@ export function createHandler(
       // }
 
       // match the URI path
-      uriParams = getURIParams(parsedRequestURI.pathname, parsedMatchURI.pathname);
+      uriParams = getURIParams(
+        parsedRequestURI.pathname,
+        parsedMatchURI.pathname,
+      );
       if (!uriParams) {
         return undefined;
       }
@@ -73,8 +82,8 @@ export function createHandler(
       const reqWithPathParams = {
         ...req,
         params: {
-          ...uriParams
-        }
+          ...uriParams,
+        },
       };
 
       return handlerOrResponse(reqWithPathParams, ctx);

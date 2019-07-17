@@ -88,7 +88,7 @@ describe('superagent', () => {
     try {
       const res = await superagent.get('/').timeout({
         response: 5,
-        deadline: 6
+        deadline: 6,
       });
       expect.fail();
     } catch (error) {

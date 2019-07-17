@@ -4,10 +4,15 @@ function isPromise<T>(value: any): value is Promise<T> {
   return typeof value === 'object' && typeof value.then === 'function';
 }
 
-export default function delay(responseOrMiddleware: Partial<Response> | Middleware, ms: number = 1500): Middleware {
+export default function delay(
+  responseOrMiddleware: Partial<Response> | Middleware,
+  ms: number = 1500,
+): Middleware {
   return (request, context) => {
     const result =
-      typeof responseOrMiddleware === 'function' ? responseOrMiddleware(request, context) : responseOrMiddleware;
+      typeof responseOrMiddleware === 'function'
+        ? responseOrMiddleware(request, context)
+        : responseOrMiddleware;
     if (result === undefined) {
       return undefined;
     }
@@ -15,7 +20,9 @@ export default function delay(responseOrMiddleware: Partial<Response> | Middlewa
       if (!response) {
         return undefined;
       } else {
-        return new Promise<Partial<Response> | undefined>(resolve => setTimeout(() => resolve(response), ms));
+        return new Promise<Partial<Response> | undefined>(resolve =>
+          setTimeout(() => resolve(response), ms),
+        );
       }
     });
   };

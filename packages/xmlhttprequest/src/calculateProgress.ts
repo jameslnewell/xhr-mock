@@ -18,6 +18,6 @@ export function calculateProgress(message: Request | Response) {
   return {
     lengthComputable,
     loaded: (body && body.length) || 0, //FIXME: Measure bytes not (unicode) chars
-    total
+    total,
   };
 }

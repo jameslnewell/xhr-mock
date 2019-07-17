@@ -1,16 +1,20 @@
 import window = require('global');
-import Router, {Mode, Request as RouterRequest, Context} from '@xhr-mock/router';
+import Router, {
+  Mode,
+  Request as RouterRequest,
+  Context,
+} from '@xhr-mock/router';
 import {Headers} from './Headers';
 import {Request} from './Request';
 import {Response} from './Response';
 
 export class Facade {
-  private fns: Array<{
+  private fns: {
     fetch: GlobalFetch['fetch'];
     Headers: Headers;
     Request: Request;
     Response: Response;
-  }> = [];
+  }[] = [];
   public router: Router | undefined = undefined;
 
   public setup() {
@@ -19,7 +23,7 @@ export class Facade {
       fetch: window.fetch,
       Headers: window.Headers,
       Request: window.Request,
-      Response: window.Response
+      Response: window.Response,
     });
     // apply the mock function
     window.fetch = this.fetch;
@@ -40,24 +44,27 @@ export class Facade {
     window.Response = fns.Response;
   }
 
-  private fetch: GlobalFetch['fetch'] = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
+  private fetch: GlobalFetch['fetch'] = async (
+    input: RequestInfo,
+    init?: RequestInit,
+  ): Promise<Response> => {
     if (!this.router) {
       throw new Error('No router!');
     }
 
     let request: Partial<RouterRequest>;
     const context: Partial<Context> = {
-      mode: Mode.ASYNC
+      mode: Mode.ASYNC,
     };
     if (typeof input === 'string') {
       request = {
-        url: input
+        url: input,
       };
     } else {
       request = {
         method: input.method,
         url: input.url,
-        body: await input.text() // FIXME:
+        body: await input.text(), // FIXME:
         // TODO: other fields
       };
       input.headers.forEach((val, nm) => {
@@ -85,7 +92,7 @@ export class Facade {
     return new Response(response.body, {
       status: response.status,
       statusText: response.reason,
-      headers: response.headers
+      headers: response.headers,
     });
   };
 }

@@ -8,7 +8,7 @@ const defaultRequest: Request = {
   url: '/foo/bar',
   params: {},
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 const defaultResponse: Response = {
@@ -16,11 +16,11 @@ const defaultResponse: Response = {
   status: 200,
   reason: 'OK',
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 const defaultContext: Context = {
-  mode: Mode.ASYNC
+  mode: Mode.ASYNC,
 };
 
 const noop = () => undefined;
@@ -33,13 +33,17 @@ describe('Router', () => {
   it('should match the middleware', () => {
     const router = createMockRouter();
     router.get('/foo/bar', () => defaultResponse);
-    expect(router.handle(Mode.SYNC, defaultRequest, defaultContext)).toEqual(defaultResponse);
+    expect(router.handle(Mode.SYNC, defaultRequest, defaultContext)).toEqual(
+      defaultResponse,
+    );
   });
 
   it('should not match the middleware', () => {
     const router = createMockRouter();
     router.post('/bar', () => defaultResponse);
-    expect(() => router.handle(Mode.SYNC, defaultRequest, defaultContext)).toThrow();
+    expect(() =>
+      router.handle(Mode.SYNC, defaultRequest, defaultContext),
+    ).toThrow();
   });
 
   describe('sync', () => {
@@ -51,8 +55,10 @@ describe('Router', () => {
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/No middleware returned a response/i)
-          })
+            message: expect.stringMatching(
+              /No middleware returned a response/i,
+            ),
+          }),
         );
       }
     });
@@ -67,8 +73,10 @@ describe('Router', () => {
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/No middleware returned a response/i)
-          })
+            message: expect.stringMatching(
+              /No middleware returned a response/i,
+            ),
+          }),
         );
       }
     });
@@ -91,9 +99,9 @@ describe('Router', () => {
         expect(error).toEqual(
           expect.objectContaining({
             message: expect.stringMatching(
-              /A middleware returned a response asynchronously while the request was being handled synchronously./i
-            )
-          })
+              /A middleware returned a response asynchronously while the request was being handled synchronously./i,
+            ),
+          }),
         );
       }
     });
@@ -111,9 +119,9 @@ describe('Router', () => {
           url: '/abc',
           params: {},
           headers: {},
-          body: undefined
+          body: undefined,
         },
-        expect.anything()
+        expect.anything(),
       );
     });
 
@@ -126,7 +134,7 @@ describe('Router', () => {
         status: 201,
         reason: 'Created',
         headers: {},
-        body: undefined
+        body: undefined,
       });
     });
 
@@ -138,7 +146,7 @@ describe('Router', () => {
       router.handle(Mode.SYNC, defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: {mode: Mode.SYNC},
-        request: defaultRequest
+        request: defaultRequest,
       });
     });
 
@@ -153,8 +161,8 @@ describe('Router', () => {
         request: defaultRequest,
         response: expect.objectContaining({
           status: 201,
-          reason: 'Created'
-        })
+          reason: 'Created',
+        }),
       });
     });
 
@@ -174,8 +182,8 @@ describe('Router', () => {
           context: {mode: Mode.SYNC},
           request: defaultRequest,
           error: expect.objectContaining({
-            message: expect.stringContaining('Oops')
-          })
+            message: expect.stringContaining('Oops'),
+          }),
         });
       }
     });
@@ -190,8 +198,10 @@ describe('Router', () => {
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/No middleware returned a response/i)
-          })
+            message: expect.stringMatching(
+              /No middleware returned a response/i,
+            ),
+          }),
         );
       }
     });
@@ -206,8 +216,10 @@ describe('Router', () => {
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/No middleware returned a response/i)
-          })
+            message: expect.stringMatching(
+              /No middleware returned a response/i,
+            ),
+          }),
         );
       }
     });
@@ -215,14 +227,22 @@ describe('Router', () => {
     it('should return a response when a middleware returns a response synchronously', async () => {
       const router = createMockRouter();
       router.use(() => defaultResponse);
-      const actual = await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+      const actual = await router.handle(
+        Mode.ASYNC,
+        defaultRequest,
+        defaultContext,
+      );
       expect(actual).toEqual(defaultResponse);
     });
 
     it('should return a response when a middleware returns a response asynchronously', async () => {
       const router = createMockRouter();
       router.use(() => Promise.resolve(defaultResponse));
-      const actual = await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+      const actual = await router.handle(
+        Mode.ASYNC,
+        defaultRequest,
+        defaultContext,
+      );
       expect(actual).toEqual(defaultResponse);
     });
 
@@ -239,22 +259,26 @@ describe('Router', () => {
           url: '/abc',
           params: {},
           headers: {},
-          body: undefined
+          body: undefined,
         },
-        expect.anything()
+        expect.anything(),
       );
     });
 
     it('should normalise the response', async () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
-      const response = await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+      const response = await router.handle(
+        Mode.ASYNC,
+        defaultRequest,
+        defaultContext,
+      );
       expect(response).toEqual({
         version: '1.1',
         status: 201,
         reason: 'Created',
         headers: {},
-        body: undefined
+        body: undefined,
       });
     });
 
@@ -266,7 +290,7 @@ describe('Router', () => {
       await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: defaultContext,
-        request: defaultRequest
+        request: defaultRequest,
       });
     });
 
@@ -281,8 +305,8 @@ describe('Router', () => {
         request: defaultRequest,
         response: expect.objectContaining({
           status: 201,
-          reason: 'Created'
-        })
+          reason: 'Created',
+        }),
       });
     });
 
@@ -300,8 +324,8 @@ describe('Router', () => {
           context: defaultContext,
           request: defaultRequest,
           error: expect.objectContaining({
-            message: expect.stringContaining('Oops')
-          })
+            message: expect.stringContaining('Oops'),
+          }),
         });
       }
     });

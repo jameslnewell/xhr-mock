@@ -5,13 +5,13 @@ const minimalResponse = {
   status: 200,
   reason: 'OK',
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 describe('convertResponseToString()', () => {
   it('should have no headers and no body', () => {
     const response = {
-      ...minimalResponse
+      ...minimalResponse,
     };
     const expected = `HTTP/1.1 200 OK\n\n`;
     expect(convertResponseToString(response)).toEqual(expected);
@@ -21,8 +21,8 @@ describe('convertResponseToString()', () => {
     const response = {
       ...minimalResponse,
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
-      }
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
     };
     const expected = `HTTP/1.1 200 OK\nContent-Type: application/json; charset=UTF-8\n\n`;
     expect(convertResponseToString(response)).toEqual(expected);
@@ -31,7 +31,7 @@ describe('convertResponseToString()', () => {
   it('should have a body', () => {
     const response = {
       ...minimalResponse,
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const expected = `HTTP/1.1 200 OK
 
@@ -43,9 +43,9 @@ describe('convertResponseToString()', () => {
     const response = {
       ...minimalResponse,
       headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
+        'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: '<html></html>'
+      body: '<html></html>',
     };
     const expected = `HTTP/1.1 200 OK\nContent-Type: application/json; charset=UTF-8\n\n<html></html>`;
     expect(convertResponseToString(response)).toEqual(expected);

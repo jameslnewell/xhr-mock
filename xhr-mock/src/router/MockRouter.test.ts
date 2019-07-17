@@ -1,4 +1,9 @@
-import {MockRequest, MockRequestWithParams, MockResponse, MockContext} from './types';
+import {
+  MockRequest,
+  MockRequestWithParams,
+  MockResponse,
+  MockContext,
+} from './types';
 import {MockRouter} from './MockRouter';
 
 const noop = () => undefined;
@@ -15,7 +20,7 @@ const req: MockRequest = {
   method: 'get',
   uri: '/foo/bar',
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 const res: MockResponse = {
@@ -23,11 +28,11 @@ const res: MockResponse = {
   status: 200,
   reason: 'OK',
   headers: {},
-  body: undefined
+  body: undefined,
 };
 
 const ctx: MockContext = {
-  sync: false
+  sync: false,
 };
 
 describe('MockRouter', () => {
@@ -46,20 +51,26 @@ describe('MockRouter', () => {
   describe('.routeSync()', () => {
     it('should error when there are no handlers and no response is returned', () => {
       const router = createMockRouter();
-      expect(() => router.routeSync(req, ctx)).toThrow(/No handler returned a response/i);
+      expect(() => router.routeSync(req, ctx)).toThrow(
+        /No handler returned a response/i,
+      );
     });
 
     it('should error when there are handlers and no response is returned', () => {
       const router = createMockRouter();
       router.use(noop);
       router.use(noop);
-      expect(() => router.routeSync(req, ctx)).toThrow(/No handler returned a response/i);
+      expect(() => router.routeSync(req, ctx)).toThrow(
+        /No handler returned a response/i,
+      );
     });
 
     it('should error when there are handlers and a response is returned asynchronously', () => {
       const router = createMockRouter();
       router.use(() => Promise.resolve(res));
-      expect(() => router.routeSync(req, ctx)).toThrow(/returned a response asynchronously/i);
+      expect(() => router.routeSync(req, ctx)).toThrow(
+        /returned a response asynchronously/i,
+      );
     });
 
     it('should return a response when there are handlers and a response is returned synchronously', () => {
@@ -79,7 +90,7 @@ describe('MockRouter', () => {
           uri: '/',
           params: {},
           headers: {},
-          body: undefined
+          body: undefined,
         });
         return {};
       });
@@ -97,7 +108,7 @@ describe('MockRouter', () => {
         status: 201,
         reason: 'Created',
         headers: {},
-        body: undefined
+        body: undefined,
       });
     });
 
@@ -111,7 +122,7 @@ describe('MockRouter', () => {
           method: 'GET',
           uri: '/',
           headers: {},
-          body: undefined
+          body: undefined,
         });
       });
       router.get('/', {});
@@ -128,14 +139,14 @@ describe('MockRouter', () => {
           method: 'GET',
           uri: '/',
           headers: {},
-          body: undefined
+          body: undefined,
         });
         expect(res).toEqual({
           version: '1.1',
           status: 201,
           reason: 'Created',
           headers: {},
-          body: undefined
+          body: undefined,
         });
       });
       router.get('/', {status: 201});
@@ -152,7 +163,7 @@ describe('MockRouter', () => {
           method: 'GET',
           uri: '/',
           headers: {},
-          body: undefined
+          body: undefined,
         });
         expect(err.message).toMatch('Oops');
       });
@@ -174,8 +185,8 @@ describe('MockRouter', () => {
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/No handler returned a response/i)
-          })
+            message: expect.stringMatching(/No handler returned a response/i),
+          }),
         );
       }
     });
@@ -190,8 +201,8 @@ describe('MockRouter', () => {
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
-            message: expect.stringMatching(/No handler returned a response/i)
-          })
+            message: expect.stringMatching(/No handler returned a response/i),
+          }),
         );
       }
     });
@@ -228,7 +239,7 @@ describe('MockRouter', () => {
           query: {},
           params: {},
           headers: {},
-          body: undefined
+          body: undefined,
         });
         return {};
       });
@@ -250,7 +261,7 @@ describe('MockRouter', () => {
           status: 201,
           reason: 'Created',
           headers: {},
-          body: undefined
+          body: undefined,
         });
       } catch (error) {}
     });
@@ -265,7 +276,7 @@ describe('MockRouter', () => {
           method: 'GET',
           uri: '/',
           headers: {},
-          body: undefined
+          body: undefined,
         });
       });
       router.get('/', {});
@@ -282,14 +293,14 @@ describe('MockRouter', () => {
           method: 'GET',
           uri: '/',
           headers: {},
-          body: undefined
+          body: undefined,
         });
         expect(res).toEqual({
           version: '1.1',
           status: 201,
           reason: 'Created',
           headers: {},
-          body: undefined
+          body: undefined,
         });
       });
       router.get('/', {status: 201});
@@ -306,12 +317,12 @@ describe('MockRouter', () => {
           method: 'GET',
           uri: '/',
           headers: {},
-          body: undefined
+          body: undefined,
         });
         expect(err).toEqual(
           expect.objectContaining({
-            message: expect.stringContaining('Oops')
-          })
+            message: expect.stringContaining('Oops'),
+          }),
         );
       });
       router.get('/', () => Promise.reject(new Error('Oops')));
@@ -325,7 +336,7 @@ describe('MockRouter', () => {
     const router = createMockRouter();
     router.get('/api/item/:id([0-9]+)', (req: MockRequestWithParams) => {
       expect(req.params).toEqual({
-        id: '123'
+        id: '123',
       });
       return {};
     });

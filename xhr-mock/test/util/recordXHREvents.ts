@@ -17,8 +17,8 @@ export function recordXHREventsAsync(xhr: XMLHttpRequest) {
           {
             lengthComputable,
             loaded,
-            total
-          }
+            total,
+          },
         ]);
         if (type === 'loadend') {
           resolve(events);
@@ -34,8 +34,8 @@ export function recordXHREventsAsync(xhr: XMLHttpRequest) {
           {
             lengthComputable,
             loaded,
-            total
-          }
+            total,
+          },
         ]);
       });
     };
@@ -77,8 +77,8 @@ export function recordXHREventsSync(xhr: XMLHttpRequest) {
         {
           lengthComputable,
           loaded,
-          total
-        }
+          total,
+        },
       ]);
     });
   };
@@ -91,8 +91,8 @@ export function recordXHREventsSync(xhr: XMLHttpRequest) {
         {
           lengthComputable,
           loaded,
-          total
-        }
+          total,
+        },
       ]);
     });
   };

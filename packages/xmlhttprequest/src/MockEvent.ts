@@ -4,7 +4,7 @@ export enum EventPhase {
   NONE = 0,
   CAPTURING_PHASE = 1,
   AT_TARGET = 2,
-  BUBBLING_PHASE = 3
+  BUBBLING_PHASE = 3,
 }
 
 export class MockEvent implements Event {
@@ -39,7 +39,11 @@ export class MockEvent implements Event {
   public constructor(type: string, eventInitDict?: EventInit) {
     this.name = type;
     if (eventInitDict) {
-      const {bubbles = false, cancelable = false, composed = false} = eventInitDict;
+      const {
+        bubbles = false,
+        cancelable = false,
+        composed = false,
+      } = eventInitDict;
       this.canBubble = bubbles;
       this.canCancel = cancelable;
       this.composed = composed;
@@ -70,7 +74,11 @@ export class MockEvent implements Event {
     return this.isCanceled;
   }
 
-  public initEvent(type: string, bubbles: boolean = false, cancelable: boolean = false): void {
+  public initEvent(
+    type: string,
+    bubbles: boolean = false,
+    cancelable: boolean = false,
+  ): void {
     this.name = type;
     this.canBubble = bubbles;
     this.canCancel = cancelable;

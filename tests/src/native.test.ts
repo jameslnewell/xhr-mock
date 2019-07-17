@@ -24,7 +24,9 @@ describe('native', () => {
 
   it('should receive a request containing form data', done => {
     mock.post('/contact', (req, res) => {
-      expect(req.header('content-type')).to.equal('multipart/form-data; boundary=----XHRMockFormBoundary');
+      expect(req.header('content-type')).to.equal(
+        'multipart/form-data; boundary=----XHRMockFormBoundary',
+      );
       expect(req.body()).to.equal(data);
       return res;
     });
@@ -44,7 +46,9 @@ describe('native', () => {
 
   it('should receive a request containing url data', done => {
     mock.post('/contact', (req, res) => {
-      expect(req.header('content-type')).to.equal('application/x-www-form-urlencoded; charset=UTF-8');
+      expect(req.header('content-type')).to.equal(
+        'application/x-www-form-urlencoded; charset=UTF-8',
+      );
       expect(req.body()).to.equal(data);
       return res;
     });
@@ -81,7 +85,7 @@ describe('native', () => {
 
   it('should send a response containing an array buffer', done => {
     mock.get('/myfile.png', {
-      body: new ArrayBuffer(0)
+      body: new ArrayBuffer(0),
     });
 
     // sourced from https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Sending_and_Receiving_Binary_Data

@@ -7,7 +7,7 @@ import {MockXMLHttpRequestEventTarget} from './MockXMLHttpRequestEventTarget';
 import {calculateProgress} from './calculateProgress';
 
 const notImplementedError = new MockError(
-  "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
+  "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github.",
 );
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
@@ -17,10 +17,11 @@ export enum ReadyState {
   OPENED = 1,
   HEADERS_RECEIVED = 2,
   LOADING = 3,
-  DONE = 4
+  DONE = 4,
 }
 
-export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements XMLHttpRequest {
+export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
+  implements XMLHttpRequest {
   public static router: Router;
 
   public static readonly UNSENT = ReadyState.UNSENT;
@@ -47,7 +48,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     url: '',
     params: {},
     headers: {},
-    body: undefined
+    body: undefined,
   };
 
   private res: Response = {
@@ -55,7 +56,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     status: 200,
     reason: 'Ok',
     headers: {},
-    body: undefined
+    body: undefined,
   };
 
   public responseType: XMLHttpRequestResponseType = '';
@@ -81,7 +82,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
 
   public set timeout(timeout: number) {
     if (timeout !== 0 && this.isSynchronous) {
-      throw new MockError('Timeouts cannot be set for synchronous requests made from a document.');
+      throw new MockError(
+        'Timeouts cannot be set for synchronous requests made from a document.',
+      );
     }
     this._timeout = timeout;
   }
@@ -194,7 +197,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     url: string,
     async: boolean = true,
     username: string | null = null,
-    password: string | null = null
+    password: string | null = null,
   ): void {
     // if method is not a method, then throw a "SyntaxError" DOMException
     // if method is a forbidden method, then throw a "SecurityError" DOMException
@@ -240,7 +243,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       headers: {},
       params: {},
       url, // TODO: full url with username and pw
-      body: undefined
+      body: undefined,
     };
     this.applyNetworkError();
 
@@ -283,8 +286,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     this.dispatchEvent(
       new MockProgressEvent('loadstart', {
         ...progress,
-        loaded: 0
-      })
+        loaded: 0,
+      }),
     );
 
     // if the upload complete flag is unset and upload listener flag is set, then fire a progress
@@ -294,8 +297,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       this.upload.dispatchEvent(
         new MockProgressEvent('loadstart', {
           ...progress,
-          loaded: 0
-        })
+          loaded: 0,
+        }),
       );
     }
 
@@ -320,7 +323,11 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     }
 
     try {
-      const res = MockXMLHttpRequest.router.handleAsync(Mode.ASYNC, this.req, {});
+      const res = MockXMLHttpRequest.router.handleAsync(
+        Mode.ASYNC,
+        this.req,
+        {},
+      );
 
       //we've received a response before the timeout so we don't want to timeout
       clearTimeout(this.timeoutTimer);
@@ -352,7 +359,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       status: 0,
       reason: '',
       headers: {},
-      body: undefined
+      body: undefined,
     };
   }
 
@@ -369,7 +376,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
 
     // if the synchronous flag is set, throw an exception exception
     if (this.isSynchronous) {
-      throw new MockError('An error occurred whilst sending a synchronous request.');
+      throw new MockError(
+        'An error occurred whilst sending a synchronous request.',
+      );
     }
 
     // fire an event named readystatechange
@@ -390,7 +399,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       this.upload.dispatchEvent(new MockProgressEvent(event, uploadProgress));
 
       // fire a progress event named loadend on the XMLHttpRequestUpload object with 0 and 0
-      this.upload.dispatchEvent(new MockProgressEvent('loadend', uploadProgress));
+      this.upload.dispatchEvent(
+        new MockProgressEvent('loadend', uploadProgress),
+      );
     }
 
     const downloadProgress = calculateProgress(this.res);
@@ -566,7 +577,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
   public send(body?: any): void {
     // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
-      throw new MockError('Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().');
+      throw new MockError(
+        'Please call MockXMLHttpRequest.open() before MockXMLHttpRequest.send().',
+      );
     }
 
     // if the send() flag is set, throw an InvalidStateError exception
@@ -583,12 +596,17 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
     let encoding;
     let mimeType;
     if (body !== null && body !== undefined) {
-      if (typeof Document !== 'undefined' && typeof XMLDocument !== 'undefined' && body instanceof Document) {
+      if (
+        typeof Document !== 'undefined' &&
+        typeof XMLDocument !== 'undefined' &&
+        body instanceof Document
+      ) {
         // Set encoding to `UTF-8`.
         // Set mimeType to `text/html` if body is an HTML document, and to `application/xml` otherwise. Then append `;charset=UTF-8` to mimeType.
         // Set request body to body, serialized, converted to Unicode, and utf-8 encoded.
         encoding = 'UTF-8';
-        mimeType = body instanceof XMLDocument ? 'application/xml' : 'text/html';
+        mimeType =
+          body instanceof XMLDocument ? 'application/xml' : 'text/html';
       } else {
         // If body is a string, set encoding to `UTF-8`.
         // Set request body and mimeType to the result of extracting body.
@@ -596,9 +614,15 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
 
         if (typeof Blob !== 'undefined' && body instanceof Blob) {
           mimeType = body.type;
-        } else if (typeof FormData !== 'undefined' && body instanceof FormData) {
+        } else if (
+          typeof FormData !== 'undefined' &&
+          body instanceof FormData
+        ) {
           mimeType = 'multipart/form-data; boundary=----XHRMockFormBoundary';
-        } else if (typeof URLSearchParams !== 'undefined' && body instanceof URLSearchParams) {
+        } else if (
+          typeof URLSearchParams !== 'undefined' &&
+          body instanceof URLSearchParams
+        ) {
           encoding = 'UTF-8';
           mimeType = 'application/x-www-form-urlencoded';
         } else if (typeof body === 'string') {
@@ -616,7 +640,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget implements
       // chrome seems to forget the second case ^^^
       const contentType = this.req.headers['content-type'];
       if (!contentType) {
-        this.req.headers['content-type'] = encoding ? `${mimeType}; charset=${encoding}` : mimeType;
+        this.req.headers['content-type'] = encoding
+          ? `${mimeType}; charset=${encoding}`
+          : mimeType;
       }
 
       this.req.body = body;

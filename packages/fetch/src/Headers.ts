@@ -49,8 +49,13 @@ export class Headers implements Headers, Iterable<[string, string]> {
     this.headers[name] = value;
   }
 
-  public forEach(callbackfn: (value: string, key: string, parent: Headers) => void, thisArg?: any): void {
-    Object.keys(this.headers).forEach(key => callbackfn.call(thisArg, this.headers[key], key, this));
+  public forEach(
+    callbackfn: (value: string, key: string, parent: Headers) => void,
+    thisArg?: any,
+  ): void {
+    Object.keys(this.headers).forEach(key =>
+      callbackfn.call(thisArg, this.headers[key], key, this),
+    );
   }
 
   public keys(): IterableIterator<string> {
@@ -65,7 +70,7 @@ export class Headers implements Headers, Iterable<[string, string]> {
     // FIXME:
     const keys = Object.keys(this.headers);
     const values = Object.values(this.headers);
-    let step = 0;
+    const step = 0;
     return {
       [Symbol.iterator]() {
         return this;
@@ -77,10 +82,10 @@ export class Headers implements Headers, Iterable<[string, string]> {
         } else {
           return {
             done: false,
-            value: [keys[step], values[step]]
+            value: [keys[step], values[step]],
           };
         }
-      }
+      },
     };
   }
 
