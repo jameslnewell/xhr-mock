@@ -1,5 +1,9 @@
 # Change log
 
+# 2.5.0
+
+* added the `sequence()` utility function ([#83])(https://github.com/jameslnewell/xhr-mock/pull/83)
+
 # 2.4.1
 
 * fix: check for DOM specific classes before checking for an instance of them so that environments without them e.g. `mocha` without `jsdom` mostly works
