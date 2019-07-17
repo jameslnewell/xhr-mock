@@ -12,24 +12,26 @@
     ]
   },
   "dependencies": {
-    "@jameslnewell/tslint-config": "0.1.0",
-    "@types/jest": "^24.0.6",
-    "husky": "^1.3.1",
-    "jest": "^24.1.0",
-    "lint-staged": "^8.1.4",
-    "prettier": "^1.16.4",
-    "ts-jest": "^24.0.0",
-    "tslint": "^5.12.1",
-    "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.3.3"
+    "@jameslnewell/editor-config": "^1.0.1",
+    "@jameslnewell/eslint-config": "^0.6.1",
+    "@jameslnewell/jest-preset-lint": "^1.1.0",
+    "@jameslnewell/jest-preset-test": "^3.0.0",
+    "@jameslnewell/jest-preset-type": "^1.0.1",
+    "@jameslnewell/prettier-config": "^1.0.1",
+    "@jameslnewell/typescript-config": "^3.0.0",
+    "@types/jest": "^24.0.15",
+    "eslint": "^6.0.1",
+    "husky": "^3.0.0",
+    "jest": "^24.8.0",
+    "lint-staged": "^9.2.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "clean": "yarn workspaces exec lib",
-    "lint:sources": "tslint --format stylish --config .configs/tslint.sources.json --project .configs/tsconfig.sources.json",
-    "lint:tests": "tslint --format stylish --config .configs/tslint.tests.json --project .configs/tsconfig.tests.json",
-    "lint": "yarn run lint:sources && yarn run lint:tests",
+    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "build": "yarn workspaces run build",
-    "test": "jest --config=.configs/jest.config.js",
+    "test": "jest --config .jestrc.js",
     "publish": "yarn run publish"
   },
   "husky": {
