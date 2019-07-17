@@ -2,7 +2,7 @@
   "name": "xhr-mock-monorepo",
   "private": true,
   "dependencies": {
-    "husky": "^0.14.3",
+    "husky": "^3.0.0",
     "lerna": "^2.6.0",
     "lint-staged": "^4.0.4",
     "prettier": "^1.9.2",
@@ -11,12 +11,16 @@
     "typescript": "2.7.2"
   },
   "scripts": {
-    "precommit": "lint-staged",
     "bootstrap": "lerna bootstrap --npm-client yarn",
     "publish": "yarn run ci && lerna publish",
     "ci": "lerna run ci"
   },
   "lint-staged": {
     "*.{js,json,ts,md}": ["prettier --write", "git add"]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
