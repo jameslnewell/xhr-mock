@@ -1,6 +1,5 @@
 import {expect} from 'chai';
-import {ajax} from 'rxjs/observable/dom/ajax';
-import {map, retryWhen, scan, delay} from 'rxjs/operators';
+import {ajax} from 'rxjs/ajax';
 import mock from 'xhr-mock';
 
 describe('rxjs', () => {
