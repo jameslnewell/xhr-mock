@@ -4,5 +4,6 @@
     "lib": ["esnext", "dom"],
     "target": "esnext"
   },
+  "include": ["**/src", "**/test"],
   "exclude": ["node_modules"]
 }

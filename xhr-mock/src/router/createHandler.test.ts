@@ -21,7 +21,7 @@ const ctx: MockContextWithSync = {
   sync: false,
 };
 
-const alwaysReturnsResponseHandler = () => res;
+const alwaysReturnsResponseHandler = (): MockResponse => res;
 
 describe('createRouteHandler()', () => {
   it('should match the method', () => {
@@ -149,7 +149,7 @@ describe('createRouteHandler()', () => {
   });
 
   it('should populate the request params', () => {
-    const res = createHandler('get', '/foo/:thing', req => {
+    createHandler('get', '/foo/:thing', req => {
       expect(req).toEqual(
         expect.objectContaining({
           params: {

@@ -1,4 +1,5 @@
-import mitt = require('mitt');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mitt from 'mitt';
 import {
   MethodPattern,
   PathPattern,
@@ -6,7 +7,6 @@ import {
   Response,
   Context,
   Middleware,
-  Mode,
 } from './types';
 import {RouterError} from './RouterError';
 import {createMiddleware} from './createMiddleware';
@@ -181,7 +181,7 @@ export class Router<C extends {} = {}> {
     return this;
   }
 
-  public handleSync(
+  public routeSync(
     request: Partial<Request>,
     context: C & Partial<Context<C>>,
   ): Response {
@@ -221,7 +221,7 @@ export class Router<C extends {} = {}> {
     }
   }
 
-  public async handleAsync(
+  public async routeAsync(
     request: Partial<Request>,
     context: C & Partial<Context<C>>,
   ): Promise<Response> {

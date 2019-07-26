@@ -17,14 +17,14 @@ import {isPromise} from './isPromise';
 import {formatMessage} from './formatMessage';
 import {normaliseRequest, normaliseResponse} from './normalise';
 
-function afterLogger(event: MockAfterCallbackEvent) {
+function afterLogger(event: MockAfterCallbackEvent): void {
   const {req, res} = event;
   console.info(
     formatMessage('A handler returned a response for the request.', {req, res}),
   );
 }
 
-function errorLogger(event: MockErrorCallbackEvent) {
+function errorLogger(event: MockErrorCallbackEvent): void {
   const {req, err} = event;
   if (err instanceof MockError) {
     console.error(formatMessage(err.message, {req}));
@@ -41,7 +41,7 @@ export class MockRouter {
   private handlerErrorCallback?: MockErrorCallback = errorLogger;
   private handlers: MockHandler[] = [];
 
-  clear() {
+  public clear(): MockRouter {
     this.handlers = [];
     this.beforeHandlerCallback = undefined;
     this.afterHandlerCallback = afterLogger;
@@ -49,33 +49,33 @@ export class MockRouter {
     return this;
   }
 
-  before(callback: MockBeforeCallback) {
+  public before(callback: MockBeforeCallback): MockRouter {
     this.beforeHandlerCallback = callback;
     return this;
   }
 
-  after(callback: MockAfterCallback) {
+  public after(callback: MockAfterCallback): MockRouter {
     this.afterHandlerCallback = callback;
     return this;
   }
 
-  error(callback: MockErrorCallback) {
+  public error(callback: MockErrorCallback): MockRouter {
     this.handlerErrorCallback = callback;
     return this;
   }
 
-  use(handler: MockHandler): MockRouter;
-  use(
+  public use(handler: MockHandler): MockRouter;
+  public use(
     method: MockMethodCriteria,
     uri: MockURLCriteria,
     handler: MockHandler,
   ): MockRouter;
-  use(
+  public use(
     method: MockMethodCriteria,
     uri: MockURLCriteria,
     response: Partial<MockResponse>,
   ): MockRouter;
-  use(
+  public use(
     methodOrHandler: MockMethodCriteria | MockHandler,
     uri?: MockURLCriteria,
     handlerOrResponse?: MockHandler | Partial<MockResponse>,
@@ -96,9 +96,9 @@ export class MockRouter {
     return this;
   }
 
-  get(uri: MockURLCriteria, handler: MockHandler): MockRouter;
-  get(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  get(
+  public get(uri: MockURLCriteria, handler: MockHandler): MockRouter;
+  public get(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
+  public get(
     uri: MockURLCriteria,
     handlerOrResponse: MockHandler | Partial<MockResponse>,
   ): MockRouter {
@@ -112,9 +112,12 @@ export class MockRouter {
     return this;
   }
 
-  post(uri: MockURLCriteria, handler: MockHandler): MockRouter;
-  post(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  post(
+  public post(uri: MockURLCriteria, handler: MockHandler): MockRouter;
+  public post(
+    uri: MockURLCriteria,
+    response: Partial<MockResponse>,
+  ): MockRouter;
+  public post(
     uri: MockURLCriteria,
     handlerOrResponse: MockHandler | Partial<MockResponse>,
   ): MockRouter {
@@ -128,9 +131,9 @@ export class MockRouter {
     return this;
   }
 
-  put(uri: MockURLCriteria, handler: MockHandler): MockRouter;
-  put(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  put(
+  public put(uri: MockURLCriteria, handler: MockHandler): MockRouter;
+  public put(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
+  public put(
     uri: MockURLCriteria,
     handlerOrResponse: MockHandler | Partial<MockResponse>,
   ): MockRouter {
@@ -144,9 +147,12 @@ export class MockRouter {
     return this;
   }
 
-  patch(uri: MockURLCriteria, handler: MockHandler): MockRouter;
-  patch(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  patch(
+  public(uri: MockURLCriteria, handler: MockHandler): MockRouter;
+  public patch(
+    uri: MockURLCriteria,
+    response: Partial<MockResponse>,
+  ): MockRouter;
+  public patch(
     uri: MockURLCriteria,
     handlerOrResponse: MockHandler | Partial<MockResponse>,
   ): MockRouter {
@@ -160,9 +166,12 @@ export class MockRouter {
     return this;
   }
 
-  delete(uri: MockURLCriteria, handler: MockHandler): MockRouter;
-  delete(uri: MockURLCriteria, response: Partial<MockResponse>): MockRouter;
-  delete(
+  public delete(uri: MockURLCriteria, handler: MockHandler): MockRouter;
+  public delete(
+    uri: MockURLCriteria,
+    response: Partial<MockResponse>,
+  ): MockRouter;
+  public delete(
     uri: MockURLCriteria,
     handlerOrResponse: MockHandler | Partial<MockResponse>,
   ): MockRouter {
@@ -176,7 +185,7 @@ export class MockRouter {
     return this;
   }
 
-  routeSync(req: Partial<MockRequest>, ctx: MockContext): MockResponse {
+  public routeSync(req: Partial<MockRequest>, ctx: MockContext): MockResponse {
     const fullRequest = normaliseRequest(req);
     const fullContext = {...ctx, sync: true};
     if (this.beforeHandlerCallback) {
@@ -216,7 +225,7 @@ export class MockRouter {
     }
   }
 
-  async routeAsync(
+  public async routeAsync(
     req: Partial<MockRequest>,
     ctx: MockContext,
   ): Promise<MockResponse> {

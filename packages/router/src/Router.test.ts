@@ -33,7 +33,7 @@ describe('Router', () => {
   it('should match the middleware', () => {
     const router = createMockRouter();
     router.get('/foo/bar', () => defaultResponse);
-    expect(router.handle(Mode.SYNC, defaultRequest, defaultContext)).toEqual(
+    expect(router.routeSync(defaultRequest, defaultContext)).toEqual(
       defaultResponse,
     );
   });
@@ -41,9 +41,7 @@ describe('Router', () => {
   it('should not match the middleware', () => {
     const router = createMockRouter();
     router.post('/bar', () => defaultResponse);
-    expect(() =>
-      router.handle(Mode.SYNC, defaultRequest, defaultContext),
-    ).toThrow();
+    expect(() => router.routeSync(defaultRequest, defaultContext)).toThrow();
   });
 
   describe('sync', () => {
@@ -51,7 +49,7 @@ describe('Router', () => {
       expect.assertions(1);
       const router = createMockRouter();
       try {
-        router.handle(Mode.SYNC, defaultRequest, defaultContext);
+        router.routeSync(defaultRequest, defaultContext);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
@@ -69,7 +67,7 @@ describe('Router', () => {
       router.use(noop);
       router.use(noop);
       try {
-        router.handle(Mode.SYNC, defaultRequest, defaultContext);
+        router.routeSync(defaultRequest, defaultContext);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
@@ -84,17 +82,17 @@ describe('Router', () => {
     it('should return a response when a middleware returns a response synchronously', () => {
       const router = createMockRouter();
       router.use(() => defaultResponse);
-      const actual = router.handle(Mode.SYNC, defaultRequest, defaultContext);
+      const actual = router.routeSync(defaultRequest, defaultContext);
       expect(actual).toEqual(defaultResponse);
     });
 
     it('should throw an error when a middleware returns a response asynchronously', () => {
       const router = createMockRouter();
       router.use(() => defaultResponse);
-      const actual = router.handle(Mode.SYNC, defaultRequest, defaultContext);
+      const actual = router.routeSync(defaultRequest, defaultContext);
       expect(actual).toEqual(defaultResponse);
       try {
-        router.handle(Mode.SYNC, defaultRequest, defaultContext);
+        router.routeSync(defaultRequest, defaultContext);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
@@ -111,7 +109,7 @@ describe('Router', () => {
       const request = {method: 'put', url: '/abc'};
       const router = createMockRouter();
       router.put('/abc', middleware);
-      router.handle(Mode.SYNC, request, defaultContext);
+      router.routeSync(request, defaultContext);
       expect(middleware).toBeCalledWith(
         {
           version: '1.1',
@@ -128,7 +126,7 @@ describe('Router', () => {
     it('should normalise the response', () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
-      const response = router.handle(Mode.SYNC, defaultRequest, defaultContext);
+      const response = router.routeSync(defaultRequest, defaultContext);
       expect(response).toEqual({
         version: '1.1',
         status: 201,
@@ -143,7 +141,7 @@ describe('Router', () => {
       const router = createMockRouter();
       router.on('before', listener);
       router.get('/foo/bar', {});
-      router.handle(Mode.SYNC, defaultRequest, defaultContext);
+      router.routeSync(defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: {mode: Mode.SYNC},
         request: defaultRequest,
@@ -155,7 +153,7 @@ describe('Router', () => {
       const router = createMockRouter();
       router.on('after', listener);
       router.get('/foo/bar', {status: 201});
-      router.handle(Mode.SYNC, defaultRequest, defaultContext);
+      router.routeSync(defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: {mode: Mode.SYNC},
         request: defaultRequest,
@@ -175,7 +173,7 @@ describe('Router', () => {
         throw new Error('Oops');
       });
       try {
-        router.handle(Mode.SYNC, defaultRequest, defaultContext);
+        router.routeSync(defaultRequest, defaultContext);
       } catch (error) {
         // error is expected
         expect(listener).toBeCalledWith({
@@ -194,7 +192,7 @@ describe('Router', () => {
       expect.assertions(1);
       const router = createMockRouter();
       try {
-        await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+        await router.routeAsync(defaultRequest, defaultContext);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
@@ -212,7 +210,7 @@ describe('Router', () => {
       router.use(noop);
       router.use(noop);
       try {
-        await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+        await router.routeAsync(defaultRequest, defaultContext);
       } catch (error) {
         expect(error).toEqual(
           expect.objectContaining({
@@ -227,22 +225,14 @@ describe('Router', () => {
     it('should return a response when a middleware returns a response synchronously', async () => {
       const router = createMockRouter();
       router.use(() => defaultResponse);
-      const actual = await router.handle(
-        Mode.ASYNC,
-        defaultRequest,
-        defaultContext,
-      );
+      const actual = await router.routeAsync(defaultRequest, defaultContext);
       expect(actual).toEqual(defaultResponse);
     });
 
     it('should return a response when a middleware returns a response asynchronously', async () => {
       const router = createMockRouter();
       router.use(() => Promise.resolve(defaultResponse));
-      const actual = await router.handle(
-        Mode.ASYNC,
-        defaultRequest,
-        defaultContext,
-      );
+      const actual = await router.routeAsync(defaultRequest, defaultContext);
       expect(actual).toEqual(defaultResponse);
     });
 
@@ -251,7 +241,7 @@ describe('Router', () => {
       const request = {method: 'put', url: '/abc'};
       const router = createMockRouter();
       router.put('/abc', middleware);
-      await router.handle(Mode.ASYNC, request, defaultContext);
+      await router.routeAsync(request, defaultContext);
       expect(middleware).toBeCalledWith(
         {
           version: '1.1',
@@ -268,11 +258,7 @@ describe('Router', () => {
     it('should normalise the response', async () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
-      const response = await router.handle(
-        Mode.ASYNC,
-        defaultRequest,
-        defaultContext,
-      );
+      const response = await router.routeAsync(defaultRequest, defaultContext);
       expect(response).toEqual({
         version: '1.1',
         status: 201,
@@ -287,7 +273,7 @@ describe('Router', () => {
       const router = createMockRouter();
       router.on('before', listener);
       router.get('/foo/bar', {});
-      await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+      await router.routeAsync(defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: defaultContext,
         request: defaultRequest,
@@ -299,7 +285,7 @@ describe('Router', () => {
       const router = createMockRouter();
       router.on('after', listener);
       router.get('/foo/bar', {status: 201});
-      await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+      await router.routeAsync(defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: defaultContext,
         request: defaultRequest,
@@ -317,7 +303,7 @@ describe('Router', () => {
       router.on('error', listener);
       router.get('/foo/bar', () => Promise.reject(new Error('Oops')));
       try {
-        await router.handle(Mode.ASYNC, defaultRequest, defaultContext);
+        await router.routeAsync(defaultRequest, defaultContext);
       } catch (error) {
         // error is expected
         expect(listener).toBeCalledWith({

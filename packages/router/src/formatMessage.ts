@@ -5,15 +5,15 @@ import {convertResponseToString} from './convertResponseToString';
 function indentLines(content: string, indent: number): string {
   return content
     .split('\n')
-    .map((line, index) => Array(indent + 1).join(' ') + line)
+    .map(line => Array(indent + 1).join(' ') + line)
     .join('\n');
 }
 
-function formatRequest(request: Request) {
+function formatRequest(request: Request): string {
   return indentLines(convertRequestToString(request).trim(), 4);
 }
 
-function formatResponse(response: Response) {
+function formatResponse(response: Response): string {
   return indentLines(convertResponseToString(response).trim(), 4);
 }
 
@@ -31,7 +31,7 @@ export function formatMessage(
     response,
     error,
   }: {request: Request; response?: Response; error?: Error},
-) {
+): string {
   return `xhr-mock: ${msg}
 
 ${formatRequest(request)}

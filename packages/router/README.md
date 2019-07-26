@@ -15,18 +15,19 @@ yarn add @xhr-mock/router
 ```js
 import Router, {Mode} from '@xhr-mock/router';
 
-const router = new Router().get('/', {status: 200, body: 'Hello World!'}).use(req => ({
-  status: 200,
-  body: JSON.stringify(req)
-}));
+const router = new Router()
+  .get('/', {status: 200, body: 'Hello World!'})
+  .use(req => ({
+    status: 200,
+    body: JSON.stringify(req),
+  }));
 
-const response = router.handle(
-  Mode.SYNC,
+const response = router.routeSync(
   {
     method: 'get',
-    url: '/foo/bar'
+    url: '/foo/bar',
   },
-  {}
+  {},
 );
 ```
 
@@ -62,7 +63,9 @@ const response = router.handle(
 
 ### `.delete(url, middleware)`
 
-### `.handle(mode, request, response)`
+### `.routeSync(request, response)`
+
+### `.routeAsync(request, response)`
 
 ## License
 

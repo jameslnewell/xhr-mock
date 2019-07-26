@@ -30,7 +30,7 @@
   },
   "scripts": {
     "clean": "yarn workspaces exec lib",
-    "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix .",
+    "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix ",
     "build": "yarn workspaces run build",
     "test": "jest --config .jestrc.js",
     "publish": "yarn run publish"

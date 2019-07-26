@@ -1,4 +1,4 @@
-import * as URL from 'url-parse';
+import URL from 'url-parse';
 import * as pathToRegExp from 'path-to-regexp';
 import {
   Parameters,
@@ -30,6 +30,7 @@ function urlMatches(
   request: Request,
 ): {url: string; params: Parameters} | undefined {
   // get the actual URL and default any missing values
+
   const actualURL = new URL(request.url, {hostname: request.headers.host});
 
   // get the expected URL
@@ -47,7 +48,7 @@ function urlMatches(
 
   // match the path
   const keys: pathToRegExp.Key[] = [];
-  const regexp = pathToRegExp(
+  const regexp = pathToRegExp.default(
     expectedURL ? expectedURL.pathname : pattern,
     keys,
   ); // TODO: cache the regexp

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export enum Mode {
   SYNC,
   ASYNC,
@@ -17,7 +19,7 @@ export interface Request {
   url: string;
   params: Parameters;
   headers: Headers;
-  body: any;
+  body: any; // TODO: Can we type this better?
 }
 
 export interface Response {
@@ -25,7 +27,7 @@ export interface Response {
   status: number;
   reason: string;
   headers: Headers;
-  body: any;
+  body: any; // TODO: Can we type this better?
 }
 
 export type Context<C extends {} = {}> = {
