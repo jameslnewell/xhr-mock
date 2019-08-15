@@ -1,28 +1,27 @@
-import {MockRequest, MockRouter} from '../../../xhr-mock/src/router';
-import {MockError} from '../../../xhr-mock/src/MockError';
+/* eslint prefer-const: ["error", {"ignoreReadBeforeAssign": true}] */
+import Router from '@xhr-mock/router';
 import {MockEvent} from './MockEvent';
-import {MockProgressEvent} from './MockProgressEvent';
 import {MockXMLHttpRequest} from './MockXMLHttpRequest';
 
 function failOnEvent(done: jest.DoneCallback) {
-  return function(event: MockProgressEvent) {
+  return function() {
     done.fail();
   };
 }
 
 function successOnEvent(done: jest.DoneCallback) {
-  return function(event: MockProgressEvent) {
+  return function() {
     done();
   };
 }
 
 const createXHR = () => {
   const events: string[] = [];
-  const router = new MockRouter();
+  const router = new Router();
   const xhr = new MockXMLHttpRequest(router);
 
   // mute logging of successful requests
-  router.after(undefined);
+  router.on('after', jest.fn());
 
   // record upload events
   const pushDownloadEvent = (event: MockEvent) =>
@@ -66,7 +65,7 @@ describe('MockXMLHttpRequest', () => {
 
     it('should return the responseText when type is empty string and the request is done', done => {
       const {router, xhr} = createXHR();
-      router.use(req => ({body: 'Hello World!'}));
+      router.use(() => ({body: 'Hello World!'}));
       xhr.responseType = '';
       xhr.onload = () => {
         expect(xhr.response).toEqual('Hello World!');
@@ -79,7 +78,7 @@ describe('MockXMLHttpRequest', () => {
 
     it('should return the responseText when type is text and the request is done', done => {
       const {router, xhr} = createXHR();
-      router.use((req, res) => ({body: 'Hello World!'}));
+      router.use(() => ({body: 'Hello World!'}));
       xhr.responseType = '';
       xhr.onload = () => {
         expect(xhr.response).toEqual('Hello World!');
@@ -92,7 +91,7 @@ describe('MockXMLHttpRequest', () => {
 
     it('should return null when type is json and the request is not done', () => {
       const {router, xhr} = createXHR();
-      router.use(req => ({body: '{}'}));
+      router.use(() => ({body: '{}'}));
       xhr.responseType = 'json';
       xhr.open('get', '/');
       expect(xhr.response).toEqual(null);
@@ -100,7 +99,7 @@ describe('MockXMLHttpRequest', () => {
 
     it('should return json when the type is json and the request is done', done => {
       const {router, xhr} = createXHR();
-      router.use(req => ({body: '{"foo": "bar"}'}));
+      router.use(() => ({body: '{"foo": "bar"}'}));
       xhr.responseType = 'json';
       xhr.onload = () => {
         try {
@@ -118,7 +117,7 @@ describe('MockXMLHttpRequest', () => {
     it('should return null when the type is other and the request is not done', () => {
       const fakeBuffer = {};
       const {router, xhr} = createXHR();
-      router.use(req => ({body: fakeBuffer}));
+      router.use(() => ({body: fakeBuffer}));
       xhr.responseType = 'blob';
       xhr.open('get', '/');
       expect(xhr.response).toEqual(null);
@@ -127,7 +126,7 @@ describe('MockXMLHttpRequest', () => {
     it('should return an object when the type is other and the request is done', done => {
       const fakeBuffer = {};
       const {router, xhr} = createXHR();
-      router.use(req => ({body: fakeBuffer}));
+      router.use(() => ({body: fakeBuffer}));
       xhr.responseType = 'blob';
       xhr.onload = () => {
         try {
@@ -148,7 +147,7 @@ describe('MockXMLHttpRequest', () => {
       expect.assertions(1);
 
       const {router, xhr} = createXHR();
-      router.use((req, res) => {
+      router.use(req => {
         expect(req.headers['content-type']).toEqual('application/json');
         return {};
       });
@@ -165,7 +164,7 @@ describe('MockXMLHttpRequest', () => {
     it('should have a response header', done => {
       expect.assertions(1);
       const {router, xhr} = createXHR();
-      router.use((req, res) => {
+      router.use(() => {
         return {headers: {'Content-Type': 'application/json'}};
       });
       xhr.open('get', '/');
@@ -183,7 +182,7 @@ describe('MockXMLHttpRequest', () => {
   describe('.getAllResponseHeaders()', () => {
     it('should have return headers as a string', done => {
       const {router, xhr} = createXHR();
-      router.use((req, res) => {
+      router.use(() => {
         return {
           headers: {
             'Content-Type': 'application/json',
@@ -235,7 +234,7 @@ describe('MockXMLHttpRequest', () => {
     describe('async=false', () => {
       it('should dispatch events in order when both the request and response do not contain a body', () => {
         const {events, router, xhr} = createXHR();
-        router.use(req => ({}));
+        router.use(() => ({}));
         xhr.open('get', '/', false);
         xhr.send();
         expect(events).toEqual([
@@ -248,7 +247,7 @@ describe('MockXMLHttpRequest', () => {
 
       it('should dispatch events in order when request has a body', () => {
         const {events, router, xhr} = createXHR();
-        router.use(req => ({}));
+        router.use(() => ({}));
         xhr.open('put', '/', false);
         xhr.send('hello world!');
         expect(events).toEqual([
@@ -261,7 +260,7 @@ describe('MockXMLHttpRequest', () => {
 
       it('should dispatch events in order when response has a body', () => {
         const {events, router, xhr} = createXHR();
-        router.use(req => ({body: 'Hello World'}));
+        router.use(() => ({body: 'Hello World'}));
         xhr.open('put', '/', false);
         xhr.send();
         expect(events).toEqual([
@@ -277,7 +276,7 @@ describe('MockXMLHttpRequest', () => {
   describe('async=true', () => {
     it('should dispatch events in order when both the request and response do not contain a body', done => {
       const {events, router, xhr} = createXHR();
-      router.use(req => ({}));
+      router.use(() => ({}));
       xhr.open('get', '/');
       xhr.onloadend = () => {
         expect(events).toEqual([
@@ -296,7 +295,7 @@ describe('MockXMLHttpRequest', () => {
 
     it('should dispatch events in order when request has a body', done => {
       const {events, router, xhr} = createXHR();
-      router.use(req => ({}));
+      router.use(() => ({}));
       xhr.open('put', '/');
       xhr.onloadend = () => {
         expect(events).toEqual([
@@ -319,7 +318,7 @@ describe('MockXMLHttpRequest', () => {
 
     it('should dispatch events in order when response has a body', done => {
       const {events, router, xhr} = createXHR();
-      router.use(req => ({body: 'Hello World'}));
+      router.use(() => ({body: 'Hello World'}));
       xhr.open('put', '/');
       xhr.onloadend = () => {
         expect(events).toEqual([
@@ -363,10 +362,11 @@ describe('MockXMLHttpRequest', () => {
   });
 
   it('should time out when .timeout > 0 and no response is resloved within the time', done => {
-    let start: number, end: number;
+    let start: number;
+    let end: number;
     const {router, xhr} = createXHR();
     router.use(
-      req =>
+      () =>
         new Promise(() => {
           /* do nothing */
         }),
@@ -387,7 +387,7 @@ describe('MockXMLHttpRequest', () => {
   it('should not time out when .timeout > 0 and the request was aborted', done => {
     const {router, xhr} = createXHR();
     router.use(
-      req =>
+      () =>
         new Promise(() => {
           /* do nothing */
         }),
@@ -403,8 +403,8 @@ describe('MockXMLHttpRequest', () => {
 
   it('should not time out when .timeout > 0 and the request errored', done => {
     const {router, xhr} = createXHR();
-    router.error(undefined);
-    router.use(req => Promise.reject(new Error('test!')));
+    router.on('error', jest.fn());
+    router.use(() => Promise.reject(new Error('test!')));
     xhr.timeout = 100;
     xhr.ontimeout = failOnEvent(done);
     xhr.onerror = successOnEvent(done);
@@ -414,7 +414,7 @@ describe('MockXMLHttpRequest', () => {
 
   it('should set the request Content-Type header when the request Content-Type header has not been set and a body has been provided', done => {
     const {router, xhr} = createXHR();
-    router.use(req => ({
+    router.use(() => ({
       headers: {
         'Content-Type': 'text/plain; charset=UTF-8',
       },
@@ -427,7 +427,7 @@ describe('MockXMLHttpRequest', () => {
 
   it('should not set the request Content-Type header when the request Content-Type header has been set and a body has been provided', done => {
     const {router, xhr} = createXHR();
-    router.use(req => ({
+    router.use(() => ({
       headers: {
         'Content-Type': 'foo/bar',
       },
@@ -441,8 +441,8 @@ describe('MockXMLHttpRequest', () => {
 
   it('should be able to send another request after the previous request errored', done => {
     const {router, xhr} = createXHR();
-    router.error(undefined);
-    router.use(req => Promise.reject(new Error('test!')));
+    router.on('error', jest.fn());
+    router.use(() => Promise.reject(new Error('test!')));
     xhr.timeout = 100;
     xhr.ontimeout = failOnEvent(done);
     xhr.onerror = () => {

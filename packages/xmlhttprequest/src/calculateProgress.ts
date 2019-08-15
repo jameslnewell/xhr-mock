@@ -1,6 +1,8 @@
 import {Request, Response} from '@xhr-mock/router';
 
-export function calculateProgress(message: Request | Response) {
+export function calculateProgress(
+  message: Request | Response,
+): ProgressEventInit {
   const header = message.headers['content-length'];
   const body = message.body;
 

@@ -56,7 +56,7 @@ describe('MockEventTarget', () => {
     expect.assertions(1);
     const target = new MockEventTarget();
 
-    target.addEventListener('event1', function(event) {
+    target.addEventListener('event1', function() {
       expect(this).toBe(target);
     });
 
@@ -79,7 +79,8 @@ describe('MockEventTarget', () => {
     expect.assertions(1);
     const target = new MockEventTarget();
 
-    (target as any).onevent1 = function(event: MockEvent) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (target as any).onevent1 = function() {
       expect(this).toBe(target);
     };
 

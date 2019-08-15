@@ -36,7 +36,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   public readonly LOADING = ReadyState.LOADING;
   public readonly DONE = ReadyState.DONE;
 
-  public onreadystatechange: (this: XMLHttpRequest, ev: Event) => any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public onreadystatechange: ((this: XMLHttpRequest, ev: Event) => any) | null;
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
@@ -90,6 +91,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   // https://xhr.spec.whatwg.org/#the-response-attribute
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public get response(): any {
     if (this.responseType === '' || this.responseType === 'text') {
       if (this.readyState !== this.LOADING && this.readyState !== this.DONE) {
@@ -188,7 +190,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     this.req.headers[name] = value;
   }
 
-  public overrideMimeType(mime: string): void {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public overrideMimeType(_mime: string): void {
     throw notImplementedError;
   }
 
@@ -196,8 +199,10 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     method: string,
     url: string,
     async: boolean = true,
-    username: string | null = null,
-    password: string | null = null,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    username: string | null = null, // TODO:
+    password: string | null = null, // TODO:
+    /* eslint-enable @typescript-eslint/no-unused-vars */
   ): void {
     // if method is not a method, then throw a "SyntaxError" DOMException
     // if method is a forbidden method, then throw a "SecurityError" DOMException
@@ -257,7 +262,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
   }
 
-  private sendSync() {
+  private sendSync(): void {
     // let response be the result of fetching req
     let res;
     try {
@@ -278,7 +283,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
   }
 
-  private async sendAsync() {
+  private async sendAsync(): Promise<void> {
     const req = this.req;
 
     // fire a progress event named loadstart with 0 and 0
@@ -350,7 +355,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
   }
 
-  private applyNetworkError() {
+  private applyNetworkError(): void {
     // a network error is a response whose status is always 0, status message is always the
     // empty byte sequence, header list is always empty, body is always null, and
     // trailer is always empty
@@ -364,7 +369,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   // @see https://xhr.spec.whatwg.org/#request-error-steps
-  private reportError(event: string) {
+  private reportError(event: string): void {
     // set state to done
     this.readyState = this.DONE;
 
@@ -413,7 +418,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     this.dispatchEvent(new MockProgressEvent('loadend', downloadProgress));
   }
 
-  private sendRequest(req: MockRequest) {
+  private sendRequest(req: Request): void {
     if (this.isUploadComplete) {
       return;
     }
@@ -440,7 +445,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     // let transmitted be request’s body’s transmitted bytes
     // let length be request’s body’s total bytes
-    const progress = calculateProgress(this.req);
+    const progress = calculateProgress(req);
 
     // fire a progress event named progress on the XMLHttpRequestUpload object with transmitted and length
     this.upload.dispatchEvent(new MockProgressEvent('progress', progress));
@@ -452,7 +457,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     this.upload.dispatchEvent(new MockProgressEvent('loadend', progress));
   }
 
-  private receiveResponse(res: MockResponse) {
+  private receiveResponse(res: Response): void {
     // set state to headers received
     this.readyState = this.HEADERS_RECEIVED;
 
@@ -504,7 +509,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   // @see https://xhr.spec.whatwg.org/#handle-errors
-  private handleError(error?: Error) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private handleError(error?: Error): void {
+    // TODO: error
     // if the send() flag is unset, return
     if (!this.isSending) {
       return;
@@ -544,7 +551,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   // @see https://xhr.spec.whatwg.org/#handle-response-end-of-body
-  private handleResponseBody(res: MockResponse) {
+  private handleResponseBody(res: Response): void {
     this.res = res;
 
     // let transmitted be response’s body’s transmitted bytes
@@ -574,7 +581,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   // https://xhr.spec.whatwg.org/#event-xhr-loadstart
-  public send(body?: any): void {
+  public send(body?: Document | BodyInit | null): void {
     // if state is not opened, throw an InvalidStateError exception
     if (this.readyState !== MockXMLHttpRequest.OPENED) {
       throw new MockError(
@@ -699,7 +706,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
   }
 
-  public msCachingEnabled() {
+  public msCachingEnabled(): boolean {
     return false;
   }
 }
