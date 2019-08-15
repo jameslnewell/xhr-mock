@@ -7,6 +7,7 @@ import {
   Response,
   Context,
   Middleware,
+  Mode,
 } from './types';
 import {RouterError} from './RouterError';
 import {createMiddleware} from './createMiddleware';
@@ -185,13 +186,18 @@ export class Router<C extends {} = {}> {
     request: Partial<Request>,
     context: C & Partial<Context<C>>,
   ): Response {
-    this.emitter.emit('before', {request, context});
+    const normalisedRequest = normaliseRequest(request);
+    const normalisedContext = normaliseContext({...context, mode: Mode.SYNC});
+
+    this.emitter.emit('before', {
+      request: normalisedRequest,
+      context: normalisedContext,
+    });
+
     try {
       for (const middleware of this.middleware) {
-        const response = middleware(
-          normaliseRequest(request),
-          normaliseContext(context),
-        );
+        const response = middleware(normalisedRequest, normalisedContext);
+
         if (!response) {
           continue;
         }
@@ -200,23 +206,36 @@ export class Router<C extends {} = {}> {
             'A middleware returned a response asynchronously while the request was being handled synchronously.',
           );
         }
+
         const normalisedResponse = normaliseResponse(response);
+
         this.emitter.emit('after', {
-          request,
+          request: normalisedRequest,
           response: normalisedResponse,
-          context,
+          context: normalisedContext,
         });
+
         return normalisedResponse;
       }
-      throw new RouterError(
+
+      const error = new RouterError(
         'No middleware returned a response for the request.',
       );
+
+      this.emitter.emit('error', {
+        request: normalisedRequest,
+        error,
+        context: normalisedContext,
+      });
+
+      throw error;
     } catch (error) {
       this.emitter.emit('error', {
-        request,
+        request: normalisedRequest,
         error,
-        context,
+        context: normalisedContext,
       });
+
       throw error;
     }
   }
@@ -225,33 +244,51 @@ export class Router<C extends {} = {}> {
     request: Partial<Request>,
     context: C & Partial<Context<C>>,
   ): Promise<Response> {
-    this.emitter.emit('before', {request, context});
+    const normalisedRequest = normaliseRequest(request);
+    const normalisedContext = normaliseContext({...context, mode: Mode.ASYNC});
+
+    this.emitter.emit('before', {
+      request: normalisedRequest,
+      context: normalisedContext,
+    });
+
     try {
       for (const middleware of this.middleware) {
-        const response = await middleware(
-          normaliseRequest(request),
-          normaliseContext(context),
-        );
+        const response = await middleware(normalisedRequest, normalisedContext);
+
         if (!response) {
           continue;
         }
+
         const normalisedResponse = normaliseResponse(response);
+
         this.emitter.emit('after', {
-          request,
+          request: normalisedRequest,
           response: normalisedResponse,
-          context,
+          context: normalisedContext,
         });
+
         return normalisedResponse;
       }
-      throw new RouterError(
+
+      const error = new RouterError(
         'No middleware returned a response for the request.',
       );
+
+      this.emitter.emit('error', {
+        request: normalisedRequest,
+        error,
+        context: normalisedContext,
+      });
+
+      throw error;
     } catch (error) {
       this.emitter.emit('error', {
-        request,
+        request: normalisedRequest,
         error,
-        context,
+        context: normalisedContext,
       });
+
       throw error;
     }
   }

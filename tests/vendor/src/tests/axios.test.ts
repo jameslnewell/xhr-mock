@@ -92,7 +92,7 @@ describe('axios', () => {
     mock.get('/', () => new Promise(() => {}));
 
     try {
-      const res = await axios.get('/', {timeout: 10});
+      await axios.get('/', {timeout: 10});
       expect.fail();
     } catch (error) {
       expect(error).to.be.an('Error');
@@ -104,7 +104,7 @@ describe('axios', () => {
     mock.get('/', () => Promise.reject(new Error('😬')));
 
     try {
-      const res = await axios.get('/');
+      await axios.get('/');
       expect.fail();
     } catch (error) {
       expect(error).to.be.an('Error');

@@ -3,7 +3,7 @@ import {formatMessage} from './formatMessage';
 
 export function afterLogger<C>(event: AfterEvent<C>): void {
   const {request, response} = event;
-  // eslint:disable-next-line
+  // eslint-disable-next-line no-console
   console.info(
     formatMessage('A middleware returned a response for the request.', {
       request,

@@ -12,6 +12,8 @@ Install the dependencies:
 
 ```bash
 yarn
+yarn run clean
+yarn run lint
 yarn run build
 yarn run test
 ```

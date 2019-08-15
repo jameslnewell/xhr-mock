@@ -46,70 +46,59 @@ describe('Router', () => {
 
   describe('sync', () => {
     it('should throw an error when there are no middlewares and no response is returned', () => {
-      expect.assertions(1);
       const router = createMockRouter();
-      try {
-        router.routeSync(defaultRequest, defaultContext);
-      } catch (error) {
-        expect(error).toEqual(
-          expect.objectContaining({
-            message: expect.stringMatching(
-              /No middleware returned a response/i,
-            ),
-          }),
-        );
-      }
+      expect(() =>
+        router.routeSync(defaultRequest, defaultContext),
+      ).toThrowError(/No middleware returned a response for the request./);
     });
 
-    it('should throw an error when there are middlwares and no response is returned by any middleware', () => {
-      expect.assertions(1);
+    it('should throw an error when there are middlwares and no response is returned by any of the middleware', () => {
       const router = createMockRouter();
       router.use(noop);
       router.use(noop);
-      try {
-        router.routeSync(defaultRequest, defaultContext);
-      } catch (error) {
-        expect(error).toEqual(
-          expect.objectContaining({
-            message: expect.stringMatching(
-              /No middleware returned a response/i,
-            ),
-          }),
-        );
-      }
-    });
-
-    it('should return a response when a middleware returns a response synchronously', () => {
-      const router = createMockRouter();
-      router.use(() => defaultResponse);
-      const actual = router.routeSync(defaultRequest, defaultContext);
-      expect(actual).toEqual(defaultResponse);
+      expect(() =>
+        router.routeSync(defaultRequest, defaultContext),
+      ).toThrowError(/No middleware returned a response for the request./);
     });
 
     it('should throw an error when a middleware returns a response asynchronously', () => {
       const router = createMockRouter();
-      router.use(() => defaultResponse);
-      const actual = router.routeSync(defaultRequest, defaultContext);
-      expect(actual).toEqual(defaultResponse);
-      try {
-        router.routeSync(defaultRequest, defaultContext);
-      } catch (error) {
-        expect(error).toEqual(
-          expect.objectContaining({
-            message: expect.stringMatching(
-              /A middleware returned a response asynchronously while the request was being handled synchronously./i,
-            ),
-          }),
-        );
-      }
+      router.use(() => Promise.resolve(defaultResponse));
+      expect(() =>
+        router.routeSync(defaultRequest, defaultContext),
+      ).toThrowError(
+        /A middleware returned a response asynchronously while the request was being handled synchronously./,
+      );
     });
 
-    it('should normalise the request', () => {
-      const middleware = jest.fn().mockReturnValue({});
-      const request = {method: 'put', url: '/abc'};
+    it('should emit the "before" event before the request is handled', () => {
+      const order: string[] = [];
+
+      const listener = jest.fn(() => {
+        order.push('listener');
+      });
+
+      const middleware = jest.fn(() => {
+        order.push('middleware');
+        return defaultResponse;
+      });
+
+      const router = createMockRouter();
+      router.on('before', listener);
+      router.get('/foo/bar', middleware);
+      router.routeSync(defaultRequest, defaultContext);
+      expect(listener).toBeCalledWith({
+        context: {mode: Mode.SYNC},
+        request: defaultRequest,
+      });
+      expect(order).toEqual(['listener', 'middleware']);
+    });
+
+    it('should call the middleware with a normalised request', () => {
+      const middleware = jest.fn().mockReturnValue(defaultResponse);
       const router = createMockRouter();
       router.put('/abc', middleware);
-      router.routeSync(request, defaultContext);
+      router.routeSync({method: 'put', url: '/abc'}, defaultContext);
       expect(middleware).toBeCalledWith(
         {
           version: '1.1',
@@ -123,7 +112,7 @@ describe('Router', () => {
       );
     });
 
-    it('should normalise the response', () => {
+    it('should return a normalised response', () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
       const response = router.routeSync(defaultRequest, defaultContext);
@@ -136,32 +125,28 @@ describe('Router', () => {
       });
     });
 
-    it('should call the before listener before the request is handled', () => {
-      const listener = jest.fn();
-      const router = createMockRouter();
-      router.on('before', listener);
-      router.get('/foo/bar', {});
-      router.routeSync(defaultRequest, defaultContext);
-      expect(listener).toBeCalledWith({
-        context: {mode: Mode.SYNC},
-        request: defaultRequest,
-      });
-    });
+    it('should emit the "after" event before the request is handled', () => {
+      const order: string[] = [];
 
-    it('should call the after listener after the request is handled', () => {
-      const listener = jest.fn();
+      const listener = jest.fn(() => {
+        order.push('listener');
+      });
+
+      const middleware = jest.fn(() => {
+        order.push('middleware');
+        return defaultResponse;
+      });
+
       const router = createMockRouter();
       router.on('after', listener);
-      router.get('/foo/bar', {status: 201});
+      router.get('/foo/bar', middleware);
       router.routeSync(defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
         context: {mode: Mode.SYNC},
         request: defaultRequest,
-        response: expect.objectContaining({
-          status: 201,
-          reason: 'Created',
-        }),
+        response: defaultResponse,
       });
+      expect(order).toEqual(['middleware', 'listener']);
     });
 
     it('should call the error listener when there is an error handling the request', () => {
@@ -175,7 +160,7 @@ describe('Router', () => {
       try {
         router.routeSync(defaultRequest, defaultContext);
       } catch (error) {
-        // error is expected
+        // an error is expected
         expect(listener).toBeCalledWith({
           context: {mode: Mode.SYNC},
           request: defaultRequest,
@@ -189,59 +174,53 @@ describe('Router', () => {
 
   describe('async', () => {
     it('should throw an error when there are no middlewares and no response is returned', async () => {
-      expect.assertions(1);
       const router = createMockRouter();
-      try {
-        await router.routeAsync(defaultRequest, defaultContext);
-      } catch (error) {
-        expect(error).toEqual(
-          expect.objectContaining({
-            message: expect.stringMatching(
-              /No middleware returned a response/i,
-            ),
-          }),
-        );
-      }
+      await expect(
+        router.routeAsync(defaultRequest, defaultContext),
+      ).rejects.toThrowError(
+        /No middleware returned a response for the request./,
+      );
     });
 
-    it('should throw an error when there are middlwares and no response is returned by any middleware', async () => {
-      expect.assertions(1);
+    it('should throw an error when there are middlwares and no response is returned by any of the middleware', async () => {
       const router = createMockRouter();
       router.use(noop);
       router.use(noop);
-      try {
-        await router.routeAsync(defaultRequest, defaultContext);
-      } catch (error) {
-        expect(error).toEqual(
-          expect.objectContaining({
-            message: expect.stringMatching(
-              /No middleware returned a response/i,
-            ),
-          }),
-        );
-      }
+      await expect(
+        router.routeAsync(defaultRequest, defaultContext),
+      ).rejects.toThrowError(
+        /No middleware returned a response for the request./,
+      );
     });
 
-    it('should return a response when a middleware returns a response synchronously', async () => {
+    it('should emit the "before" event before the request is handled', async () => {
+      const order: string[] = [];
+
+      const listener = jest.fn(() => {
+        order.push('listener');
+      });
+
+      const middleware = jest.fn(() => {
+        order.push('middleware');
+        return defaultResponse;
+      });
+
       const router = createMockRouter();
-      router.use(() => defaultResponse);
-      const actual = await router.routeAsync(defaultRequest, defaultContext);
-      expect(actual).toEqual(defaultResponse);
+      router.on('before', listener);
+      router.get('/foo/bar', middleware);
+      await router.routeAsync(defaultRequest, defaultContext);
+      expect(listener).toBeCalledWith({
+        context: {mode: Mode.ASYNC},
+        request: defaultRequest,
+      });
+      expect(order).toEqual(['listener', 'middleware']);
     });
 
-    it('should return a response when a middleware returns a response asynchronously', async () => {
-      const router = createMockRouter();
-      router.use(() => Promise.resolve(defaultResponse));
-      const actual = await router.routeAsync(defaultRequest, defaultContext);
-      expect(actual).toEqual(defaultResponse);
-    });
-
-    it('should normalise the request', async () => {
-      const middleware = jest.fn().mockReturnValue({});
-      const request = {method: 'put', url: '/abc'};
+    it('should call the middleware with a normalised request', async () => {
+      const middleware = jest.fn().mockReturnValue(defaultResponse);
       const router = createMockRouter();
       router.put('/abc', middleware);
-      await router.routeAsync(request, defaultContext);
+      await router.routeAsync({method: 'put', url: '/abc'}, defaultContext);
       expect(middleware).toBeCalledWith(
         {
           version: '1.1',
@@ -255,7 +234,7 @@ describe('Router', () => {
       );
     });
 
-    it('should normalise the response', async () => {
+    it('should return a normalised response synchronously', async () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
       const response = await router.routeAsync(defaultRequest, defaultContext);
@@ -268,32 +247,41 @@ describe('Router', () => {
       });
     });
 
-    it('should call the before listener before the request is handled', async () => {
-      const listener = jest.fn();
+    it('should return a normalised response asynchronously', async () => {
       const router = createMockRouter();
-      router.on('before', listener);
-      router.get('/foo/bar', {});
-      await router.routeAsync(defaultRequest, defaultContext);
-      expect(listener).toBeCalledWith({
-        context: defaultContext,
-        request: defaultRequest,
+      router.get('/foo/bar', () => Promise.resolve({status: 201}));
+      const response = await router.routeAsync(defaultRequest, defaultContext);
+      expect(response).toEqual({
+        version: '1.1',
+        status: 201,
+        reason: 'Created',
+        headers: {},
+        body: undefined,
       });
     });
 
-    it('should call the after listener after the request is handled', async () => {
-      const listener = jest.fn();
+    it('should emit the "after" event before the request is handled', async () => {
+      const order: string[] = [];
+
+      const listener = jest.fn(() => {
+        order.push('listener');
+      });
+
+      const middleware = jest.fn(() => {
+        order.push('middleware');
+        return defaultResponse;
+      });
+
       const router = createMockRouter();
       router.on('after', listener);
-      router.get('/foo/bar', {status: 201});
+      router.get('/foo/bar', middleware);
       await router.routeAsync(defaultRequest, defaultContext);
       expect(listener).toBeCalledWith({
-        context: defaultContext,
+        context: {mode: Mode.ASYNC},
         request: defaultRequest,
-        response: expect.objectContaining({
-          status: 201,
-          reason: 'Created',
-        }),
+        response: defaultResponse,
       });
+      expect(order).toEqual(['middleware', 'listener']);
     });
 
     it('should call the error listener when there is an error handling the request', async () => {
@@ -301,13 +289,15 @@ describe('Router', () => {
       const listener = jest.fn();
       const router = createMockRouter();
       router.on('error', listener);
-      router.get('/foo/bar', () => Promise.reject(new Error('Oops')));
+      router.get('/foo/bar', () => {
+        throw new Error('Oops');
+      });
       try {
         await router.routeAsync(defaultRequest, defaultContext);
       } catch (error) {
-        // error is expected
+        // an error is expected
         expect(listener).toBeCalledWith({
-          context: defaultContext,
+          context: {mode: Mode.ASYNC},
           request: defaultRequest,
           error: expect.objectContaining({
             message: expect.stringContaining('Oops'),

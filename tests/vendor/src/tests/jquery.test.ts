@@ -19,7 +19,7 @@ describe('jquery', () => {
     });
 
     await $.ajax('/')
-      .then((data, status, xhr) => {
+      .then((data, _status, xhr) => {
         expect(xhr.status).to.eq(200);
         expect(xhr.statusText).to.eq('OK');
         expect(xhr.getAllResponseHeaders()).to.contain(
@@ -27,7 +27,7 @@ describe('jquery', () => {
         );
         expect(data).to.eq('Hello World!');
       })
-      .catch((xhr, status, error) => expect.fail(error));
+      .catch((_xhr, _status, error) => expect.fail(error));
   });
 
   it('should POST', async () => {
@@ -42,12 +42,12 @@ describe('jquery', () => {
         .body('Hello World!');
     });
 
-    const res = await $.ajax({
+    await $.ajax({
       method: 'post',
       url: '/',
       data: JSON.stringify({foo: 'bar'}),
     })
-      .then((data, status, xhr) => {
+      .then((data, _status, xhr) => {
         expect(xhr.status).to.eq(201);
         expect(xhr.statusText).to.eq('Created');
         expect(xhr.getAllResponseHeaders()).to.contain(
@@ -55,7 +55,7 @@ describe('jquery', () => {
         );
         expect(data).to.eq('Hello World!');
       })
-      .catch((xhr, status, error) => expect.fail(error));
+      .catch((_xhr, _status, error) => expect.fail(error));
   });
 
   it('should PUT', async () => {
@@ -70,12 +70,12 @@ describe('jquery', () => {
         .body('Hello World!');
     });
 
-    const res = await $.ajax({
+    await $.ajax({
       method: 'put',
       url: '/',
       data: JSON.stringify({foo: 'bar'}),
     })
-      .then((data, status, xhr) => {
+      .then((data, _status, xhr) => {
         expect(xhr.status).to.eq(200);
         expect(xhr.statusText).to.eq('OK');
         expect(xhr.getAllResponseHeaders()).to.contain(
@@ -83,7 +83,7 @@ describe('jquery', () => {
         );
         expect(data).to.eq('Hello World!');
       })
-      .catch((xhr, status, error) => expect.fail(error));
+      .catch((_xhr, _status, error) => expect.fail(error));
   });
 
   it('should DELETE', async () => {
@@ -94,28 +94,27 @@ describe('jquery', () => {
       return res.status(204).reason('No Content');
     });
 
-    const res = await $.ajax({
+    await $.ajax({
       method: 'delete',
       url: '/',
     })
-      .then((data, status, xhr) => {
+      .then((data, _status, xhr) => {
         expect(xhr.status).to.eq(204);
         expect(xhr.statusText).to.eq('No Content');
         expect(xhr.getAllResponseHeaders()).to.eq('');
         expect(data).to.eq(undefined);
       })
-      .catch((xhr, status, error) => expect.fail(error));
+      .catch((_xhr, _status, error) => expect.fail(error));
   });
 
   it('should time out', async () => {
     mock.get('/', () => new Promise(() => {}));
-
     await $.ajax({
       url: '/',
       timeout: 10,
     }).then(
       () => expect.fail(),
-      (xhr, status, error) => {
+      (_xhr, status, error) => {
         expect(status).to.eq('timeout');
         expect(error).to.contain('');
       },
@@ -124,10 +123,9 @@ describe('jquery', () => {
 
   it('should error', async () => {
     mock.get('/', () => Promise.reject(new Error('😬')));
-
     await $.ajax('/').then(
       () => expect.fail(),
-      (xhr, status, error) => {
+      (_xhr, status, error) => {
         expect(status).to.eq('error');
         expect(error).to.contain('');
       },

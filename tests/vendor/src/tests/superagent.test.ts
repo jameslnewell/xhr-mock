@@ -86,7 +86,7 @@ describe('superagent', () => {
     mock.get('/', () => new Promise(() => {}));
 
     try {
-      const res = await superagent.get('/').timeout({
+      await superagent.get('/').timeout({
         response: 5,
         deadline: 6,
       });
@@ -101,7 +101,7 @@ describe('superagent', () => {
     mock.get('/', () => Promise.reject(new Error('😬')));
 
     try {
-      const res = await superagent.get('/');
+      await superagent.get('/');
       expect.fail();
     } catch (error) {
       expect(error).to.be.an('Error');

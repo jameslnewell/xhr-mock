@@ -6,13 +6,13 @@ describe('native', () => {
   afterEach(() => mock.teardown());
 
   it('should receive a request containing a blob', done => {
+    const data = new Blob(['<h1>Hello World!</h1>'], {type: 'image/png'});
+
     mock.post('/files', (req, res) => {
       expect(req.header('content-type')).to.equal('image/png');
       expect(req.body()).to.equal(data);
       return res;
     });
-
-    const data = new Blob(['<h1>Hello World!</h1>'], {type: 'image/png'});
 
     const req = new XMLHttpRequest();
     req.open('POST', '/files');
@@ -23,6 +23,11 @@ describe('native', () => {
   });
 
   it('should receive a request containing form data', done => {
+    const data = new FormData();
+    data.append('name', 'John Smith');
+    data.append('email', 'john@smith.com');
+    data.append('message', 'blah\nblah\nblah');
+
     mock.post('/contact', (req, res) => {
       expect(req.header('content-type')).to.equal(
         'multipart/form-data; boundary=----XHRMockFormBoundary',
@@ -30,11 +35,6 @@ describe('native', () => {
       expect(req.body()).to.equal(data);
       return res;
     });
-
-    const data = new FormData();
-    data.append('name', 'John Smith');
-    data.append('email', 'john@smith.com');
-    data.append('message', 'blah\nblah\nblah');
 
     const req = new XMLHttpRequest();
     req.open('POST', '/contact');
@@ -45,6 +45,11 @@ describe('native', () => {
   });
 
   it('should receive a request containing url data', done => {
+    const data = new URLSearchParams();
+    data.append('name', 'John Smith');
+    data.append('email', 'john@smith.com');
+    data.append('message', 'blah\nblah\nblah');
+
     mock.post('/contact', (req, res) => {
       expect(req.header('content-type')).to.equal(
         'application/x-www-form-urlencoded; charset=UTF-8',
@@ -52,11 +57,6 @@ describe('native', () => {
       expect(req.body()).to.equal(data);
       return res;
     });
-
-    const data = new URLSearchParams();
-    data.append('name', 'John Smith');
-    data.append('email', 'john@smith.com');
-    data.append('message', 'blah\nblah\nblah');
 
     const req = new XMLHttpRequest();
     req.open('POST', '/contact');
@@ -67,13 +67,13 @@ describe('native', () => {
   });
 
   it('should receive a request containing string data', done => {
+    const data = 'Hello World!';
+
     mock.post('/echo', (req, res) => {
       expect(req.header('content-type')).to.equal('text/plain; charset=UTF-8');
       expect(req.body()).to.equal('Hello World!');
       return res;
     });
-
-    const data = 'Hello World!';
 
     const req = new XMLHttpRequest();
     req.open('POST', '/echo');

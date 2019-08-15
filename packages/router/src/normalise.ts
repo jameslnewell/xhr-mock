@@ -13,7 +13,7 @@ function normaliseHeaders(headers: Headers): Headers {
 }
 
 function getReasonById(status: number): string {
-  return statuses[status] || '';
+  return statuses.default[status] || '';
 }
 
 export function normaliseRequest(req: Partial<Request>): Request {

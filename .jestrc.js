@@ -3,6 +3,9 @@ module.exports = {
     {
       displayName: 'lint',
       preset: '@jameslnewell/jest-preset-lint',
+      cliOptions: {
+        fix: true,
+      },
     },
     {
       displayName: 'type',
@@ -10,7 +13,8 @@ module.exports = {
     },
     {
       displayName: 'test',
-      preset: '@jameslnewell/jest-preset-test',
+      // preset: '@jameslnewell/jest-preset-test',
+      preset: 'ts-jest',
       // moduleNameMapper: {
       //   "^@xhr-mock/(.*)$": "<rootDir>/packages/$1/src"
       // },
