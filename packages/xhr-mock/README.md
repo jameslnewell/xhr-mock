@@ -162,6 +162,12 @@ Forget all the request handlers.
 
 Register a factory function to create mock responses for each GET request to a specific URL.
 
+```js
+mock.get(/\.*.json$/, {
+  body: JSON.stringify({ data: { id: "abc" } })
+});
+```
+
 #### .post(url | regex, mock)
 
 Register a factory function to create mock responses for each POST request to a specific URL.
