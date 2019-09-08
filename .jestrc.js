@@ -3,21 +3,25 @@ module.exports = {
     {
       displayName: 'lint',
       preset: '@jameslnewell/jest-preset-lint',
-      cliOptions: {
-        fix: true,
-      },
     },
     {
       displayName: 'type',
       preset: '@jameslnewell/jest-preset-type',
     },
     {
-      displayName: 'test',
-      // preset: '@jameslnewell/jest-preset-test',
-      preset: 'ts-jest',
-      // moduleNameMapper: {
-      //   "^@xhr-mock/(.*)$": "<rootDir>/packages/$1/src"
-      // },
+      displayName: 'unit tests',
+      preset: '@jameslnewell/jest-preset-test',
+      testMatch: ['<rootDir>/packages/*/(src|test)/**/*.test.ts?(x)'],
+      moduleNameMapper: {
+        '^@xhr-mock/(.*)$': '<rootDir>/packages/$1/src',
+      },
     },
+    // {
+    //   displayName: 'integration tests',
+    //   preset: '@jameslnewell/jest-preset-test',
+    //   moduleNameMapper: {
+    //     "^@xhr-mock/(.*)$": "<rootDir>/packages/$1/src"
+    //   },
+    // },
   ],
 };
