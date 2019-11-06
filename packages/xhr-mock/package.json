@@ -18,7 +18,10 @@
   "repository": "jameslnewell/xhr-mock",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "files": ["lib", "dist"],
+  "files": [
+    "lib",
+    "dist"
+  ],
   "browser": {
     "./lib/proxy.js": "./lib/proxy.browser.js"
   },
@@ -28,7 +31,7 @@
   },
   "devDependencies": {
     "@alexlur/rollup-plugin-typescript": "^1.0.4",
-    "@types/jest": "^22.2.0",
+    "@types/jest": "22.2.0",
     "@types/node": "^9.3.0",
     "axios": "^0.17.1",
     "jest": "^22.0.5",
@@ -49,8 +52,7 @@
     "build": "yarn run build:cjs && yarn run build:umd",
     "test": "jest",
     "test:watch": "jest --watch",
-    "ci":
-      "yarn run clean && yarn run check && yarn run lint && yarn run build && yarn run test"
+    "ci": "yarn run clean && yarn run check && yarn run lint && yarn run build && yarn run test"
   },
   "license": "MIT"
 }
