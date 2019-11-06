@@ -126,6 +126,14 @@ export class Router<C extends {} = {}> {
     return this;
   }
 
+  public all(
+    path: PathPattern,
+    middlewareOrResponse: Middleware<C> | Partial<Response>,
+  ): Router<C> {
+    this.use('*', path, middlewareOrResponse);
+    return this;
+  }
+
   public options(
     path: PathPattern,
     middlewareOrResponse: Middleware<C> | Partial<Response>,
