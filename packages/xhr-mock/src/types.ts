@@ -2,9 +2,7 @@ import {MockHeaders} from './MockHeaders';
 import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 
-export type MockHeaders = {
-  [name: string]: string;
-};
+export type MockHeaders = MockHeaders;
 
 export type MockObject = {
   status?: number;
