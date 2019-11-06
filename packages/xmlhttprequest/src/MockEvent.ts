@@ -36,7 +36,7 @@ export class MockEvent implements Event {
   public readonly isTrusted: boolean = false;
   public readonly timeStamp: number = Date.now();
 
-  public constructor(type: string, eventInitDict?: EventInit) {
+  constructor(type: string, eventInitDict?: EventInit) {
     this.name = type;
     if (eventInitDict) {
       const {

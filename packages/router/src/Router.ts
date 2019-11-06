@@ -23,7 +23,7 @@ export class Router<C extends {} = {}> {
   private emitter: mitt.Emitter = new mitt();
   private middleware: Middleware<C>[] = [];
 
-  public constructor() {
+  constructor() {
     // add a default event handler until the user registers their own
     this.emitter.on('error', defaultErrorListener);
   }

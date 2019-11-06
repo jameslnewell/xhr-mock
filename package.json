@@ -14,6 +14,8 @@
     ]
   },
   "dependencies": {
+    "@babel/core": "^7.7.0",
+    "@jameslnewell/babel-preset": "^2.0.0",
     "@jameslnewell/editor-config": "^1.0.1",
     "@jameslnewell/eslint-config": "^0.13.5",
     "@jameslnewell/jest-preset-test": "^5.0.0",
@@ -29,10 +31,10 @@
     "typescript": "^3.7.2"
   },
   "scripts": {
-    "clean": "lerna exec -- rm -rf lib",
+    "clean": "lerna exec -- rm -rf dist",
     "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix . ",
     "build": "yarn workspaces run build",
-    "test": "jest --config .jestrc.js",
+    "test": "jest",
     "publish": "yarn run publish"
   },
   "husky": {

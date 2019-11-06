@@ -17,7 +17,7 @@
     "lib"
   ],
   "dependencies": {
-    "@xhr-mock/router": "^1.0.0",
+    "@xhr-mock/router": "^0.1.0",
     "global": "^4.3.2"
   },
   "scripts": {
