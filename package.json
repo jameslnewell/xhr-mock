@@ -6,7 +6,8 @@
     "packages": [
       "packages/*",
       "tests/*",
-      "website"
+      "website",
+      "examples"
     ],
     "nohoist": [
       "**/@types/**"
@@ -14,22 +15,21 @@
   },
   "dependencies": {
     "@jameslnewell/editor-config": "^1.0.1",
-    "@jameslnewell/eslint-config": "^0.6.1",
-    "@jameslnewell/jest-preset-lint": "^1.2.0",
-    "@jameslnewell/jest-preset-test": "^3.1.0",
-    "@jameslnewell/jest-preset-type": "^1.2.0",
+    "@jameslnewell/eslint-config": "^0.13.5",
+    "@jameslnewell/jest-preset-test": "^5.0.0",
     "@jameslnewell/prettier-config": "^1.0.1",
     "@jameslnewell/typescript-config": "^3.0.0",
-    "@types/jest": "^24.0.15",
-    "eslint": "^6.0.1",
-    "husky": "^3.0.0",
-    "jest": "^24.8.0",
-    "lint-staged": "^9.2.0",
+    "@types/jest": "^24.0.22",
+    "eslint": "^6.6.0",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "lerna": "^3.18.3",
     "prettier": "^1.18.2",
-    "typescript": "^3.5.3"
+    "pretty-quick": "^2.0.1",
+    "typescript": "^3.7.2"
   },
   "scripts": {
-    "clean": "yarn workspaces exec lib",
+    "clean": "lerna exec -- rm -rf lib",
     "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix . ",
     "build": "yarn workspaces run build",
     "test": "jest --config .jestrc.js",
@@ -37,13 +37,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "pretty-quick --staged"
     }
-  },
-  "lint-staged": {
-    "*.{json,js,ts,tsx,md}": [
-      "prettier --write",
-      "git add"
-    ]
   }
 }

@@ -1,3 +1,5 @@
+//FIXME:
+/* eslint-disable @typescript-eslint/ban-ts-ignore */
 import Router, {Request, Response, Mode} from '@xhr-mock/router';
 import {MockError} from './MockError';
 import {MockEvent} from './MockEvent';
@@ -41,7 +43,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
-  public withCredentials: boolean = false;
+  public withCredentials = false;
 
   private req: Request = {
     version: '1.1',
@@ -61,21 +63,21 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   };
 
   public responseType: XMLHttpRequestResponseType = '';
-  public responseURL: string = '';
+  public responseURL = '';
   // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
   public upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
   public readyState: ReadyState = MockXMLHttpRequest.UNSENT;
 
   // flags
-  private isSynchronous: boolean = false;
-  private isSending: boolean = false;
-  private isUploadComplete: boolean = false;
-  private isAborted: boolean = false;
-  private isTimedOut: boolean = false;
+  private isSynchronous = false;
+  private isSending = false;
+  private isUploadComplete = false;
+  private isAborted = false;
+  private isTimedOut = false;
 
   // @ts-ignore: wants a NodeJS.Timer because of @types/node
   private timeoutTimer: number;
-  private _timeout: number = 0;
+  private _timeout = 0;
 
   public get timeout(): number {
     return this._timeout;
@@ -198,7 +200,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   public open(
     method: string,
     url: string,
-    async: boolean = true,
+    async = true,
     /* eslint-disable @typescript-eslint/no-unused-vars */
     username: string | null = null, // TODO:
     password: string | null = null, // TODO:

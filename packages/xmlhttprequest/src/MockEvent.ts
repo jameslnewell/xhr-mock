@@ -19,12 +19,12 @@ export class MockEvent implements Event {
   public readonly BUBBLING_PHASE: number = EventPhase.BUBBLING_PHASE;
 
   private name: string;
-  private canBubble: boolean = false;
-  private canCancel: boolean = false;
-  private isPropagationStopped: boolean = false;
-  private isImmediatePropagationStopped: boolean = false;
-  private isCanceled: boolean = false;
-  private isPassive: boolean = false;
+  private canBubble = false;
+  private canCancel = false;
+  private isPropagationStopped = false;
+  private isImmediatePropagationStopped = false;
+  private isCanceled = false;
+  private isPassive = false;
 
   public readonly composed: boolean = false;
 
@@ -74,11 +74,7 @@ export class MockEvent implements Event {
     return this.isCanceled;
   }
 
-  public initEvent(
-    type: string,
-    bubbles: boolean = false,
-    cancelable: boolean = false,
-  ): void {
+  public initEvent(type: string, bubbles = false, cancelable = false): void {
     this.name = type;
     this.canBubble = bubbles;
     this.canCancel = cancelable;

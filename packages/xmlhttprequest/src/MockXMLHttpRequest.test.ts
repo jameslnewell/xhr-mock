@@ -1,4 +1,4 @@
-/* eslint prefer-const: ["error", {"ignoreReadBeforeAssign": true}] */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import Router from '@xhr-mock/router';
 import {MockEvent} from './MockEvent';
 import {MockXMLHttpRequest} from './MockXMLHttpRequest';
@@ -362,7 +362,7 @@ describe('MockXMLHttpRequest', () => {
   });
 
   it('should time out when .timeout > 0 and no response is resloved within the time', done => {
-    let start: number;
+    const start = Date.now();
     let end: number;
     const {router, xhr} = createXHR();
     router.use(
@@ -379,7 +379,6 @@ describe('MockXMLHttpRequest', () => {
       done();
     };
     xhr.onerror = failOnEvent(done);
-    start = Date.now();
     xhr.open('get', '/');
     xhr.send();
   });

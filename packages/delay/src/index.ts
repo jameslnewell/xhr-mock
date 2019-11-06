@@ -1,12 +1,8 @@
 import {Response, Middleware} from '@xhr-mock/router';
 
-function isPromise<T>(value: any): value is Promise<T> {
-  return typeof value === 'object' && typeof value.then === 'function';
-}
-
 export default function delay(
   responseOrMiddleware: Partial<Response> | Middleware,
-  ms: number = 1500,
+  ms = 1500,
 ): Middleware {
   return (request, context) => {
     const result =
