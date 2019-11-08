@@ -1,9 +1,10 @@
 {
-  "extends": "./node_modules/@jameslnewell/typescript-config/tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "isolatedModules": true,
-    "lib": ["esnext", "dom"],
-    "target": "esnext"
+    "baseUrl": ".",
+    "paths": {
+      "@xhr-mock/*": ["packages/*/src"]
+    }
   },
   "include": ["**/src", "**/test"],
   "exclude": ["node_modules"]

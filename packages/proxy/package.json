@@ -21,7 +21,7 @@
     "@xhr-mock/router": "^0.1.0"
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json"
+    "build": "tsdx build --tsconfig ../../tsconfig.build.json"
   },
   "license": "MIT"
 }

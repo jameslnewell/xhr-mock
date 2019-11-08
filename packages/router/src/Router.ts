@@ -20,7 +20,7 @@ import {
 import {defaultErrorListener} from './defaultErrorListener';
 
 export class Router<C extends {} = {}> {
-  private emitter: mitt.Emitter = new mitt();
+  private emitter: mitt.Emitter = mitt();
   private middleware: Middleware<C>[] = [];
 
   constructor() {

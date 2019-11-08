@@ -1,6 +1,6 @@
 {
   "name": "@xhr-mock/xmlhttprequest",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A mock for XMLHttpRequest.",
   "keywords": [
     "mock",
@@ -11,17 +11,18 @@
     "response"
   ],
   "repository": "jameslnewell/xhr-mock",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/router.esm.js",
+  "typings": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "dependencies": {
     "@xhr-mock/router": "^0.1.0",
-    "global": "^4.3.2"
+    "global": "^4.4.0"
   },
   "scripts": {
-    "build": "tsc --project tsconfig.json"
+    "build": "tsdx build --tsconfig ../../tsconfig.build.json"
   },
   "license": "MIT"
 }

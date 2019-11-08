@@ -1,0 +1,11 @@
+{
+  "name": "@xhr-mock/website",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "typedoc": "typedoc --json apidocs.json"
+  },
+  "devDependencies": {
+    "typedoc": "^0.15.0"
+  }
+}

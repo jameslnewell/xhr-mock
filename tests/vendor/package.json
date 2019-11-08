@@ -23,7 +23,7 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist ./cache",
-    "check": "tsc --project tsconfig.json",
+    "check": "tsdx build --tsconfig ../../tsconfig.build.json",
     "dev": "concurrently 'parcel watch --public-url /js/ src/index.ts' testem",
     "test": "parcel build src/index.ts && testem ci",
     "ci": "yarn run clean && yarn run lint && yarn run check && yarn run test"

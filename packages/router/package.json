@@ -11,10 +11,11 @@
     "response"
   ],
   "repository": "jameslnewell/xhr-mock",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/router.esm.js",
+  "typings": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "dependencies": {
     "@types/statuses": "^1.5.0",
@@ -23,6 +24,9 @@
     "path-to-regexp": "^3.0.0",
     "statuses": "^1.5.0",
     "url-parse": "^1.4.7"
+  },
+  "scripts": {
+    "build": "tsdx build --tsconfig ../../tsconfig.build.json"
   },
   "license": "MIT"
 }
