@@ -1,6 +1,6 @@
 //FIXME:
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
-import Router, {Request, Response, Mode} from '@xhr-mock/router';
+import Router, {Request, Response} from '@xhr-mock/router';
 import {MockError} from './MockError';
 import {MockEvent} from './MockEvent';
 import {MockProgressEvent} from './MockProgressEvent';
@@ -39,7 +39,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   public readonly DONE = ReadyState.DONE;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public onreadystatechange: ((this: XMLHttpRequest, ev: Event) => any) | null;
+  public onreadystatechange:
+    | ((this: XMLHttpRequest, ev: Event) => any)
+    | null = null;
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
@@ -202,7 +204,9 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     url: string,
     async = true,
     /* eslint-disable @typescript-eslint/no-unused-vars */
+    // @ts-ignore
     username: string | null = null, // TODO:
+    // @ts-ignore
     password: string | null = null, // TODO:
     /* eslint-enable @typescript-eslint/no-unused-vars */
   ): void {
@@ -268,7 +272,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // let response be the result of fetching req
     let res;
     try {
-      res = MockXMLHttpRequest.router.handleSync(this.req, {});
+      res = MockXMLHttpRequest.router.routeSync(this.req, {});
 
       // if the timeout attribute value is not zero, then set the timed out flag and terminate fetching if it has not returned within the amount of milliseconds from the timeout.
       // TODO: check if timeout was elapsed
@@ -281,7 +285,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       // run handle response end-of-body for response
       this.handleResponseBody(res);
     } catch (error) {
-      this.handleError(error);
+      this.handleError();
     }
   }
 
@@ -330,11 +334,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     }
 
     try {
-      const res = MockXMLHttpRequest.router.handleAsync(
-        Mode.ASYNC,
-        this.req,
-        {},
-      );
+      const res = await MockXMLHttpRequest.router.routeAsync(this.req, {});
 
       //we've received a response before the timeout so we don't want to timeout
       clearTimeout(this.timeoutTimer);
@@ -353,7 +353,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
         return; // these cases will already have been handled
       }
 
-      this.handleError(error);
+      this.handleError();
     }
   }
 
@@ -511,9 +511,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   // @see https://xhr.spec.whatwg.org/#handle-errors
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private handleError(error?: Error): void {
-    // TODO: error
+  private handleError(/*error?: Error*/): void {
+    // TODO: do something with the error?
     // if the send() flag is unset, return
     if (!this.isSending) {
       return;

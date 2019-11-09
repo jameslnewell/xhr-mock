@@ -19,13 +19,14 @@ export class MockEvent implements Event {
   public readonly BUBBLING_PHASE: number = EventPhase.BUBBLING_PHASE;
 
   private name: string;
-  private canBubble = false;
-  private canCancel = false;
-  private isPropagationStopped = false;
-  private isImmediatePropagationStopped = false;
-  private isCanceled = false;
-  private isPassive = false;
-
+  private canBubble: boolean = false;
+  private canCancel: boolean = false;
+  private isPropagationStopped: boolean = false;
+  // @ts-ignore
+  private isImmediatePropagationStopped: boolean = false;
+  private isCanceled: boolean = false;
+  // @ts-ignore
+  private isPassive: boolean = false;
   public readonly composed: boolean = false;
 
   public readonly currentTarget: EventTarget | null = null;

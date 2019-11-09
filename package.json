@@ -33,6 +33,7 @@
   },
   "scripts": {
     "clean": "lerna exec -- rm -rf dist",
+    "type": "tsc --noEmit",
     "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix . ",
     "build": "yarn workspaces run build",
     "test": "jest",

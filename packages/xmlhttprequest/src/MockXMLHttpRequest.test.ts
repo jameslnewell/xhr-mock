@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import Router from '@xhr-mock/router';
-import {MockEvent} from './MockEvent';
 import {MockXMLHttpRequest} from './MockXMLHttpRequest';
 
 function failOnEvent(done: jest.DoneCallback) {
@@ -18,31 +17,35 @@ function successOnEvent(done: jest.DoneCallback) {
 const createXHR = () => {
   const events: string[] = [];
   const router = new Router();
-  const xhr = new MockXMLHttpRequest(router);
+  const xhr = new MockXMLHttpRequest();
+
+  MockXMLHttpRequest.router = router;
 
   // mute logging of successful requests
   router.on('after', jest.fn());
 
   // record upload events
-  const pushDownloadEvent = (event: MockEvent) =>
+  const pushUploadEvent = (event: ProgressEvent) => {
+    events.push(`upload:${event.type}`);
+  };
+  xhr.upload.addEventListener('loadstart', pushUploadEvent);
+  xhr.upload.addEventListener('progress', pushUploadEvent);
+  xhr.upload.addEventListener('load', pushUploadEvent);
+  xhr.upload.addEventListener('loadend', pushUploadEvent);
+
+  // record download events
+  const pushDownloadEvent = (event: ProgressEvent) => {
     events.push(
       `xhr:${event.type}${
         event.type === 'readystatechange' ? `[${xhr.readyState}]` : ''
       }`,
     );
+  };
   xhr.addEventListener('readystatechange', pushDownloadEvent);
   xhr.addEventListener('loadstart', pushDownloadEvent);
   xhr.addEventListener('progress', pushDownloadEvent);
   xhr.addEventListener('load', pushDownloadEvent);
   xhr.addEventListener('loadend', pushDownloadEvent);
-
-  // record upload events
-  const pushUploadEvent = (event: MockEvent) =>
-    events.push(`upload:${event.type}`);
-  xhr.upload.addEventListener('loadstart', pushUploadEvent);
-  xhr.upload.addEventListener('progress', pushUploadEvent);
-  xhr.upload.addEventListener('load', pushUploadEvent);
-  xhr.upload.addEventListener('loadend', pushUploadEvent);
 
   return {events, router, xhr};
 };

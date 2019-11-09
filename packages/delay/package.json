@@ -11,10 +11,11 @@
     "response"
   ],
   "repository": "jameslnewell/xhr-mock",
-  "main": "lib/index.js",
-  "typings": "lib/index.d.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
   "files": [
-    "lib"
+    "dist"
   ],
   "dependencies": {
     "@xhr-mock/router": "^0.1.0"

@@ -16,9 +16,7 @@ export default function delay(
       if (!response) {
         return undefined;
       } else {
-        return new Promise<Partial<Response> | undefined>(resolve =>
-          setTimeout(() => resolve(response), ms),
-        );
+        return new Promise(resolve => setTimeout(() => resolve(response), ms));
       }
     });
   };
