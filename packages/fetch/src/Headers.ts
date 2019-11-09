@@ -42,7 +42,7 @@ export class Headers implements Headers, Iterable<[string, string]> {
   }
 
   public has(name: string): boolean {
-    return this.headers.hasOwnProperty(name);
+    return name in this.headers;
   }
 
   public set(name: string, value: string): void {

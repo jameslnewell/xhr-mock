@@ -1,0 +1,9 @@
+{
+  "extends": "./node_modules/@jameslnewell/typescript-config/tsconfig.json",
+  "compilerOptions": {
+    "isolatedModules": true,
+    "lib": ["esnext", "dom"],
+    "target": "esnext",
+    "noEmit": true
+  }
+}

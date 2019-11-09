@@ -20,10 +20,10 @@ import {
 import {defaultErrorListener} from './defaultErrorListener';
 
 export class Router<C extends {} = {}> {
-  private emitter: mitt.Emitter = new mitt();
+  private emitter: mitt.Emitter = mitt();
   private middleware: Middleware<C>[] = [];
 
-  public constructor() {
+  constructor() {
     // add a default event handler until the user registers their own
     this.emitter.on('error', defaultErrorListener);
   }
@@ -123,6 +123,14 @@ export class Router<C extends {} = {}> {
     } else {
       throw new TypeError('Invalid parameters');
     }
+    return this;
+  }
+
+  public all(
+    path: PathPattern,
+    middlewareOrResponse: Middleware<C> | Partial<Response>,
+  ): Router<C> {
+    this.use('*', path, middlewareOrResponse);
     return this;
   }
 

@@ -17,7 +17,7 @@ export class Facade {
   }[] = [];
   public router: Router | undefined = undefined;
 
-  public setup() {
+  public setup(): void {
     // save the original function
     this.fns.push({
       fetch: window.fetch,
@@ -32,7 +32,7 @@ export class Facade {
     // TODO: all the other classes
   }
 
-  public teardown() {
+  public teardown(): void {
     // restore the original function
     const fns = this.fns.pop();
     if (!fns) {

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "rootDir": "..",
+    "lib": ["esnext", "dom"]
+  },
+  "include": ["./packages/*/src"],
+  "exclude": ["node_modules"]
+}

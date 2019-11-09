@@ -1,7 +1,7 @@
 import {MockRequestWithParams, MockRouter} from '../router';
 import createFetchFunction from './index';
 
-function createRouter() {
+function createRouter(): MockRouter {
   return new MockRouter()
     .get('/api/user/:id', (req: MockRequestWithParams) => ({
       body: JSON.stringify({
@@ -21,11 +21,11 @@ function createRouter() {
 describe('createFetchFunction()', () => {
   it('should get', async () => {
     const fetch = createFetchFunction(createRouter());
-    const res = await fetch('/api/user/123');
+    await fetch('/api/user/123');
   });
 
   it('should post', async () => {
     const fetch = createFetchFunction(createRouter());
-    const res = await fetch('/api/user', {method: 'post'});
+    await fetch('/api/user', {method: 'post'});
   });
 });

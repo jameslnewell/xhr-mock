@@ -1,16 +1,16 @@
 // TODO: finish implementation
 
-function createNotImplementedError() {
+function createNotImplementedError(): Error {
   return new Error('Not implemented yet.');
 }
 
-function createBodyConversionError() {
+function createBodyConversionError(): Error {
   return new Error('Body conversion not implemented yet.');
 }
 
 export class Body {
   protected readonly bodyInit: BodyInit | undefined;
-  private isBodyUsed: boolean = false;
+  private isBodyUsed = false;
 
   protected constructor(bodyInit?: BodyInit) {
     this.bodyInit = bodyInit;
@@ -38,6 +38,7 @@ export class Body {
     throw createNotImplementedError();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async json(): Promise<any> {
     const text = await this.text();
     return JSON.parse(text);

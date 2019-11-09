@@ -1,7 +1,5 @@
 # @xhr-mock/router
 
-[![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
-
 A router for dispatching requests and responses.
 
 ## Installation

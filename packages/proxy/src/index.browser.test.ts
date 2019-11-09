@@ -26,7 +26,7 @@ const defaultResponse: Response = {
   },
 };
 
-function createContext(error: boolean = false): Context {
+function createContext(error = false): Context {
   const xhr = new XMLHttpRequest();
 
   jest.spyOn(xhr, 'status').mockImplementation(206);

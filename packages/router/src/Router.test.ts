@@ -23,9 +23,9 @@ const defaultContext: Context = {
   mode: Mode.ASYNC,
 };
 
-const noop = () => undefined;
+const noop = (): undefined => undefined;
 
-const createMockRouter = () => {
+const createMockRouter = (): Router => {
   return new Router().on('error', noop);
 };
 
