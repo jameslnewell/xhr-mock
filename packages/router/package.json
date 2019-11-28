@@ -11,22 +11,26 @@
     "response"
   ],
   "repository": "jameslnewell/xhr-mock",
+  "source": "src/index.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "dependencies": {
     "@types/statuses": "^1.5.0",
-    "@types/url-parse": "^1.4.3",
+    "@types/whatwg-url": "^6.4.0",
     "mitt": "^1.1.3",
     "path-to-regexp": "^3.0.0",
     "statuses": "^1.5.0",
-    "url-parse": "^1.4.7"
+    "whatwg-url": "^7.1.0"
   },
   "scripts": {
-    "build": "tsdx build --tsconfig ../../tsconfig.build.json"
+    "clean": "package-scripts clean",
+    "build": "env FORCE_COLOR=3 package-scripts build --tsconfig ../../tsconfig.build.json",
+    "watch": "yarn run build --watch",
+    "test": "package-scripts test"
   },
   "license": "MIT"
 }

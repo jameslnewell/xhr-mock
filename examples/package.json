@@ -6,7 +6,7 @@
     "axios": "^0.18.0",
     "jquery": "^3.3.1",
     "superagent": "^4.1.0",
-    "xhr-mock": "^3.0.0-preview.3"
+    "xhr-mock": "^3.0.0-preview.1"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^4.6.0",
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "webpack",
+    "_build": "webpack",
     "start": "webpack-dev-server"
   }
 }

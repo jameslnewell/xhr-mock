@@ -65,6 +65,23 @@ const response = router.routeSync(
 
 ### `.routeAsync(request, response)`
 
+## How To
+
+### How to match query strings
+
+Matching requests based on query strings isn't supported out-of-the-box yet. You can implement it yourself like this:
+
+```js
+mock.get('/search', req => {
+  const url = new URL(req.url);
+  if (url.searchParams.get('q') === 'cats') {
+    return {status: 200};
+  } else {
+    return {status: 404};
+  }
+});
+```
+
 ## License
 
 MIT Licensed. Copyright (c) James Newell 2014.

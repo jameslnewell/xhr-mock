@@ -21,6 +21,7 @@
     "@jameslnewell/jest-preset-test": "^5.0.0",
     "@jameslnewell/prettier-config": "^1.0.1",
     "@jameslnewell/typescript-config": "^3.0.0",
+    "@tradie/package-scripts": "^0.1.9",
     "@types/jest": "^24.0.22",
     "eslint": "^6.6.0",
     "husky": "^3.0.9",
@@ -28,14 +29,13 @@
     "lerna": "^3.18.3",
     "prettier": "^1.18.2",
     "pretty-quick": "^2.0.1",
-    "tsdx": "^0.11.0",
     "typescript": "^3.7.2"
   },
   "scripts": {
-    "clean": "lerna exec -- rm -rf dist",
+    "clean": "lerna exec -- rm -rf dist && lerna clean",
     "type": "tsc --noEmit",
     "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix . ",
-    "build": "yarn workspaces run build",
+    "build": "lerna run build",
     "test": "jest",
     "publish": "yarn run publish"
   },

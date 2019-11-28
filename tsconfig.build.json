@@ -1,6 +1,9 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {},
-  "include": ["**/src"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+  "extends": "./node_modules/@tradie/package-scripts/config/tsconfig.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["dom", "esnext"]
+  }
 }

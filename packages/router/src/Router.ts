@@ -2,118 +2,107 @@
 import mitt from 'mitt';
 import {
   MethodPattern,
-  PathPattern,
+  URLPathPattern,
   Request,
   Response,
   Context,
   Middleware,
-  Mode,
+  RouteOptions,
+  RouteResult,
+  BeforeEvent,
+  AfterEvent,
+  ErrorEvent,
+  ExecutionContext,
+  RequestWithParameters,
 } from './types';
-import {RouterError} from './RouterError';
-import {createMiddleware} from './createMiddleware';
-import {isPromise} from './isPromise';
-import {
-  normaliseRequest,
-  normaliseResponse,
-  normaliseContext,
-} from './normalise';
-import {defaultErrorListener} from './defaultErrorListener';
+import {defaultErrorListener} from './utils/defaultErrorListener';
+import {createMiddleware} from './utils/createMiddleware';
+import {normaliseRequest, normaliseContext} from './utils/normalise';
+import {routeSync} from './utils/routeSync';
+import {routeAsync} from './utils/routeAsync';
+import {isRedirect} from './utils/isRedirect';
 
-export class Router<C extends {} = {}> {
+export class Router {
   private emitter: mitt.Emitter = mitt();
-  private middleware: Middleware<C>[] = [];
+  private middleware: Middleware[] = [];
 
   constructor() {
-    // add a default event handler until the user registers their own
+    // register a default event handler until the user registers their own to avoid throwing an error
     this.emitter.on('error', defaultErrorListener);
   }
 
-  public on(
-    type: 'before',
-    listener: (data: {request: Request; context: Context<C>}) => void,
-  ): Router<C>;
-  public on(
-    type: 'after',
-    listener: (data: {
-      request: Request;
-      response: Response;
-      context: Context<C>;
-    }) => void,
-  ): Router<C>;
-  public on(
-    type: 'error',
-    listener: (data: {
-      request: Request;
-      context: Context<C>;
-      error: any;
-    }) => void,
-  ): Router<C>;
+  private emitBeforeEvent(request: Request, context: Context) {
+    this.emitter.emit('before', {
+      request,
+      context,
+    });
+  }
+
+  private emitAfterEvent(
+    request: Request,
+    response: Response,
+    context: Context,
+  ) {
+    this.emitter.emit('after', {
+      request,
+      response,
+      context,
+    });
+  }
+
+  private emitErrorEvent(request: Request, error: any, context: Context) {
+    this.emitter.emit('error', {
+      request,
+      error,
+      context,
+    });
+  }
+
+  public on(type: 'before', listener: (data: BeforeEvent) => void): Router;
+  public on(type: 'after', listener: (data: AfterEvent) => void): Router;
+  public on(type: 'error', listener: (data: ErrorEvent) => void): Router;
   public on(
     type: 'before' | 'after' | 'error',
     listener:
-      | (
-          | ((data: {request: Request; context: Context<C>}) => void)
-          | ((data: {
-              request: Request;
-              response: Response;
-              context: Context<C>;
-            }) => void))
-      | ((data: {request: Request; context: Context<C>; error: any}) => void),
-  ): Router<C> {
+      | ((data: BeforeEvent) => void)
+      | ((data: AfterEvent) => void)
+      | ((data: ErrorEvent) => void),
+  ): Router {
     this.emitter.on(type, listener);
+    // remove the default error listener when the user adds their own
     if (type === 'error') {
       this.emitter.off('error', defaultErrorListener);
     }
     return this;
   }
 
-  public off(
-    type: 'before',
-    listener: (data: {request: Request; context: Context<C>}) => void,
-  ): Router<C>;
-  public off(
-    type: 'after',
-    listener: (data: {
-      request: Request;
-      response: Response;
-      context: Context<C>;
-    }) => void,
-  ): Router<C>;
-  public off(
-    type: 'error',
-    listener: (data: {
-      request: Request;
-      context: Context<C>;
-      error: any;
-    }) => void,
-  ): Router<C>;
+  public off(type: 'before', listener: (data: BeforeEvent) => void): Router;
+  public off(type: 'after', listener: (data: AfterEvent) => void): Router;
+  public off(type: 'error', listener: (data: ErrorEvent) => void): Router;
   public off(
     type: 'before' | 'after' | 'error',
     listener:
-      | (
-          | ((data: {request: Request; context: Context<C>}) => void)
-          | ((data: {
-              request: Request;
-              response: Response;
-              context: Context<C>;
-            }) => void))
-      | ((data: {request: Request; context: Context<C>; error: any}) => void),
-  ): Router<C> {
+      | ((data: BeforeEvent) => void)
+      | ((data: AfterEvent) => void)
+      | ((data: ErrorEvent) => void),
+  ): Router {
     this.emitter.off(type, listener);
     return this;
   }
 
-  public use(middleware: Middleware<C>): Router<C>;
+  public use(middleware: Middleware): Router;
   public use(
     method: MethodPattern,
-    path: PathPattern,
-    middleware: Middleware<C> | Partial<Response>,
-  ): Router<C>;
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router;
   public use(
-    methodOrMiddleware: MethodPattern | Middleware<C>,
-    path?: PathPattern,
-    middlewareOrResponse?: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    methodOrMiddleware: MethodPattern | Middleware,
+    path?: URLPathPattern,
+    middlewareOrResponse?:
+      | Middleware<RequestWithParameters>
+      | Partial<Response>,
+  ): Router {
     if (typeof methodOrMiddleware === 'function') {
       this.middleware.push(methodOrMiddleware);
     } else if (path && middlewareOrResponse) {
@@ -121,182 +110,141 @@ export class Router<C extends {} = {}> {
         createMiddleware(methodOrMiddleware, path, middlewareOrResponse),
       );
     } else {
-      throw new TypeError('Invalid parameters');
+      throw new TypeError('Invalid arguments.');
     }
     return this;
   }
 
   public all(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('*', path, middlewareOrResponse);
     return this;
   }
 
   public options(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('options', path, middlewareOrResponse);
     return this;
   }
 
   public head(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('head', path, middlewareOrResponse);
     return this;
   }
 
   public get(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('get', path, middlewareOrResponse);
     return this;
   }
 
   public post(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('post', path, middlewareOrResponse);
     return this;
   }
 
   public put(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('put', path, middlewareOrResponse);
     return this;
   }
 
   public patch(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('patch', path, middlewareOrResponse);
     return this;
   }
 
   public delete(
-    path: PathPattern,
-    middlewareOrResponse: Middleware<C> | Partial<Response>,
-  ): Router<C> {
+    path: URLPathPattern,
+    middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
+  ): Router {
     this.use('delete', path, middlewareOrResponse);
     return this;
   }
 
   public routeSync(
     request: Partial<Request>,
-    context: C & Partial<Context<C>>,
-  ): Response {
-    const normalisedRequest = normaliseRequest(request);
-    const normalisedContext = normaliseContext({...context, mode: Mode.SYNC});
-
-    this.emitter.emit('before', {
-      request: normalisedRequest,
-      context: normalisedContext,
+    options: RouteOptions = {redirect: 'follow'},
+  ): RouteResult {
+    let normalisedRequest = normaliseRequest(request);
+    let normalisedContext = normaliseContext({
+      execution: ExecutionContext.Synchronous,
     });
-
+    let normalisedResponse: Response;
     try {
-      for (const middleware of this.middleware) {
-        const response = middleware(normalisedRequest, normalisedContext);
-
-        if (!response) {
-          continue;
-        }
-        if (isPromise(response)) {
-          throw new RouterError(
-            'A middleware returned a response asynchronously while the request was being handled synchronously.',
-          );
-        }
-
-        const normalisedResponse = normaliseResponse(response);
-
-        this.emitter.emit('after', {
-          request: normalisedRequest,
-          response: normalisedResponse,
-          context: normalisedContext,
-        });
-
-        return normalisedResponse;
-      }
-
-      const error = new RouterError(
-        'No middleware returned a response for the request.',
-      );
-
-      this.emitter.emit('error', {
-        request: normalisedRequest,
-        error,
-        context: normalisedContext,
-      });
-
-      throw error;
+      do {
+        this.emitBeforeEvent(normalisedRequest, normalisedContext);
+        normalisedResponse = routeSync(
+          normalisedRequest,
+          normalisedContext,
+          this.middleware,
+        );
+        this.emitAfterEvent(
+          normalisedRequest,
+          normalisedResponse,
+          normalisedContext,
+        );
+        // TODO: create redirect request
+      } while (options.redirect && isRedirect(normalisedResponse));
+      return {
+        url: normalisedRequest.url,
+        redirected: false,
+        ...normalisedResponse,
+      };
     } catch (error) {
-      this.emitter.emit('error', {
-        request: normalisedRequest,
-        error,
-        context: normalisedContext,
-      });
-
+      this.emitErrorEvent(normalisedRequest, error, normalisedContext);
       throw error;
     }
   }
 
   public async routeAsync(
     request: Partial<Request>,
-    context: C & Partial<Context<C>>,
-  ): Promise<Response> {
-    const normalisedRequest = normaliseRequest(request);
-    const normalisedContext = normaliseContext({...context, mode: Mode.ASYNC});
-
-    this.emitter.emit('before', {
-      request: normalisedRequest,
-      context: normalisedContext,
+    options: RouteOptions = {redirect: 'follow'},
+  ): Promise<RouteResult> {
+    let normalisedRequest = normaliseRequest(request);
+    let normalisedContext = normaliseContext({
+      execution: ExecutionContext.Asynchronous,
     });
-
+    let normalisedResponse: Response;
     try {
-      for (const middleware of this.middleware) {
-        const response = await middleware(normalisedRequest, normalisedContext);
-
-        if (!response) {
-          continue;
-        }
-
-        const normalisedResponse = normaliseResponse(response);
-
-        this.emitter.emit('after', {
-          request: normalisedRequest,
-          response: normalisedResponse,
-          context: normalisedContext,
-        });
-
-        return normalisedResponse;
-      }
-
-      const error = new RouterError(
-        'No middleware returned a response for the request.',
-      );
-
-      this.emitter.emit('error', {
-        request: normalisedRequest,
-        error,
-        context: normalisedContext,
-      });
-
-      throw error;
+      do {
+        this.emitBeforeEvent(normalisedRequest, normalisedContext);
+        normalisedResponse = await routeAsync(
+          normalisedRequest,
+          normalisedContext,
+          this.middleware,
+        );
+        this.emitAfterEvent(
+          normalisedRequest,
+          normalisedResponse,
+          normalisedContext,
+        );
+        // TODO: create redirect request
+      } while (options.redirect && isRedirect(normalisedResponse));
+      return {
+        url: normalisedRequest.url,
+        redirected: false,
+        ...normalisedResponse,
+      };
     } catch (error) {
-      this.emitter.emit('error', {
-        request: normalisedRequest,
-        error,
-        context: normalisedContext,
-      });
-
+      this.emitErrorEvent(normalisedRequest, error, normalisedContext);
       throw error;
     }
   }

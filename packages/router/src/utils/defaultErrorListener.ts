@@ -1,15 +1,14 @@
-import {ErrorEvent} from './types';
-import {RouterError} from './RouterError';
+import {ErrorEvent, Error} from '../types';
 import {formatMessage} from './formatMessage';
 
-export function defaultErrorListener<C>(event: ErrorEvent<C>): void {
+export function defaultErrorListener(event: ErrorEvent): void {
   const {request, error} = event;
-  if (error instanceof RouterError) {
-    // need to specify dom or node to get this working
+  if (error instanceof Error) {
+    // FIXME: need to specify dom or node env to get this working
     // eslint-disable-next-line no-console
     console.error(formatMessage(error.message, {request}));
   } else {
-    // need to specify dom or node to get this working
+    // FIXME: need to specify dom or node env to get this working
     // eslint-disable-next-line no-console
     console.error(
       formatMessage('A middleware returned an error for the request.', {

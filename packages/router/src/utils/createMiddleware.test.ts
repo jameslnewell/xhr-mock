@@ -1,12 +1,12 @@
 // tslint:disable no-shadowed-variable
-import {Request, Response, Context, Mode} from './types';
+import {Request, Response, Context} from '../types';
 import {createMiddleware} from './createMiddleware';
+import {ExecutionContext} from '../types';
 
 const defaultRequest: Request = {
   version: '1.1',
   method: 'get',
   url: '/foo/bar',
-  params: {},
   headers: {},
   body: undefined,
 };
@@ -20,7 +20,7 @@ const defaultResponse: Response = {
 };
 
 const defaultContext: Context = {
-  mode: Mode.ASYNC,
+  execution: ExecutionContext.Asynchronous,
 };
 
 describe('createMiddlewareHandler()', () => {
@@ -118,7 +118,10 @@ describe('createMiddlewareHandler()', () => {
       defaultRequest,
       defaultContext,
     );
-    expect(middleware).toHaveBeenCalledWith(defaultRequest, defaultContext);
+    expect(middleware).toHaveBeenCalledWith(
+      {...defaultRequest, params: {}},
+      defaultContext,
+    );
   });
 
   it('should populate the request with parameters from the path', () => {

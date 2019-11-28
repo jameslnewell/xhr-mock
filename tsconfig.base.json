@@ -1,9 +1,10 @@
 {
   "extends": "./node_modules/@jameslnewell/typescript-config/tsconfig.json",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "isolatedModules": true,
     "lib": ["esnext", "dom"],
-    "target": "esnext",
-    "noEmit": true
+    "target": "esnext"
   }
 }

@@ -1,16 +1,11 @@
-//FIXME:
-/* eslint-disable @typescript-eslint/ban-ts-ignore */
-import Router, {Request, Response} from '@xhr-mock/router';
+import {Router, Request, Response} from '@xhr-mock/router';
 import {MockError} from './MockError';
 import {MockEvent} from './MockEvent';
 import {MockProgressEvent} from './MockProgressEvent';
 import {MockXMLHttpRequestUpload} from './MockXMLHttpRequestUpload';
 import {MockXMLHttpRequestEventTarget} from './MockXMLHttpRequestEventTarget';
 import {calculateProgress} from './calculateProgress';
-
-const notImplementedError = new MockError(
-  "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github.",
-);
+import {NotImplementedError} from './NotImplementedError';
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
 
@@ -66,7 +61,6 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   public responseType: XMLHttpRequestResponseType = '';
   public responseURL = '';
-  // @ts-ignore: https://github.com/jameslnewell/xhr-mock/issues/45
   public upload: XMLHttpRequestUpload = new MockXMLHttpRequestUpload();
   public readyState: ReadyState = MockXMLHttpRequest.UNSENT;
 
@@ -123,7 +117,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     if (this.responseType === 'blob' && typeof body === 'string') {
       try {
-        throw notImplementedError;
+        throw new NotImplementedError();
       } catch (error) {
         return null;
       }
@@ -131,7 +125,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     if (this.responseType === 'arraybuffer' && typeof body === 'string') {
       try {
-        throw notImplementedError;
+        throw new NotImplementedError();
       } catch (error) {
         return null;
       }
@@ -139,7 +133,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     if (this.responseType === 'document' && typeof body === 'string') {
       try {
-        throw notImplementedError;
+        throw new NotImplementedError();
       } catch (error) {
         return null;
       }
@@ -154,7 +148,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   public get responseXML(): Document | null {
-    throw notImplementedError;
+    throw new NotImplementedError();
   }
 
   public get status(): number {
@@ -196,7 +190,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public overrideMimeType(_mime: string): void {
-    throw notImplementedError;
+    throw new NotImplementedError();
   }
 
   public open(
@@ -637,7 +631,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
           encoding = 'UTF-8';
           mimeType = 'text/plain';
         } else {
-          throw notImplementedError;
+          throw new NotImplementedError();
         }
       }
 

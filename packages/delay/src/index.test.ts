@@ -1,4 +1,10 @@
-import {Request, Response, Context, Mode} from '@xhr-mock/router';
+import {
+  Request,
+  Response,
+  Context,
+  Mode,
+  ExecutionContext,
+} from '@xhr-mock/router';
 import delay from '.';
 
 const defaultRequest: Request = {
@@ -19,7 +25,7 @@ const defaultResponse: Response = {
 };
 
 const defaultContext: Context = {
-  mode: Mode.ASYNC,
+  execution: ExecutionContext.Asynchronous,
 };
 
 const ms = 250;

@@ -21,7 +21,10 @@
     "@xhr-mock/router": "^0.1.0"
   },
   "scripts": {
-    "build": "tsdx build --tsconfig ../../tsconfig.build.json"
+    "clean": "package-scripts clean",
+    "_build": "env FORCE_COLOR=3 package-scripts build --tsconfig ../../tsconfig.build.json",
+    "watch": "yarn run build --watch",
+    "test": "package-scripts test"
   },
   "license": "MIT"
 }

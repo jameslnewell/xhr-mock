@@ -1,16 +1,11 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
+    "noEmit": true,
     "baseUrl": ".",
     "paths": {
       "@xhr-mock/*": ["packages/*/src"]
     }
   },
-  "include": [
-    "packages/*/src",
-    "packages/*/test",
-    "packages/*/typings",
-    "tests/*/src"
-  ],
-  "exclude": ["node_modules"]
+  "include": ["packages/*/src/**/*.ts"]
 }
