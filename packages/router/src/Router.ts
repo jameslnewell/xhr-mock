@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt';
+import isAbsoluteURL from 'is-absolute-url';
 import {
   MethodPattern,
-  URLPathPattern,
+  URLPattern,
   Request,
   Response,
   Context,
@@ -14,6 +15,7 @@ import {
   ErrorEvent,
   ExecutionContext,
   RequestWithParameters,
+  Error,
 } from './types';
 import {defaultErrorListener} from './utils/defaultErrorListener';
 import {createMiddleware} from './utils/createMiddleware';
@@ -93,21 +95,21 @@ export class Router {
   public use(middleware: Middleware): Router;
   public use(
     method: MethodPattern,
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router;
   public use(
     methodOrMiddleware: MethodPattern | Middleware,
-    path?: URLPathPattern,
+    url?: URLPattern,
     middlewareOrResponse?:
       | Middleware<RequestWithParameters>
       | Partial<Response>,
   ): Router {
     if (typeof methodOrMiddleware === 'function') {
       this.middleware.push(methodOrMiddleware);
-    } else if (path && middlewareOrResponse) {
+    } else if (url && middlewareOrResponse) {
       this.middleware.push(
-        createMiddleware(methodOrMiddleware, path, middlewareOrResponse),
+        createMiddleware(methodOrMiddleware, url, middlewareOrResponse),
       );
     } else {
       throw new TypeError('Invalid arguments.');
@@ -116,66 +118,66 @@ export class Router {
   }
 
   public all(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('*', path, middlewareOrResponse);
+    this.use('*', url, middlewareOrResponse);
     return this;
   }
 
   public options(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('options', path, middlewareOrResponse);
+    this.use('options', url, middlewareOrResponse);
     return this;
   }
 
   public head(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('head', path, middlewareOrResponse);
+    this.use('head', url, middlewareOrResponse);
     return this;
   }
 
   public get(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('get', path, middlewareOrResponse);
+    this.use('get', url, middlewareOrResponse);
     return this;
   }
 
   public post(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('post', path, middlewareOrResponse);
+    this.use('post', url, middlewareOrResponse);
     return this;
   }
 
   public put(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('put', path, middlewareOrResponse);
+    this.use('put', url, middlewareOrResponse);
     return this;
   }
 
   public patch(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('patch', path, middlewareOrResponse);
+    this.use('patch', url, middlewareOrResponse);
     return this;
   }
 
   public delete(
-    path: URLPathPattern,
+    url: URLPattern,
     middlewareOrResponse: Middleware<RequestWithParameters> | Partial<Response>,
   ): Router {
-    this.use('delete', path, middlewareOrResponse);
+    this.use('delete', url, middlewareOrResponse);
     return this;
   }
 
@@ -188,6 +190,11 @@ export class Router {
       execution: ExecutionContext.Synchronous,
     });
     let normalisedResponse: Response;
+
+    if (!isAbsoluteURL(normalisedRequest.url)) {
+      throw new Error(`Request URL must be absolute: ${normalisedRequest.url}`);
+    }
+
     try {
       do {
         this.emitBeforeEvent(normalisedRequest, normalisedContext);
@@ -204,9 +211,9 @@ export class Router {
         // TODO: create redirect request
       } while (options.redirect && isRedirect(normalisedResponse));
       return {
+        ...normalisedResponse,
         url: normalisedRequest.url,
         redirected: false,
-        ...normalisedResponse,
       };
     } catch (error) {
       this.emitErrorEvent(normalisedRequest, error, normalisedContext);
@@ -223,6 +230,11 @@ export class Router {
       execution: ExecutionContext.Asynchronous,
     });
     let normalisedResponse: Response;
+
+    if (!isAbsoluteURL(normalisedRequest.url)) {
+      throw new Error(`Request URL must be absolute: ${normalisedRequest.url}`);
+    }
+
     try {
       do {
         this.emitBeforeEvent(normalisedRequest, normalisedContext);
@@ -239,9 +251,9 @@ export class Router {
         // TODO: create redirect request
       } while (options.redirect && isRedirect(normalisedResponse));
       return {
+        ...normalisedResponse,
         url: normalisedRequest.url,
         redirected: false,
-        ...normalisedResponse,
       };
     } catch (error) {
       this.emitErrorEvent(normalisedRequest, error, normalisedContext);

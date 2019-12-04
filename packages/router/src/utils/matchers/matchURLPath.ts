@@ -43,7 +43,7 @@ export function matchURLPath(
   );
 
   return {
-    path: requestPath,
+    path: match.input,
     params,
   };
 }

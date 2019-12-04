@@ -1,15 +1,20 @@
 import {URL} from 'whatwg-url';
-import {URLPattern, Request, RequestParameters} from '../../types';
+import {URLObjectPattern, Request, RequestParameters} from '../../types';
+import {getDefaultPort} from '../getDefaultPort';
 import {matchURLPath} from './matchURLPath';
 import {matchURLQuery} from './matchURLQuery';
 
 export interface MatchURLResult {
-  path: string;
-  params: RequestParameters;
+  protocol?: string;
+  host?: string;
+  port?: number;
+  path?: string;
+  params?: RequestParameters;
+  query?: {[name: string]: string};
 }
 
 export function matchURL(
-  pattern: URLPattern,
+  pattern: URLObjectPattern,
   request: Request,
 ): MatchURLResult | undefined {
   // get the request path
@@ -23,17 +28,29 @@ export function matchURL(
     return undefined;
   }
 
-  if (pattern.port && pattern.port !== parseInt(requestURL.port, 10)) {
+  const port = getDefaultPort(requestURL);
+  if (pattern.port && pattern.port !== port) {
     return undefined;
   }
 
-  if (pattern.path && !matchURLPath(pattern.path, request)) {
+  let urlPathMatch =
+    (pattern.path && matchURLPath(pattern.path, request)) || undefined;
+  if (pattern.path && !urlPathMatch) {
     return undefined;
   }
 
-  if (pattern.query && !matchURLQuery(pattern.query, request)) {
+  let urlQueryMatch =
+    (pattern.query && matchURLQuery(pattern.query, request)) || undefined;
+  if (pattern.query && !urlQueryMatch) {
     return undefined;
   }
 
-  return {};
+  return {
+    protocol: requestURL.protocol,
+    host: requestURL.hostname,
+    port: port,
+    path: urlPathMatch && urlPathMatch.path,
+    params: urlPathMatch && urlPathMatch.params,
+    query: urlQueryMatch,
+  };
 }

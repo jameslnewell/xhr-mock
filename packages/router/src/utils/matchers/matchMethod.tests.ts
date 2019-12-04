@@ -4,26 +4,24 @@ import {normaliseRequest} from '../normalise';
 const methods = ['get', 'post', 'put', 'patch', 'delete'];
 
 describe('matchMethod()', () => {
-  test('returns undefined when the request method is not a match for the method pattern', () => {
+  test('returns false when the request method does not match the pattern', () => {
     expect(
       matchMethod('foobar', normaliseRequest({method: 'get'})),
-    ).toBeUndefined();
+    ).toBeFalsy();
   });
-  test('returns the method when the request method is an exact match for the string method pattern', () => {
+  test('returns true when the request method does match the pattern', () => {
     methods.forEach(method => {
       expect(
         matchMethod(method.toLowerCase(), normaliseRequest({method})),
-      ).toEqual(method.toUpperCase());
+      ).toBeTruthy();
       expect(
         matchMethod(method.toUpperCase(), normaliseRequest({method})),
-      ).toEqual(method.toUpperCase());
+      ).toBeTruthy();
     });
   });
-  test('returns the method when the request method is a match for the wildcard method pattern', () => {
+  test('returns true when the request method matches the wildcard pattern', () => {
     methods.forEach(method => {
-      expect(matchMethod('*', normaliseRequest({method}))).toEqual(
-        method.toUpperCase(),
-      );
+      expect(matchMethod('*', normaliseRequest({method}))).toBeTruthy();
     });
   });
 });

@@ -1,11 +1,14 @@
 // tslint:disable: no-shadowed-variable
-import {Request, Response, Context, ExecutionContext} from './types';
-import {Router} from './Router';
+import {Request, Response, ExecutionContext} from './types';
+import {createMockRouter} from './__fixtures__/createMockRouter';
+
+const foobarURL = 'http://www.example.com/foo/bar';
+const abcURL = 'http://www.example.com/abc';
 
 const defaultRequest: Request = {
   version: '1.1',
   method: 'GET',
-  url: '/foo/bar',
+  url: foobarURL,
   headers: {},
   body: undefined,
 };
@@ -18,15 +21,7 @@ const defaultResponse: Response = {
   body: undefined,
 };
 
-const defaultContext: Context = {
-  execution: ExecutionContext.Asynchronous,
-};
-
-const noop = (): undefined => undefined;
-
-const createMockRouter = (): Router => {
-  return new Router().on('error', noop);
-};
+const noop = () => undefined;
 
 describe('Router', () => {
   it('should match the middleware', () => {
@@ -34,7 +29,7 @@ describe('Router', () => {
     router.get('/foo/bar', () => defaultResponse);
     expect(router.routeSync(defaultRequest)).toEqual({
       ...defaultResponse,
-      url: '/foo/bar',
+      url: foobarURL,
       redirected: false,
     });
   });
@@ -88,7 +83,7 @@ describe('Router', () => {
       router.routeSync(defaultRequest);
       expect(listener).toBeCalledWith({
         context: {execution: ExecutionContext.Synchronous},
-        request: defaultRequest,
+        request: expect.objectContaining(defaultRequest),
       });
       expect(order).toEqual(['listener', 'middleware']);
     });
@@ -97,12 +92,12 @@ describe('Router', () => {
       const middleware = jest.fn().mockReturnValue(defaultResponse);
       const router = createMockRouter();
       router.put('/abc', middleware);
-      router.routeSync({method: 'put', url: '/abc'});
+      router.routeSync({method: 'put', url: abcURL});
       expect(middleware).toBeCalledWith(
         {
           version: '1.1',
           method: 'PUT',
-          url: '/abc',
+          url: abcURL,
           params: {},
           headers: {},
           body: undefined,
@@ -121,7 +116,7 @@ describe('Router', () => {
         reason: 'Created',
         headers: {},
         body: undefined,
-        url: '/foo/bar',
+        url: foobarURL,
         redirected: false,
       });
     });
@@ -144,7 +139,7 @@ describe('Router', () => {
       router.routeSync(defaultRequest);
       expect(listener).toBeCalledWith({
         context: {execution: ExecutionContext.Synchronous},
-        request: defaultRequest,
+        request: expect.objectContaining(defaultRequest),
         response: defaultResponse,
       });
       expect(order).toEqual(['middleware', 'listener']);
@@ -164,7 +159,7 @@ describe('Router', () => {
         // an error is expected
         expect(listener).toBeCalledWith({
           context: {execution: ExecutionContext.Synchronous},
-          request: defaultRequest,
+          request: expect.objectContaining(defaultRequest),
           error: expect.objectContaining({
             message: expect.stringContaining('Oops'),
           }),
@@ -208,7 +203,7 @@ describe('Router', () => {
       await router.routeAsync(defaultRequest);
       expect(listener).toBeCalledWith({
         context: {execution: ExecutionContext.Asynchronous},
-        request: defaultRequest,
+        request: expect.objectContaining(defaultRequest),
       });
       expect(order).toEqual(['listener', 'middleware']);
     });
@@ -217,12 +212,12 @@ describe('Router', () => {
       const middleware = jest.fn().mockReturnValue(defaultResponse);
       const router = createMockRouter();
       router.put('/abc', middleware);
-      await router.routeAsync({method: 'put', url: '/abc'});
+      await router.routeAsync({method: 'put', url: abcURL});
       expect(middleware).toBeCalledWith(
         {
           version: '1.1',
           method: 'PUT',
-          url: '/abc',
+          url: abcURL,
           params: {},
           headers: {},
           body: undefined,
@@ -241,7 +236,7 @@ describe('Router', () => {
         reason: 'Created',
         headers: {},
         body: undefined,
-        url: '/foo/bar',
+        url: foobarURL,
         redirected: false,
       });
     });
@@ -256,7 +251,7 @@ describe('Router', () => {
         reason: 'Created',
         headers: {},
         body: undefined,
-        url: '/foo/bar',
+        url: foobarURL,
         redirected: false,
       });
     });
@@ -279,7 +274,7 @@ describe('Router', () => {
       await router.routeAsync(defaultRequest);
       expect(listener).toBeCalledWith({
         context: {execution: ExecutionContext.Asynchronous},
-        request: defaultRequest,
+        request: expect.objectContaining(defaultRequest),
         response: defaultResponse,
       });
       expect(order).toEqual(['middleware', 'listener']);
@@ -299,7 +294,7 @@ describe('Router', () => {
         // an error is expected
         expect(listener).toBeCalledWith({
           context: {execution: ExecutionContext.Asynchronous},
-          request: defaultRequest,
+          request: expect.objectContaining(defaultRequest),
           error: expect.objectContaining({
             message: expect.stringContaining('Oops'),
           }),

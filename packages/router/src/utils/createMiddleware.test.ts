@@ -6,7 +6,7 @@ import {ExecutionContext} from '../types';
 const defaultRequest: Request = {
   version: '1.1',
   method: 'get',
-  url: '/foo/bar',
+  url: 'http://www.example.com/foo/bar',
   headers: {},
   body: undefined,
 };
@@ -141,12 +141,12 @@ describe('createMiddlewareHandler()', () => {
   it('should match the path when when the pattern is absolute', () => {
     const response = createMiddleware(
       'get',
-      'https://localhost:3000/foo/bar',
+      'http://www.example.com/foo/bar',
       defaultResponse,
     )(
       {
         ...defaultRequest,
-        headers: {host: 'localhost:3000'},
+        headers: {host: 'example.com:3000'},
       },
       defaultContext,
     );

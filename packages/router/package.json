@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/statuses": "^1.5.0",
     "@types/whatwg-url": "^6.4.0",
+    "is-absolute-url": "^3.0.3",
     "mitt": "^1.1.3",
     "path-to-regexp": "^3.0.0",
     "statuses": "^1.5.0",
