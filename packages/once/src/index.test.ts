@@ -1,16 +1,15 @@
-import {Request, Response, Context, Mode} from '@xhr-mock/router';
+import {Request, Response, Context, ExecutionContext} from '@xhr-mock/router';
 import once from '.';
 
-const defaultRequest: Request = {
+const request: Request = {
   version: '1.1',
   method: 'get',
-  url: '/',
-  params: {},
+  url: 'http://localhost/',
   headers: {},
   body: 'Hello World',
 };
 
-const defaultResponse: Response = {
+const response: Response = {
   version: '1.1',
   status: 206,
   reason: 'Partial Content',
@@ -18,24 +17,14 @@ const defaultResponse: Response = {
   body: 'Hello World',
 };
 
-const defaultContext: Context = {
-  mode: Mode.ASYNC,
+const context: Context = {
+  execution: ExecutionContext.Asynchronous,
 };
 
 describe('once()', () => {
-  it('should only return a response the first time the middleware is called', async () => {
-    const middleware = once(defaultResponse);
-    const first = await middleware(defaultRequest, defaultContext);
-    const second = await middleware(defaultRequest, defaultContext);
-    expect(first).toEqual(defaultResponse);
-    expect(second).toBeUndefined();
-  });
-
-  it('should only return a response the first time the middleware is called', async () => {
-    const middleware = once(() => defaultResponse);
-    const first = await middleware(defaultRequest, defaultContext);
-    const second = await middleware(defaultRequest, defaultContext);
-    expect(first).toEqual(defaultResponse);
-    expect(second).toBeUndefined();
+  test('should return a response once when called with one mock', async () => {
+    const middleware = once(response);
+    expect(await middleware(request, context)).toEqual(response);
+    expect(await middleware(request, context)).toBeUndefined();
   });
 });

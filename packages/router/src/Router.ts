@@ -15,7 +15,7 @@ import {
   ErrorEvent,
   ExecutionContext,
   RequestWithParameters,
-  Error,
+  RouterError,
 } from './types';
 import {defaultErrorListener} from './utilities/defaultErrorListener';
 import {createMiddleware} from './utilities/createMiddleware';
@@ -192,7 +192,9 @@ export class Router {
     let normalisedResponse: Response;
 
     if (!isAbsoluteURL(normalisedRequest.url)) {
-      throw new Error(`Request URL must be absolute: ${normalisedRequest.url}`);
+      throw new RouterError(
+        `Request URL must be absolute: ${normalisedRequest.url}`,
+      );
     }
 
     try {
@@ -232,7 +234,9 @@ export class Router {
     let normalisedResponse: Response;
 
     if (!isAbsoluteURL(normalisedRequest.url)) {
-      throw new Error(`Request URL must be absolute: ${normalisedRequest.url}`);
+      throw new RouterError(
+        `Request URL must be absolute: ${normalisedRequest.url}`,
+      );
     }
 
     try {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import Router from '@xhr-mock/router';
+import {Router} from '@xhr-mock/router';
 import {MockXMLHttpRequest} from './MockXMLHttpRequest';
 
 function failOnEvent(done: jest.DoneCallback) {

@@ -16,22 +16,10 @@ yarn add @xhr-mock/once
 import once from '@xhr-mock/once';
 
 const middleware = once({
-  body: {
-    data: {
-      id: 1,
-      fname: 'Johnny',
-      lname: 'Appleseed',
-      email: 'johnny.appleseed@example.com'
-    }
-  }
+  status: 200,
+  body: 'Hello World!',
 });
 ```
-
-## API
-
-### `once(response)`
-
-### `once(middleware)`
 
 ## License
 

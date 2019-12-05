@@ -7,7 +7,7 @@ A utility for delaying the execution of a middleware.
 ## Installation
 
 ```bash
-yarn add @xhr-mock/once
+yarn add @xhr-mock/delay
 ```
 
 ## Usage
@@ -16,22 +16,10 @@ yarn add @xhr-mock/once
 import delay from '@xhr-mock/delay';
 
 const middleware = delay({
-  body: {
-    data: {
-      id: 1,
-      fname: 'Johnny',
-      lname: 'Appleseed',
-      email: 'johnny.appleseed@example.com'
-    }
-  }
+  status: 200,
+  body: 'Hello World!',
 });
 ```
-
-## API
-
-### `delay(response)`
-
-### `delay(middleware)`
 
 ## License
 

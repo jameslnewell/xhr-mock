@@ -5,7 +5,8 @@ export class MockProgressEvent extends MockEvent implements ProgressEvent {
   public readonly loaded: number = 0;
   public readonly target: EventTarget | null = null;
   public readonly total: number = 0;
-  public constructor(type: string, eventInitDict?: ProgressEventInit) {
+
+  constructor(type: string, eventInitDict?: ProgressEventInit) {
     super(type, eventInitDict);
     if (eventInitDict) {
       const {lengthComputable, loaded, total} = eventInitDict;

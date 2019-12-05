@@ -22,10 +22,8 @@ export class MockEvent implements Event {
   private canBubble: boolean = false;
   private canCancel: boolean = false;
   private isPropagationStopped: boolean = false;
-  // @ts-ignore
   private isImmediatePropagationStopped: boolean = false;
   private isCanceled: boolean = false;
-  // @ts-ignore
   private isPassive: boolean = false;
   public readonly composed: boolean = false;
 

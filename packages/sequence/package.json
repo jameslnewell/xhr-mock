@@ -1,5 +1,5 @@
 {
-  "name": "@xhr-mock/once",
+  "name": "@xhr-mock/sequence",
   "version": "0.1.0",
   "description": "A utility for executing a middleware once.",
   "keywords": [
@@ -9,7 +9,7 @@
     "router",
     "request",
     "response",
-    "once"
+    "sequence"
   ],
   "repository": "jameslnewell/xhr-mock",
   "main": "dist/index.cjs.js",
@@ -19,8 +19,7 @@
     "dist"
   ],
   "dependencies": {
-    "@xhr-mock/router": "^0.1.0",
-    "@xhr-mock/sequence": "^0.1.0"
+    "@xhr-mock/router": "^0.1.0"
   },
   "scripts": {
     "clean": "package-scripts clean",

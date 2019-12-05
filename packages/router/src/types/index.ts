@@ -1,5 +1,5 @@
 export * from './Context';
-export * from './Error';
+export * from './RouterError';
 export * from './Headers';
 export * from './Middleware';
 export * from './Request';

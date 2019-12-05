@@ -1,4 +1,4 @@
-import {Request, Response, Context, Middleware, Error} from '../types';
+import {Request, Response, Context, Middleware, RouterError} from '../types';
 import {normaliseResponse} from './normalise';
 
 export async function routeAsync(
@@ -13,5 +13,5 @@ export async function routeAsync(
     }
     return normaliseResponse(response);
   }
-  throw new Error('No middleware returned a response for the request.');
+  throw new RouterError('No middleware returned a response for the request.');
 }

@@ -1,22 +1,15 @@
-import {
-  Request,
-  Response,
-  Context,
-  Mode,
-  ExecutionContext,
-} from '@xhr-mock/router';
+import {Request, Response, Context, ExecutionContext} from '@xhr-mock/router';
 import delay from '.';
 
-const defaultRequest: Request = {
+const request: Request = {
   version: '1.1',
   method: 'get',
-  url: '/',
-  params: {},
+  url: 'http://localhost/',
   headers: {},
   body: 'Hello World',
 };
 
-const defaultResponse: Response = {
+const response: Response = {
   version: '1.1',
   status: 206,
   reason: 'Partial Content',
@@ -24,65 +17,45 @@ const defaultResponse: Response = {
   body: 'Hello World',
 };
 
-const defaultContext: Context = {
+const context: Context = {
   execution: ExecutionContext.Asynchronous,
 };
 
 const ms = 250;
 
 describe('delay()', () => {
-  it('should not delay the response when the middleware does not return a response', async () => {
-    const start = Date.now();
-    const res = await delay(() => undefined, ms)(
-      defaultRequest,
-      defaultContext,
-    );
-    const finish = Date.now();
-    expect(finish - start).toBeLessThanOrEqual(ms);
-    expect(res).toBeUndefined();
+  test('returns undefined immediately when the middleware does not return a response', async () => {
+    const result = delay(() => undefined, ms)(request, context);
+    expect(result).toBeUndefined();
   });
 
-  it('should not delay the response when the middleware does not resolve a response', async () => {
+  test('resolves undefined immediately when the middleware does not resolve a response', async () => {
     const start = Date.now();
-    const response = await delay(() => Promise.resolve(undefined), ms)(
-      defaultRequest,
-      defaultContext,
+    const result = await delay(() => Promise.resolve(undefined), ms)(
+      request,
+      context,
     );
     const finish = Date.now();
-    expect(finish - start).toBeLessThanOrEqual(ms);
-    expect(response).toBeUndefined();
+    expect(finish - start).toBeLessThan(ms);
+    expect(result).toBeUndefined();
   });
 
-  it('should delay the response when the middleware is a response', async () => {
+  test('resolves a response after a delay when the middleware returns a response ', async () => {
     const start = Date.now();
-    const res = await delay(defaultResponse, ms)(
-      defaultRequest,
-      defaultContext,
+    const result = await delay(response, ms)(request, context);
+    const finish = Date.now();
+    expect(finish - start).toBeGreaterThanOrEqual(ms);
+    expect(result).toEqual(response);
+  });
+
+  test('resolves a response after a delay when the middleware resolves a response', async () => {
+    const start = Date.now();
+    const result = await delay(() => Promise.resolve(response), ms)(
+      request,
+      context,
     );
     const finish = Date.now();
     expect(finish - start).toBeGreaterThanOrEqual(ms);
-    expect(res).toEqual(defaultResponse);
-  });
-
-  it('should delay the response when the middleware returns a response', async () => {
-    const start = Date.now();
-    const res = await delay(() => defaultResponse, ms)(
-      defaultRequest,
-      defaultContext,
-    );
-    const finish = Date.now();
-    expect(finish - start).toBeGreaterThanOrEqual(ms);
-    expect(res).toEqual(defaultResponse);
-  });
-
-  it('should delay the response when the middleware resolves a response', async () => {
-    const start = Date.now();
-    const res = await delay(() => Promise.resolve(defaultResponse), ms)(
-      defaultRequest,
-      defaultContext,
-    );
-    const finish = Date.now();
-    expect(finish - start).toBeGreaterThanOrEqual(ms);
-    expect(res).toEqual(defaultResponse);
+    expect(result).toEqual(response);
   });
 });

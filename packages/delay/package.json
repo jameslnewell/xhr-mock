@@ -1,6 +1,6 @@
 {
   "name": "@xhr-mock/delay",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "A utility for delaying the execution of a middleware.",
   "keywords": [
     "mock",
@@ -8,7 +8,8 @@
     "fetch",
     "router",
     "request",
-    "response"
+    "response",
+    "delay"
   ],
   "repository": "jameslnewell/xhr-mock",
   "main": "dist/index.cjs.js",
