@@ -1,0 +1,52 @@
+name: main
+on: [push, pull_request]
+
+jobs:
+  install:
+    name: Install
+    steps:
+      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v1
+      - uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - name: 📦 Install
+        run: yarn install
+    runs-on: ubuntu-latest
+
+  build:
+    name: Build
+    needs: install
+    steps:
+      - uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - name: 🏗 Build
+        run: yarn build
+    runs-on: ubuntu-latest
+
+  test:
+    name: Build
+    needs: install
+    steps:
+      - uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-${{ env.cache-name }}-
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
+      - name: ✅ Test
+        run: yarn test
+    runs-on: ubuntu-latest
