@@ -3,9 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "typedoc": "typedoc --json apidocs.json"
+    "typedoc": "cd .. && typedoc --json ./website/apidocs.json ./packages/*/src"
   },
   "devDependencies": {
-    "typedoc": "^0.15.0"
+    "typedoc": "^0.15.3"
   }
 }

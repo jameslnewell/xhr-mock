@@ -18,3 +18,4 @@ dist
 build
 .cache
 .rts2_cache_*
+website/apidocs.json

@@ -29,7 +29,7 @@
     "lerna": "^3.18.3",
     "prettier": "^1.18.2",
     "pretty-quick": "^2.0.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.3"
   },
   "scripts": {
     "clean": "lerna exec -- rm -rf dist && lerna clean",
