@@ -1,9 +1,13 @@
 name: main
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   install:
-    name: Install
+    name: 📦 Install
     steps:
       - uses: actions/setup-node@v1
       - uses: actions/checkout@v1
@@ -15,12 +19,11 @@ jobs:
             ${{ runner.OS }}-build-${{ env.cache-name }}-
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-      - name: 📦 Install
-        run: yarn install
+      - run: yarn install
     runs-on: ubuntu-latest
 
   build:
-    name: Build
+    name: 🏗 Build
     needs: install
     steps:
       - uses: actions/setup-node@v1
@@ -33,12 +36,11 @@ jobs:
             ${{ runner.OS }}-build-${{ env.cache-name }}-
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-      - name: 🏗 Build
-        run: yarn build
+      - run: yarn build
     runs-on: ubuntu-latest
 
   test:
-    name: Test
+    name: ✅ Test
     needs: install
     steps:
       - uses: actions/setup-node@v1
@@ -51,6 +53,5 @@ jobs:
             ${{ runner.OS }}-build-${{ env.cache-name }}-
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
-      - name: ✅ Test
-        run: yarn test
+      - run: yarn test
     runs-on: ubuntu-latest
