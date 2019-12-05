@@ -1,6 +1,6 @@
 # xhr-mock
 
-[![Build Status](https://travis-ci.org/jameslnewell/xhr-mock.svg?branch=master)](https://travis-ci.org/jameslnewell/xhr-mock)
+![](https://github.com/jameslnewell/xhr-mock/workflows/.github/workflows/build.yml/badge.svg?branch=v3.1)
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
