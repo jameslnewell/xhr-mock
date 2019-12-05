@@ -1,6 +1,6 @@
 # xhr-mock
 
-![](https://github.com/jameslnewell/xhr-mock/workflows/.github/workflows/main.yml/badge.svg?branch=v3.1)
+![](https://github.com/jameslnewell/xhr-mock/workflows/main/badge.svg?branch=v3.1)
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
