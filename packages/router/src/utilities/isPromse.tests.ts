@@ -1,7 +1,7 @@
 import {isPromise} from './isPromise';
 
 describe('isPromise()', () => {
-  it('should return true', () => {
+  test('should return true', () => {
     expect(isPromise(Promise.resolve())).toBeTruthy();
     // expect(isPromise(Promise.reject(new Error()))).toBeTruthy();
     expect(
@@ -13,7 +13,7 @@ describe('isPromise()', () => {
     ).toBeTruthy();
   });
 
-  it('should return false', () => {
+  test('should return false', () => {
     expect(isPromise(undefined)).toBeFalsy();
     expect(isPromise(null)).toBeFalsy();
     expect(isPromise('')).toBeFalsy();

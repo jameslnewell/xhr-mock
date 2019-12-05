@@ -1,6 +1,6 @@
 import {URL} from 'whatwg-url';
-import {URLObjectPattern, Request, RequestParameters} from '../../types';
-import {getDefaultPort} from '../getDefaultPort';
+import {URLObjectPattern, Request, RequestParameters} from '../types';
+import {getDefaultPort} from '../utilities/getDefaultPort';
 import {matchURLPath} from './matchURLPath';
 import {matchURLQuery} from './matchURLQuery';
 
@@ -33,13 +33,13 @@ export function matchURL(
     return undefined;
   }
 
-  let urlPathMatch =
+  const urlPathMatch =
     (pattern.path && matchURLPath(pattern.path, request)) || undefined;
   if (pattern.path && !urlPathMatch) {
     return undefined;
   }
 
-  let urlQueryMatch =
+  const urlQueryMatch =
     (pattern.query && matchURLQuery(pattern.query, request)) || undefined;
   if (pattern.query && !urlQueryMatch) {
     return undefined;

@@ -1,11 +1,9 @@
 import {matchURLPath} from './matchURLPath';
-import {normaliseRequest} from '../normalise';
+import {normaliseRequest} from '../utilities/normalise';
 
 const req = normaliseRequest({
   url: 'http://localhost/user/jameslnewell',
 });
-
-const profilePath = '/user/jameslnewell';
 
 describe('matchURLPath()', () => {
   test('returns undefined when the request url does not match the path pattern', () => {

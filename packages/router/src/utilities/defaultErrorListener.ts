@@ -1,5 +1,5 @@
 import {ErrorEvent, Error} from '../types';
-import {formatMessage} from './formatMessage';
+import {formatMessage} from '../formatters/formatMessage';
 
 export function defaultErrorListener(event: ErrorEvent): void {
   const {request, error} = event;

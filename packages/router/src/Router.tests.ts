@@ -1,6 +1,6 @@
 // tslint:disable: no-shadowed-variable
 import {Request, Response, ExecutionContext} from './types';
-import {createMockRouter} from './__fixtures__/createMockRouter';
+import {createMockRouter} from './__tests__/createMockRouter';
 
 const foobarURL = 'http://www.example.com/foo/bar';
 const abcURL = 'http://www.example.com/abc';
@@ -21,10 +21,10 @@ const defaultResponse: Response = {
   body: undefined,
 };
 
-const noop = () => undefined;
+const noop = (): undefined => undefined;
 
 describe('Router', () => {
-  it('should match the middleware', () => {
+  test('should match the middleware', () => {
     const router = createMockRouter();
     router.get('/foo/bar', () => defaultResponse);
     expect(router.routeSync(defaultRequest)).toEqual({
@@ -34,21 +34,21 @@ describe('Router', () => {
     });
   });
 
-  it('should not match the middleware', () => {
+  test('should not match the middleware', () => {
     const router = createMockRouter();
     router.post('/bar', () => defaultResponse);
     expect(() => router.routeSync(defaultRequest)).toThrow();
   });
 
   describe('sync', () => {
-    it('should throw an error when there are no middlewares and no response is returned', () => {
+    test('should throw an error when there are no middlewares and no response is returned', () => {
       const router = createMockRouter();
       expect(() => router.routeSync(defaultRequest)).toThrowError(
         /No middleware returned a response for the request./,
       );
     });
 
-    it('should throw an error when there are middlwares and no response is returned by any of the middleware', () => {
+    test('should throw an error when there are middlwares and no response is returned by any of the middleware', () => {
       const router = createMockRouter();
       router.use(noop);
       router.use(noop);
@@ -57,7 +57,7 @@ describe('Router', () => {
       );
     });
 
-    it('should throw an error when a middleware returns a response asynchronously', () => {
+    test('should throw an error when a middleware returns a response asynchronously', () => {
       const router = createMockRouter();
       router.use(() => Promise.resolve(defaultResponse));
       expect(() => router.routeSync(defaultRequest)).toThrowError(
@@ -65,7 +65,7 @@ describe('Router', () => {
       );
     });
 
-    it('should emit the "before" event before the request is handled', () => {
+    test('should emit the "before" event before the request is handled', () => {
       const order: string[] = [];
 
       const listener = jest.fn(() => {
@@ -88,7 +88,7 @@ describe('Router', () => {
       expect(order).toEqual(['listener', 'middleware']);
     });
 
-    it('should call the middleware with a normalised request', () => {
+    test('should call the middleware with a normalised request', () => {
       const middleware = jest.fn().mockReturnValue(defaultResponse);
       const router = createMockRouter();
       router.put('/abc', middleware);
@@ -106,7 +106,7 @@ describe('Router', () => {
       );
     });
 
-    it('should return a normalised response', () => {
+    test('should return a normalised response', () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
       const response = router.routeSync(defaultRequest);
@@ -121,7 +121,7 @@ describe('Router', () => {
       });
     });
 
-    it('should emit the "after" event before the request is handled', () => {
+    test('should emit the "after" event before the request is handled', () => {
       const order: string[] = [];
 
       const listener = jest.fn(() => {
@@ -145,7 +145,7 @@ describe('Router', () => {
       expect(order).toEqual(['middleware', 'listener']);
     });
 
-    it('should call the error listener when there is an error handling the request', () => {
+    test('should call the error listener when there is an error handling the request', () => {
       expect.assertions(1);
       const listener = jest.fn();
       const router = createMockRouter();
@@ -169,14 +169,14 @@ describe('Router', () => {
   });
 
   describe('async', () => {
-    it('should throw an error when there are no middlewares and no response is returned', async () => {
+    test('should throw an error when there are no middlewares and no response is returned', async () => {
       const router = createMockRouter();
       await expect(router.routeAsync(defaultRequest)).rejects.toThrowError(
         /No middleware returned a response for the request./,
       );
     });
 
-    it('should throw an error when there are middlwares and no response is returned by any of the middleware', async () => {
+    test('should throw an error when there are middlwares and no response is returned by any of the middleware', async () => {
       const router = createMockRouter();
       router.use(noop);
       router.use(noop);
@@ -185,7 +185,7 @@ describe('Router', () => {
       );
     });
 
-    it('should emit the "before" event before the request is handled', async () => {
+    test('should emit the "before" event before the request is handled', async () => {
       const order: string[] = [];
 
       const listener = jest.fn(() => {
@@ -208,7 +208,7 @@ describe('Router', () => {
       expect(order).toEqual(['listener', 'middleware']);
     });
 
-    it('should call the middleware with a normalised request', async () => {
+    test('should call the middleware with a normalised request', async () => {
       const middleware = jest.fn().mockReturnValue(defaultResponse);
       const router = createMockRouter();
       router.put('/abc', middleware);
@@ -226,7 +226,7 @@ describe('Router', () => {
       );
     });
 
-    it('should return a normalised response synchronously', async () => {
+    test('should return a normalised response synchronously', async () => {
       const router = createMockRouter();
       router.get('/foo/bar', {status: 201});
       const response = await router.routeAsync(defaultRequest);
@@ -241,7 +241,7 @@ describe('Router', () => {
       });
     });
 
-    it('should return a normalised response asynchronously', async () => {
+    test('should return a normalised response asynchronously', async () => {
       const router = createMockRouter();
       router.get('/foo/bar', () => Promise.resolve({status: 201}));
       const response = await router.routeAsync(defaultRequest);
@@ -256,7 +256,7 @@ describe('Router', () => {
       });
     });
 
-    it('should emit the "after" event before the request is handled', async () => {
+    test('should emit the "after" event before the request is handled', async () => {
       const order: string[] = [];
 
       const listener = jest.fn(() => {
@@ -280,7 +280,7 @@ describe('Router', () => {
       expect(order).toEqual(['middleware', 'listener']);
     });
 
-    it('should call the error listener when there is an error handling the request', async () => {
+    test('should call the error listener when there is an error handling the request', async () => {
       expect.assertions(1);
       const listener = jest.fn();
       const router = createMockRouter();

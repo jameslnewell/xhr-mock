@@ -10,7 +10,7 @@ const defaultRequest = {
 };
 
 describe('convertRequestToString()', () => {
-  it('should have no headers and no body', () => {
+  test('should have no headers and no body', () => {
     const request = {
       ...defaultRequest,
     };
@@ -18,7 +18,7 @@ describe('convertRequestToString()', () => {
     expect(convertRequestToString(request)).toEqual(expected);
   });
 
-  it('should have headers', () => {
+  test('should have headers', () => {
     const request = {
       ...defaultRequest,
       headers: {
@@ -30,7 +30,7 @@ describe('convertRequestToString()', () => {
     expect(convertRequestToString(request)).toEqual(expected);
   });
 
-  it('should have a body', () => {
+  test('should have a body', () => {
     const request = {
       ...defaultRequest,
       body: '<html></html>',
@@ -39,7 +39,7 @@ describe('convertRequestToString()', () => {
     expect(convertRequestToString(request)).toEqual(expected);
   });
 
-  it('should have headers and a body', () => {
+  test('should have headers and a body', () => {
     const request = {
       ...defaultRequest,
       headers: {

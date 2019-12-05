@@ -9,9 +9,9 @@ import {
   RequestWithParameters,
 } from '../types';
 import {getDefaultPort} from './getDefaultPort';
-import {matchMethod} from './matchers/matchMethod';
-import {matchURL} from './matchers/matchURL';
-import {matchURLPath} from './matchers/matchURLPath';
+import {matchMethod} from '../matchers/matchMethod';
+import {matchURL} from '../matchers/matchURL';
+import {matchURLPath} from '../matchers/matchURLPath';
 
 // TODO: for "path" (url) support matching all the properties of an object like {protocol: string, host: string, port: number, path (string | regexp | path-to-regexp), query: object}
 export function createMiddleware(

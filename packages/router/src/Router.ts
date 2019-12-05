@@ -17,12 +17,12 @@ import {
   RequestWithParameters,
   Error,
 } from './types';
-import {defaultErrorListener} from './utils/defaultErrorListener';
-import {createMiddleware} from './utils/createMiddleware';
-import {normaliseRequest, normaliseContext} from './utils/normalise';
-import {routeSync} from './utils/routeSync';
-import {routeAsync} from './utils/routeAsync';
-import {isRedirect} from './utils/isRedirect';
+import {defaultErrorListener} from './utilities/defaultErrorListener';
+import {createMiddleware} from './utilities/createMiddleware';
+import {normaliseRequest, normaliseContext} from './utilities/normalise';
+import {routeSync} from './utilities/routeSync';
+import {routeAsync} from './utilities/routeAsync';
+import {isRedirect} from './utilities/isRedirect';
 
 export class Router {
   private emitter: mitt.Emitter = mitt();
@@ -33,7 +33,7 @@ export class Router {
     this.emitter.on('error', defaultErrorListener);
   }
 
-  private emitBeforeEvent(request: Request, context: Context) {
+  private emitBeforeEvent(request: Request, context: Context): void {
     this.emitter.emit('before', {
       request,
       context,
@@ -44,7 +44,7 @@ export class Router {
     request: Request,
     response: Response,
     context: Context,
-  ) {
+  ): void {
     this.emitter.emit('after', {
       request,
       response,
@@ -52,7 +52,7 @@ export class Router {
     });
   }
 
-  private emitErrorEvent(request: Request, error: any, context: Context) {
+  private emitErrorEvent(request: Request, error: any, context: Context): void {
     this.emitter.emit('error', {
       request,
       error,
@@ -185,8 +185,8 @@ export class Router {
     request: Partial<Request>,
     options: RouteOptions = {redirect: 'follow'},
   ): RouteResult {
-    let normalisedRequest = normaliseRequest(request);
-    let normalisedContext = normaliseContext({
+    const normalisedRequest = normaliseRequest(request);
+    const normalisedContext = normaliseContext({
       execution: ExecutionContext.Synchronous,
     });
     let normalisedResponse: Response;
@@ -225,8 +225,8 @@ export class Router {
     request: Partial<Request>,
     options: RouteOptions = {redirect: 'follow'},
   ): Promise<RouteResult> {
-    let normalisedRequest = normaliseRequest(request);
-    let normalisedContext = normaliseContext({
+    const normalisedRequest = normaliseRequest(request);
+    const normalisedContext = normaliseContext({
       execution: ExecutionContext.Asynchronous,
     });
     let normalisedResponse: Response;

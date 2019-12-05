@@ -45,6 +45,10 @@ const response = router.routeSync(
 
 ### `.use(method, url, middleware)`
 
+### `.all(url, response)`
+
+### `.all(url, middleware)`
+
 ### `.get(url, response)`
 
 ### `.get(url, middleware)`

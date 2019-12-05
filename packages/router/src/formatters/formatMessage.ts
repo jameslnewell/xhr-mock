@@ -1,4 +1,4 @@
-import {Request, Response} from './types';
+import {Request, Response} from '../types';
 import {convertRequestToString} from './convertRequestToString';
 import {convertResponseToString} from './convertResponseToString';
 

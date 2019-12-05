@@ -1,4 +1,4 @@
-import {Response} from './types';
+import {Response} from '../types';
 
 export function convertResponseToString(response: Response): string {
   const headers = Object.keys(response.headers).map(

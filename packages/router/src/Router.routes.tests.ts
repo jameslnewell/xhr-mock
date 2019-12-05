@@ -1,4 +1,4 @@
-import {createMockRouter} from './__fixtures__/createMockRouter';
+import {createMockRouter} from './__tests__/createMockRouter';
 const methods: (
   | 'options'
   | 'head'
@@ -11,7 +11,6 @@ const methods: (
 const fooBarURL = 'http://localhost/foo/bar';
 const barFooURL = 'http://localhost/bar/foo';
 
-const anyMethodPattern = '*';
 const anyURLPattern = /.*/;
 
 const teapotResponse = {

@@ -1,5 +1,5 @@
 import {matchMethod} from './matchMethod';
-import {normaliseRequest} from '../normalise';
+import {normaliseRequest} from '../utilities/normalise';
 
 const methods = ['get', 'post', 'put', 'patch', 'delete'];
 

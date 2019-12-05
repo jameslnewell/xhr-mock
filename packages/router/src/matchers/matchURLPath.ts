@@ -1,6 +1,6 @@
 import {URL} from 'whatwg-url';
 import pathToRegExp, {Key as PathToRegExpKey} from 'path-to-regexp';
-import {URLPathPattern, Request, RequestParameters} from '../../types';
+import {URLPathPattern, Request, RequestParameters} from '../types';
 
 export interface MatchURLPathResult {
   path: string;

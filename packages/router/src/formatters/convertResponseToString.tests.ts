@@ -9,7 +9,7 @@ const minimalResponse = {
 };
 
 describe('convertResponseToString()', () => {
-  it('should have no headers and no body', () => {
+  test('should have no headers and no body', () => {
     const response = {
       ...minimalResponse,
     };
@@ -17,7 +17,7 @@ describe('convertResponseToString()', () => {
     expect(convertResponseToString(response)).toEqual(expected);
   });
 
-  it('should have headers', () => {
+  test('should have headers', () => {
     const response = {
       ...minimalResponse,
       headers: {
@@ -28,7 +28,7 @@ describe('convertResponseToString()', () => {
     expect(convertResponseToString(response)).toEqual(expected);
   });
 
-  it('should have a body', () => {
+  test('should have a body', () => {
     const response = {
       ...minimalResponse,
       body: '<html></html>',
@@ -39,7 +39,7 @@ describe('convertResponseToString()', () => {
     expect(convertResponseToString(response)).toEqual(expected);
   });
 
-  it('should have headers and a body', () => {
+  test('should have headers and a body', () => {
     const response = {
       ...minimalResponse,
       headers: {

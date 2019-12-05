@@ -20,7 +20,6 @@ export function normaliseRequest(req: Partial<Request>): Request {
   return {
     version: '1.1',
     url: '/',
-    params: {},
     body: undefined,
     ...req,
     method: normaliseMethod(req.method || 'GET'),

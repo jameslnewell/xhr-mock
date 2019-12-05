@@ -1,4 +1,4 @@
-import {Request} from '../../types';
+import {Request} from '../types';
 
 export function matchURLQuery(
   pattern: {[name: string]: string},

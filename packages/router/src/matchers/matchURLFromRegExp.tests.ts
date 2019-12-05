@@ -1,5 +1,5 @@
 import {matchURLFromRegExp} from './matchURLFromRegExp';
-import {normaliseRequest} from '../normalise';
+import {normaliseRequest} from '../utilities/normalise';
 
 describe('matchURLFromRegExp()', () => {
   test('returns false when the request url does not match the regexp', () => {

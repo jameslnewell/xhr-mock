@@ -1,5 +1,5 @@
 import {matchURLQuery} from './matchURLQuery';
-import {normaliseRequest} from '../normalise';
+import {normaliseRequest} from '../utilities/normalise';
 
 const req = normaliseRequest({
   url: 'http://localhost/user/jameslnewell?foo=bar&bar=foo',

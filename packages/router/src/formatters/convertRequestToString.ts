@@ -1,4 +1,4 @@
-import {Request} from './types';
+import {Request} from '../types';
 
 export function convertRequestToString(request: Request): string {
   const headers = Object.keys(request.headers).map(
