@@ -1,7 +1,6 @@
 # xhr-mock
 
-![](https://github.com/jameslnewell/xhr-mock/workflows/main/badge.svg?branch=v3.1)
-
+![Actions Status](https://github.com/jameslnewell/xhr-mock/workflows/main/badge.svg?style=flat-square&branch=v3.1)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 `xhr-mock` is a utility for mocking HTTP responses .
