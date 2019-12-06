@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "typedoc": "cd .. && typedoc --json ./website/apidocs.json ./packages/*/src"
+    "typedoc": "cd .. && typedoc --json ./website/apidocs.json ./packages/*/src",
+    "build": "yarn run typedoc"
   },
   "devDependencies": {
     "typedoc": "^0.15.3"
