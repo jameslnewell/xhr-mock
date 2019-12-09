@@ -1,5 +1,5 @@
 import * as statuses from 'statuses';
-import {Headers, Request, Response, Context, ExecutionContext} from '../types';
+import {Headers, Request, Response, Context} from '../types';
 
 function normaliseMethod(method: string): string {
   return method.toUpperCase();
@@ -40,7 +40,7 @@ export function normaliseResponse(res: Partial<Response>): Response {
 
 export function normaliseContext(ctx: Partial<Context>): Context {
   return {
-    execution: ExecutionContext.Asynchronous,
+    isAsynchronous: true,
     ...ctx,
   };
 }

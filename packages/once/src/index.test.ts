@@ -1,4 +1,4 @@
-import {Request, Response, Context, ExecutionContext} from '@xhr-mock/router';
+import {Request, Response, Context} from '@xhr-mock/router';
 import once from '.';
 
 const request: Request = {
@@ -18,7 +18,7 @@ const response: Response = {
 };
 
 const context: Context = {
-  execution: ExecutionContext.Asynchronous,
+  isAsynchronous: true,
 };
 
 describe('once()', () => {

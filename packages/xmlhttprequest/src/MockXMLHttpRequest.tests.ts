@@ -2,9 +2,11 @@
 import {Router} from '@xhr-mock/router';
 import {MockXMLHttpRequest} from './MockXMLHttpRequest';
 
-function failOnEvent(done: jest.DoneCallback) {
+const exampleURL = 'http://example.com/';
+
+function failOnError(done: jest.DoneCallback) {
   return function() {
-    done.fail();
+    done.fail('The error event occurred');
   };
 }
 
@@ -55,14 +57,14 @@ describe('MockXMLHttpRequest', () => {
     it('should return an empty string when type is empty string and the request is not loading and is not done', () => {
       const {xhr} = createXHR();
       xhr.responseType = '';
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       expect(xhr.response).toEqual('');
     });
 
     it('should return an empty string when type is text and the request is not loading and is not done', () => {
       const {xhr} = createXHR();
       xhr.responseType = 'text';
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       expect(xhr.response).toEqual('');
     });
 
@@ -74,8 +76,8 @@ describe('MockXMLHttpRequest', () => {
         expect(xhr.response).toEqual('Hello World!');
         done();
       };
-      xhr.onerror = failOnEvent(done);
-      xhr.open('get', '/');
+      xhr.onerror = failOnError(done);
+      xhr.open('get', exampleURL);
       xhr.send();
     });
 
@@ -87,8 +89,8 @@ describe('MockXMLHttpRequest', () => {
         expect(xhr.response).toEqual('Hello World!');
         done();
       };
-      xhr.onerror = failOnEvent(done);
-      xhr.open('get', '/');
+      xhr.onerror = failOnError(done);
+      xhr.open('get', exampleURL);
       xhr.send();
     });
 
@@ -96,7 +98,7 @@ describe('MockXMLHttpRequest', () => {
       const {router, xhr} = createXHR();
       router.use(() => ({body: '{}'}));
       xhr.responseType = 'json';
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       expect(xhr.response).toEqual(null);
     });
 
@@ -112,8 +114,8 @@ describe('MockXMLHttpRequest', () => {
           done.fail(error);
         }
       };
-      xhr.onerror = failOnEvent(done);
-      xhr.open('get', '/');
+      xhr.onerror = failOnError(done);
+      xhr.open('get', exampleURL);
       xhr.send();
     });
 
@@ -122,7 +124,7 @@ describe('MockXMLHttpRequest', () => {
       const {router, xhr} = createXHR();
       router.use(() => ({body: fakeBuffer}));
       xhr.responseType = 'blob';
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       expect(xhr.response).toEqual(null);
     });
 
@@ -139,8 +141,8 @@ describe('MockXMLHttpRequest', () => {
           done.fail(error);
         }
       };
-      xhr.onerror = failOnEvent(done);
-      xhr.open('get', '/');
+      xhr.onerror = failOnError(done);
+      xhr.open('get', exampleURL);
       xhr.send();
     });
   });
@@ -155,10 +157,10 @@ describe('MockXMLHttpRequest', () => {
         return {};
       });
 
-      xhr.open('GET', '/');
+      xhr.open('GET', exampleURL);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onload = successOnEvent(done);
-      xhr.onerror = failOnEvent(done);
+      xhr.onerror = failOnError(done);
       xhr.send();
     });
   });
@@ -170,14 +172,14 @@ describe('MockXMLHttpRequest', () => {
       router.use(() => {
         return {headers: {'Content-Type': 'application/json'}};
       });
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       xhr.onloadend = () => {
         expect(xhr.getResponseHeader('Content-Type')).toEqual(
           'application/json',
         );
         done();
       };
-      xhr.onerror = failOnEvent(done);
+      xhr.onerror = failOnError(done);
       xhr.send();
     });
   });
@@ -193,14 +195,14 @@ describe('MockXMLHttpRequest', () => {
           },
         };
       });
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       xhr.onload = () => {
         expect(xhr.getAllResponseHeaders()).toEqual(
           'content-type: application/json\r\nx-powered-by: SecretSauce\r\n',
         );
         done();
       };
-      xhr.onerror = failOnEvent(done);
+      xhr.onerror = failOnError(done);
       xhr.send();
     });
   });
@@ -215,7 +217,7 @@ describe('MockXMLHttpRequest', () => {
   describe('.open()', () => {
     it('should set .readyState to OPEN', () => {
       const {xhr} = createXHR();
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       expect(xhr.readyState).toEqual(MockXMLHttpRequest.OPENED);
     });
 
@@ -223,7 +225,7 @@ describe('MockXMLHttpRequest', () => {
       const callback = jest.fn();
       const {xhr} = createXHR();
       xhr.onreadystatechange = callback;
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       expect(callback).toHaveBeenCalledTimes(1);
     });
   });
@@ -238,7 +240,7 @@ describe('MockXMLHttpRequest', () => {
       it('should dispatch events in order when both the request and response do not contain a body', () => {
         const {events, router, xhr} = createXHR();
         router.use(() => ({}));
-        xhr.open('get', '/', false);
+        xhr.open('get', exampleURL, false);
         xhr.send();
         expect(events).toEqual([
           'xhr:readystatechange[1]', // OPENED
@@ -251,7 +253,7 @@ describe('MockXMLHttpRequest', () => {
       it('should dispatch events in order when request has a body', () => {
         const {events, router, xhr} = createXHR();
         router.use(() => ({}));
-        xhr.open('put', '/', false);
+        xhr.open('put', exampleURL, false);
         xhr.send('hello world!');
         expect(events).toEqual([
           'xhr:readystatechange[1]', // OPENED
@@ -264,7 +266,7 @@ describe('MockXMLHttpRequest', () => {
       it('should dispatch events in order when response has a body', () => {
         const {events, router, xhr} = createXHR();
         router.use(() => ({body: 'Hello World'}));
-        xhr.open('put', '/', false);
+        xhr.open('put', exampleURL, false);
         xhr.send();
         expect(events).toEqual([
           'xhr:readystatechange[1]', // OPENED
@@ -280,7 +282,7 @@ describe('MockXMLHttpRequest', () => {
     it('should dispatch events in order when both the request and response do not contain a body', done => {
       const {events, router, xhr} = createXHR();
       router.use(() => ({}));
-      xhr.open('get', '/');
+      xhr.open('get', exampleURL);
       xhr.onloadend = () => {
         expect(events).toEqual([
           'xhr:readystatechange[1]', // OPENED
@@ -299,7 +301,7 @@ describe('MockXMLHttpRequest', () => {
     it('should dispatch events in order when request has a body', done => {
       const {events, router, xhr} = createXHR();
       router.use(() => ({}));
-      xhr.open('put', '/');
+      xhr.open('put', exampleURL);
       xhr.onloadend = () => {
         expect(events).toEqual([
           'xhr:readystatechange[1]', // OPENED
@@ -322,7 +324,7 @@ describe('MockXMLHttpRequest', () => {
     it('should dispatch events in order when response has a body', done => {
       const {events, router, xhr} = createXHR();
       router.use(() => ({body: 'Hello World'}));
-      xhr.open('put', '/');
+      xhr.open('put', exampleURL);
       xhr.onloadend = () => {
         expect(events).toEqual([
           'xhr:readystatechange[1]', // OPENED
@@ -347,8 +349,8 @@ describe('MockXMLHttpRequest', () => {
       return {};
     });
     xhr.onload = successOnEvent(done);
-    xhr.onerror = failOnEvent(done);
-    xhr.open('post', '/');
+    xhr.onerror = failOnError(done);
+    xhr.open('post', exampleURL);
     xhr.send('Hello World!');
   });
 
@@ -359,8 +361,8 @@ describe('MockXMLHttpRequest', () => {
       return {};
     });
     xhr.onload = successOnEvent(done);
-    xhr.onerror = failOnEvent(done);
-    xhr.open('get', '/');
+    xhr.onerror = failOnError(done);
+    xhr.open('get', exampleURL);
     xhr.send();
   });
 
@@ -381,8 +383,8 @@ describe('MockXMLHttpRequest', () => {
       expect(xhr.readyState).toEqual(4);
       done();
     };
-    xhr.onerror = failOnEvent(done);
-    xhr.open('get', '/');
+    xhr.onerror = failOnError(done);
+    xhr.open('get', exampleURL);
     xhr.send();
   });
 
@@ -395,10 +397,10 @@ describe('MockXMLHttpRequest', () => {
         }),
     );
     xhr.timeout = 100;
-    xhr.ontimeout = failOnEvent(done);
+    xhr.ontimeout = failOnError(done);
     xhr.onabort = successOnEvent(done);
-    xhr.onerror = failOnEvent(done);
-    xhr.open('get', '/');
+    xhr.onerror = failOnError(done);
+    xhr.open('get', exampleURL);
     xhr.send();
     xhr.abort();
   });
@@ -408,9 +410,9 @@ describe('MockXMLHttpRequest', () => {
     router.on('error', jest.fn());
     router.use(() => Promise.reject(new Error('test!')));
     xhr.timeout = 100;
-    xhr.ontimeout = failOnEvent(done);
+    xhr.ontimeout = failOnError(done);
     xhr.onerror = successOnEvent(done);
-    xhr.open('get', '/');
+    xhr.open('get', exampleURL);
     xhr.send();
   });
 
@@ -422,8 +424,8 @@ describe('MockXMLHttpRequest', () => {
       },
     }));
     xhr.onload = successOnEvent(done);
-    xhr.onerror = failOnEvent(done);
-    xhr.open('post', '/');
+    xhr.onerror = failOnError(done);
+    xhr.open('post', exampleURL);
     xhr.send('hello world!');
   });
 
@@ -435,8 +437,8 @@ describe('MockXMLHttpRequest', () => {
       },
     }));
     xhr.onload = successOnEvent(done);
-    xhr.onerror = failOnEvent(done);
-    xhr.open('post', '/');
+    xhr.onerror = failOnError(done);
+    xhr.open('post', exampleURL);
     xhr.setRequestHeader('content-type', 'foo/bar');
     xhr.send('hello world!');
   });
@@ -446,18 +448,18 @@ describe('MockXMLHttpRequest', () => {
     router.on('error', jest.fn());
     router.use(() => Promise.reject(new Error('test!')));
     xhr.timeout = 100;
-    xhr.ontimeout = failOnEvent(done);
+    xhr.ontimeout = failOnError(done);
     xhr.onerror = () => {
       try {
-        xhr.open('get', '/');
+        xhr.open('get', exampleURL);
         xhr.send();
         xhr.abort();
         done();
-      } catch (err) {
-        done.fail(err);
+      } catch (error) {
+        done.fail(error);
       }
     };
-    xhr.open('get', '/');
+    xhr.open('get', exampleURL);
     xhr.send();
   });
 });

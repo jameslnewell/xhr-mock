@@ -1,7 +1,7 @@
 // tslint:disable no-shadowed-variable
 import {Request, Response, Context} from '../types';
 import {createMiddleware} from './createMiddleware';
-import {ExecutionContext} from '../types';
+import {asynchronousContext} from '../__tests__/fixtures';
 
 const defaultRequest: Request = {
   version: '1.1',
@@ -19,9 +19,7 @@ const defaultResponse: Response = {
   body: undefined,
 };
 
-const defaultContext: Context = {
-  execution: ExecutionContext.Asynchronous,
-};
+const defaultContext: Context = asynchronousContext;
 
 describe('createMiddlewareHandler()', () => {
   ['get', 'post', 'put', 'patch', 'delete'].forEach(method => {

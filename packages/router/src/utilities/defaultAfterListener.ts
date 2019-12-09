@@ -1,7 +1,7 @@
 import {AfterEvent} from '../types';
 import {formatMessage} from '../formatters/formatMessage';
 
-export function afterLogger(event: AfterEvent): void {
+export function defaultAfterListener(event: AfterEvent): void {
   const {request, response} = event;
   // eslint-disable-next-line no-console
   console.info(

@@ -13,11 +13,11 @@ import {
   BeforeEvent,
   AfterEvent,
   ErrorEvent,
-  ExecutionContext,
   RequestWithParameters,
   RouterError,
 } from './types';
 import {defaultErrorListener} from './utilities/defaultErrorListener';
+import {defaultAfterListener} from './utilities/defaultAfterListener';
 import {createMiddleware} from './utilities/createMiddleware';
 import {normaliseRequest, normaliseContext} from './utilities/normalise';
 import {routeSync} from './utilities/routeSync';
@@ -29,7 +29,8 @@ export class Router {
   private middleware: Middleware[] = [];
 
   constructor() {
-    // register a default event handler until the user registers their own to avoid throwing an error
+    // register a default event handler until the user registers their own to avoid emitting logs
+    this.emitter.on('after', defaultAfterListener);
     this.emitter.on('error', defaultErrorListener);
   }
 
@@ -71,7 +72,10 @@ export class Router {
       | ((data: ErrorEvent) => void),
   ): Router {
     this.emitter.on(type, listener);
-    // remove the default error listener when the user adds their own
+    // remove the default listeners whenever the user adds their own
+    if (type === 'after') {
+      this.emitter.off('after', defaultAfterListener);
+    }
     if (type === 'error') {
       this.emitter.off('error', defaultErrorListener);
     }
@@ -187,7 +191,7 @@ export class Router {
   ): RouteResult {
     const normalisedRequest = normaliseRequest(request);
     const normalisedContext = normaliseContext({
-      execution: ExecutionContext.Synchronous,
+      isAsynchronous: false,
     });
     let normalisedResponse: Response;
 
@@ -229,7 +233,7 @@ export class Router {
   ): Promise<RouteResult> {
     const normalisedRequest = normaliseRequest(request);
     const normalisedContext = normaliseContext({
-      execution: ExecutionContext.Asynchronous,
+      isAsynchronous: true,
     });
     let normalisedResponse: Response;
 

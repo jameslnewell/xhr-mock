@@ -246,7 +246,6 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
       version: '1.1',
       method,
       headers: {},
-      params: {},
       url, // TODO: full url with username and pw
       body: undefined,
     };
