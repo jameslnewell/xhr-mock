@@ -76,7 +76,9 @@ describe('Router', () => {
       router.use(throwMiddleware);
       try {
         router.routeSync(getFoobarRequest);
-      } catch (error) {}
+      } catch (error) {
+        // we don't care what the error was, we're checking the logs
+      }
       expect(console.error).toBeCalledWith(
         expect.stringContaining(
           'A middleware returned an error for the request.',
@@ -90,7 +92,9 @@ describe('Router', () => {
       router.use(throwMiddleware);
       try {
         router.routeSync(getFoobarRequest);
-      } catch (error) {}
+      } catch (error) {
+        // we don't care what the error was, we're checking the logs
+      }
       expect(console.error).not.toBeCalled();
     });
 
@@ -141,7 +145,9 @@ describe('Router', () => {
         router.use(middleware);
         try {
           router.routeSync(getFoobarRequest);
-        } catch (error) {}
+        } catch (error) {
+          // we don't care what the error was, we're checking the logs
+        }
         expect(listener).toBeCalledWith({
           context: synchronousContext,
           request: expect.objectContaining(getFoobarRequest),
@@ -200,7 +206,9 @@ describe('Router', () => {
         router.use(middleware);
         try {
           await router.routeAsync(getFoobarRequest);
-        } catch (error) {}
+        } catch (error) {
+          // we don't care what the error was, we're checking the logs
+        }
         expect(listener).toBeCalledWith({
           context: asynchronousContext,
           request: expect.objectContaining(getFoobarRequest),

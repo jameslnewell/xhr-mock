@@ -10,7 +10,9 @@ import {
   foobarURL,
   returnMiddleware,
   teapotResponse,
+  getBarfooRequest,
 } from './__tests__/fixtures';
+
 const methods: (
   | 'options'
   | 'head'
@@ -27,6 +29,9 @@ const noResponseErrorMessage =
 const urlIsNotAbsoluteErrorMessage = /Request URL must be absolute:/;
 const syncMiddlewareReturnedPromiseErrorMessage =
   'A middleware returned a response asynchronously while the request was being handled synchronously.';
+const tooManyRedirectsErrorMessage = 'The number of redirects exceeded 10.';
+const redirectsWereNotPermittedErrorMessage =
+  'A redirect was encountered but redirects were not permitted.';
 
 describe('Router', () => {
   describe('.use()', () => {
@@ -229,7 +234,8 @@ describe('Router', () => {
       );
     });
 
-    // logs a "UnhandledPromiseRejectionWarning"
+    // skipped because the rejected promise returned by the middleware is  never caught (intentionally as per expected behaviour for the synchronous method)
+    // and it logs a "UnhandledPromiseRejectionWarning"
     // @see https://github.com/facebook/jest/issues/6028
     test.skip('throws when a middleware rejects', () => {
       const router = createMockRouter();
@@ -239,12 +245,49 @@ describe('Router', () => {
       );
     });
 
+    test('throws when too many redirects are returned', () => {
+      const router = createMockRouter();
+      router.use(() => ({
+        ...getFoobarResponse,
+        status: 307,
+        headers: {
+          location: barfooURL,
+        },
+      }));
+      expect(() => router.routeSync(getFoobarRequest)).toThrowError(
+        tooManyRedirectsErrorMessage,
+      );
+    });
+
+    test('throws when redirects are not permitted but encountered', () => {
+      const router = createMockRouter();
+      router.use(() => ({
+        ...getFoobarResponse,
+        status: 307,
+        headers: {
+          location: barfooURL,
+        },
+      }));
+      expect(() =>
+        router.routeSync(getFoobarRequest, {redirect: 'error'}),
+      ).toThrowError(redirectsWereNotPermittedErrorMessage);
+    });
+
     test('normalises the request', () => {
       const middleware = jest.fn().mockReturnValue(getFoobarResponse);
       const router = createMockRouter();
       router.use(middleware);
       router.routeSync({url: foobarURL});
-      expect(middleware).toBeCalledWith(getFoobarRequest, expect.anything());
+      expect(middleware).toBeCalledWith(
+        {
+          version: '1.1',
+          method: 'GET',
+          url: foobarURL,
+          headers: {},
+          body: undefined,
+        },
+        expect.anything(),
+      );
     });
 
     test('normalises the response', () => {
@@ -259,9 +302,49 @@ describe('Router', () => {
     test('returns when a response is returned', () => {
       const router = createMockRouter();
       router.use(returnMiddleware);
-      expect(router.routeSync(getFoobarRequest)).toEqual(
-        expect.objectContaining(getFoobarResponse),
-      );
+      expect(router.routeSync(getFoobarRequest)).toEqual({
+        ...getFoobarResponse,
+        redirected: false,
+        url: foobarURL,
+      });
+    });
+
+    test('returns when redirects were followed and a response is returned', () => {
+      const router = createMockRouter();
+      router.get(barfooURL, {
+        status: 307,
+        headers: {
+          location: foobarURL,
+        },
+      });
+      router.get(foobarURL, getFoobarResponse);
+      expect(router.routeSync(getBarfooRequest, {redirect: 'follow'})).toEqual({
+        ...getFoobarResponse,
+        redirected: true,
+        url: foobarURL,
+      });
+    });
+
+    test('returns when redirects were not followed and a response is returned', () => {
+      const router = createMockRouter();
+      router.get(barfooURL, {
+        status: 307,
+        headers: {
+          location: foobarURL,
+        },
+      });
+      router.get(foobarURL, getFoobarResponse);
+      expect(router.routeSync(getBarfooRequest, {redirect: 'manual'})).toEqual({
+        version: '1.1',
+        status: 307,
+        reason: 'Temporary Redirect',
+        headers: {
+          location: foobarURL,
+        },
+        body: undefined,
+        redirected: false,
+        url: barfooURL,
+      });
     });
   });
 
@@ -303,12 +386,49 @@ describe('Router', () => {
       );
     });
 
+    test('throws when too many redirects are returned', async () => {
+      const router = createMockRouter();
+      router.use(() => ({
+        ...getFoobarResponse,
+        status: 307,
+        headers: {
+          location: barfooURL,
+        },
+      }));
+      await expect(router.routeAsync(getFoobarRequest)).rejects.toThrowError(
+        tooManyRedirectsErrorMessage,
+      );
+    });
+
+    test('throws when redirects are not permitted but encountered', async () => {
+      const router = createMockRouter();
+      router.use(() => ({
+        ...getFoobarResponse,
+        status: 307,
+        headers: {
+          location: barfooURL,
+        },
+      }));
+      await expect(
+        router.routeAsync(getFoobarRequest, {redirect: 'error'}),
+      ).rejects.toThrowError(redirectsWereNotPermittedErrorMessage);
+    });
+
     test('normalises the request', async () => {
       const middleware = jest.fn().mockReturnValue(getFoobarResponse);
       const router = createMockRouter();
       router.use(middleware);
       await router.routeAsync({url: foobarURL});
-      expect(middleware).toBeCalledWith(getFoobarRequest, expect.anything());
+      expect(middleware).toBeCalledWith(
+        {
+          version: '1.1',
+          method: 'GET',
+          url: foobarURL,
+          headers: {},
+          body: undefined,
+        },
+        expect.anything(),
+      );
     });
 
     test('normalises the response', async () => {
@@ -334,6 +454,48 @@ describe('Router', () => {
       await expect(router.routeAsync(getFoobarRequest)).resolves.toEqual(
         expect.objectContaining(getFoobarResponse),
       );
+    });
+
+    test('resolves when redirects were followed and a response is returned', async () => {
+      const router = createMockRouter();
+      router.get(barfooURL, {
+        status: 307,
+        headers: {
+          location: foobarURL,
+        },
+      });
+      router.get(foobarURL, getFoobarResponse);
+      await expect(
+        router.routeAsync(getBarfooRequest, {redirect: 'follow'}),
+      ).resolves.toEqual({
+        ...getFoobarResponse,
+        redirected: true,
+        url: foobarURL,
+      });
+    });
+
+    test('resolves when redirects were not followed and a response is returned', async () => {
+      const router = createMockRouter();
+      router.get(barfooURL, {
+        status: 307,
+        headers: {
+          location: foobarURL,
+        },
+      });
+      router.get(foobarURL, getFoobarResponse);
+      await expect(
+        router.routeAsync(getBarfooRequest, {redirect: 'manual'}),
+      ).resolves.toEqual({
+        version: '1.1',
+        status: 307,
+        reason: 'Temporary Redirect',
+        headers: {
+          location: foobarURL,
+        },
+        body: undefined,
+        redirected: false,
+        url: barfooURL,
+      });
     });
   });
 });

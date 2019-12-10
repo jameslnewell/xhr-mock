@@ -1,4 +1,8 @@
-import {MockError} from './MockError';
+/**
+ * The event object
+ * @see https://dom.spec.whatwg.org/#event
+ */
+import {NotImplementedError} from './NotImplementedError';
 
 export enum EventPhase {
   NONE = 0,
@@ -18,69 +22,50 @@ export class MockEvent implements Event {
   public readonly AT_TARGET: number = EventPhase.AT_TARGET;
   public readonly BUBBLING_PHASE: number = EventPhase.BUBBLING_PHASE;
 
-  private name: string;
-  private canBubble: boolean = false;
-  private canCancel: boolean = false;
-  private isPropagationStopped: boolean = false;
-  private isImmediatePropagationStopped: boolean = false;
-  private isCanceled: boolean = false;
-  private isPassive: boolean = false;
-  public readonly composed: boolean = false;
+  readonly type: string;
+  readonly bubbles: boolean;
+  readonly cancelable: boolean;
+  readonly composed: boolean;
 
-  public readonly currentTarget: EventTarget | null = null;
-  public readonly srcElement: Element | null = null;
-  public readonly target: EventTarget | null = null;
+  /** @deprecated */
+  readonly srcElement: EventTarget | null = null;
+  readonly target: EventTarget | null = null;
+  readonly currentTarget: EventTarget | null = null;
 
-  public readonly eventPhase: number = EventPhase.NONE;
-  public readonly isTrusted: boolean = false;
-  public readonly timeStamp: number = Date.now();
+  readonly eventPhase: number = EventPhase.NONE;
+  readonly isTrusted: boolean = true;
+  readonly timeStamp: number = Date.now();
+
+  private isCanceled = false;
+  private isPropagationStopped = false;
+  // private isImmediatelyPropagationStopped = false;
 
   constructor(type: string, eventInitDict?: EventInit) {
-    this.name = type;
-    if (eventInitDict) {
-      const {
-        bubbles = false,
-        cancelable = false,
-        composed = false,
-      } = eventInitDict;
-      this.canBubble = bubbles;
-      this.canCancel = cancelable;
-      this.composed = composed;
-    }
-  }
-
-  public get type(): string {
-    return this.name;
-  }
-
-  public get bubbles(): boolean {
-    return this.canBubble;
-  }
-
-  public get cancelable(): boolean {
-    return this.canCancel;
-  }
-
-  public get cancelBubble(): boolean {
-    return this.isPropagationStopped;
+    const {bubbles = false, cancelable = false, composed = false} =
+      eventInitDict || {};
+    this.type = type;
+    this.timeStamp = Date.now();
+    this.bubbles = bubbles;
+    this.cancelable = cancelable;
+    this.composed = composed;
   }
 
   public composedPath(): EventTarget[] {
-    throw new MockError();
+    throw new NotImplementedError();
+  }
+
+  public initEvent(): void {
+    throw new NotImplementedError();
+  }
+
+  public preventDefault(): void {
+    if (this.cancelable) {
+      this.isCanceled = true;
+    }
   }
 
   public get defaultPrevented(): boolean {
     return this.isCanceled;
-  }
-
-  public initEvent(type: string, bubbles = false, cancelable = false): void {
-    this.name = type;
-    this.canBubble = bubbles;
-    this.canCancel = cancelable;
-  }
-
-  public preventDefault(): void {
-    this.isCanceled = true;
   }
 
   public get returnValue(): boolean {
@@ -88,15 +73,27 @@ export class MockEvent implements Event {
   }
 
   public set returnValue(value: boolean) {
-    this.isCanceled = !value;
-  }
-
-  public stopImmediatePropagation(): void {
-    this.isPropagationStopped = true;
-    this.isImmediatePropagationStopped = true;
+    if (value === false) {
+      this.isCanceled = true;
+    }
   }
 
   public stopPropagation(): void {
     this.isPropagationStopped = true;
+  }
+
+  public stopImmediatePropagation(): void {
+    this.isPropagationStopped = true;
+    // this.isImmediatelyPropagationStopped = true;
+  }
+
+  public get cancelBubble(): boolean {
+    return this.isPropagationStopped;
+  }
+
+  public set cancelBubble(value: boolean) {
+    if (value) {
+      this.isPropagationStopped = true;
+    }
   }
 }

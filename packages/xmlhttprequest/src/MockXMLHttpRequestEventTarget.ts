@@ -1,6 +1,3 @@
-// import {MockEvent} from './MockEvent';
-// import {MockProgressEvent} from './MockProgressEvent';
-
 export class MockXMLHttpRequestEventTarget
   implements XMLHttpRequestEventTarget {
   private listeners?: {

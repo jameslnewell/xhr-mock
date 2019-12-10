@@ -22,7 +22,11 @@ import {createMiddleware} from './utilities/createMiddleware';
 import {normaliseRequest, normaliseContext} from './utilities/normalise';
 import {routeSync} from './utilities/routeSync';
 import {routeAsync} from './utilities/routeAsync';
-import {isRedirect} from './utilities/isRedirect';
+import {getRedirectRequest} from './utilities/getRedirectRequest';
+
+const tooManyRedirectsError = 'The number of redirects exceeded 10.';
+const redirectsWereNotPermittedError =
+  'A redirect was encountered but redirects were not permitted.';
 
 export class Router {
   private emitter: mitt.Emitter = mitt();
@@ -202,24 +206,39 @@ export class Router {
     }
 
     try {
+      let prevRequest: Request | undefined = normalisedRequest;
+      let nextRequest: Request | undefined = normalisedRequest;
+      let redirectCount = 0;
       do {
-        this.emitBeforeEvent(normalisedRequest, normalisedContext);
+        this.emitBeforeEvent(nextRequest, normalisedContext);
+
+        if (redirectCount >= 10) {
+          throw new RouterError(tooManyRedirectsError);
+        }
+
         normalisedResponse = routeSync(
-          normalisedRequest,
+          nextRequest,
           normalisedContext,
           this.middleware,
         );
-        this.emitAfterEvent(
-          normalisedRequest,
-          normalisedResponse,
-          normalisedContext,
-        );
-        // TODO: create redirect request
-      } while (options.redirect && isRedirect(normalisedResponse));
+
+        this.emitAfterEvent(nextRequest, normalisedResponse, normalisedContext);
+
+        prevRequest = nextRequest;
+        nextRequest = getRedirectRequest(nextRequest, normalisedResponse);
+
+        if (options.redirect === 'error' && nextRequest) {
+          throw new RouterError(redirectsWereNotPermittedError);
+        }
+
+        if (options.redirect === 'follow' && nextRequest) {
+          ++redirectCount;
+        }
+      } while (options.redirect === 'follow' && nextRequest);
       return {
         ...normalisedResponse,
-        url: normalisedRequest.url,
-        redirected: false,
+        url: prevRequest.url,
+        redirected: redirectCount !== 0,
       };
     } catch (error) {
       this.emitErrorEvent(normalisedRequest, error, normalisedContext);
@@ -244,24 +263,39 @@ export class Router {
     }
 
     try {
+      let prevRequest: Request | undefined = normalisedRequest;
+      let nextRequest: Request | undefined = normalisedRequest;
+      let redirectCount = 0;
       do {
-        this.emitBeforeEvent(normalisedRequest, normalisedContext);
+        this.emitBeforeEvent(nextRequest, normalisedContext);
+
+        if (redirectCount >= 10) {
+          throw new RouterError(tooManyRedirectsError);
+        }
+
         normalisedResponse = await routeAsync(
-          normalisedRequest,
+          nextRequest,
           normalisedContext,
           this.middleware,
         );
-        this.emitAfterEvent(
-          normalisedRequest,
-          normalisedResponse,
-          normalisedContext,
-        );
-        // TODO: create redirect request
-      } while (options.redirect && isRedirect(normalisedResponse));
+
+        this.emitAfterEvent(nextRequest, normalisedResponse, normalisedContext);
+
+        prevRequest = nextRequest;
+        nextRequest = getRedirectRequest(nextRequest, normalisedResponse);
+
+        if (options.redirect === 'error' && nextRequest) {
+          throw new RouterError(redirectsWereNotPermittedError);
+        }
+
+        if (options.redirect === 'follow' && nextRequest) {
+          ++redirectCount;
+        }
+      } while (options.redirect === 'follow' && nextRequest);
       return {
         ...normalisedResponse,
-        url: normalisedRequest.url,
-        redirected: false,
+        url: prevRequest.url,
+        redirected: redirectCount !== 0,
       };
     } catch (error) {
       this.emitErrorEvent(normalisedRequest, error, normalisedContext);

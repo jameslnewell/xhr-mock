@@ -54,4 +54,8 @@ jobs:
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
       - run: yarn test
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: './packages/*/coverage/coverage.json'
     runs-on: ubuntu-latest

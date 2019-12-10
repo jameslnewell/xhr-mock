@@ -17,6 +17,7 @@ function getReasonById(status: number): string {
 }
 
 export function normaliseRequest(req: Partial<Request>): Request {
+  // FIXME: set Host header from URL
   return {
     version: '1.1',
     url: '/',
