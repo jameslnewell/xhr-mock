@@ -1,8 +1,8 @@
 # xhr-mock
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jameslnewell/xhr-mock/main/v3.1?style=flat-square)
-[![codecov.io](https://img.shields.io/codecov/c/github/jameslnewell/xhr-mock/v3.1.svg?style=flat-square)](https://codecov.io/github/jameslnewell/xhr-mock/coverage.svg?branch=v3.1&style=flat-square)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=for-the-badge)](https://github.com/prettier/prettier)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/jameslnewell/xhr-mock/main/v3.1?style=for-the-badge)
+[![codecov.io](https://img.shields.io/codecov/c/github/jameslnewell/xhr-mock/v3.1.svg?style=for-the-badge)](https://codecov.io/github/jameslnewell/xhr-mock/coverage.svg?branch=v3.1&style=for-the-badge)
 
 `xhr-mock` is a utility for mocking HTTP requests and responses in the Browser, in NodeJS and in your tests.
 
