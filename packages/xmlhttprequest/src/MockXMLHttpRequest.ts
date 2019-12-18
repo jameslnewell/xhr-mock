@@ -33,20 +33,45 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   public readonly LOADING = ReadyState.LOADING;
   public readonly DONE = ReadyState.DONE;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   public onreadystatechange:
     | ((this: XMLHttpRequest, ev: Event) => any)
     | null = null;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   //some libraries (like Mixpanel) use the presence of this field to check if XHR is properly supported
   // https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/withCredentials
   public withCredentials = false;
 
+  addEventListener<K extends keyof XMLHttpRequestEventMap>(
+    type: K,
+    listener: (this: XMLHttpRequest, ev: XMLHttpRequestEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
+  ): void {
+    super.addEventListener(type, listener, options);
+  }
+  removeEventListener<K extends keyof XMLHttpRequestEventMap>(
+    type: K,
+    listener: (this: XMLHttpRequest, ev: XMLHttpRequestEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions,
+  ): void {
+    super.addEventListener(type, listener, options);
+  }
+
   private req: Request = {
     version: '1.1',
     method: 'GET',
     url: '',
-    params: {},
     headers: {},
     body: undefined,
   };
@@ -71,8 +96,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   private isAborted = false;
   private isTimedOut = false;
 
-  // @ts-ignore: wants a NodeJS.Timer because of @types/node
-  private timeoutTimer: number;
+  private timeoutTimer: number | undefined = undefined;
   private _timeout = 0;
 
   public get timeout(): number {
@@ -176,8 +200,8 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     if (this.readyState < MockXMLHttpRequest.HEADERS_RECEIVED) {
       return null;
     }
-
-    return this.res.headers[name.toLowerCase()];
+    const headers = this.res.headers[name.toLowerCase()];
+    return Array.isArray(headers) ? headers[0] : headers;
   }
 
   public setRequestHeader(name: string, value: string): void {
@@ -197,12 +221,12 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     method: string,
     url: string,
     async = true,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
+    /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
     // @ts-ignore
     username: string | null = null, // TODO:
     // @ts-ignore
     password: string | null = null, // TODO:
-    /* eslint-enable @typescript-eslint/no-unused-vars */
+    /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
   ): void {
     // if method is not a method, then throw a "SyntaxError" DOMException
     // if method is a forbidden method, then throw a "SecurityError" DOMException
@@ -319,8 +343,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // if req’s done flag is unset, then set the timed out flag and terminate fetching
 
     if (this._timeout !== 0) {
-      // @ts-ignore: wants a NodeJS.Timer because of @types/node
-      this.timeoutTimer = setTimeout(() => {
+      this.timeoutTimer = window.setTimeout(() => {
         this.isTimedOut = true;
         this.handleError();
       }, this._timeout);

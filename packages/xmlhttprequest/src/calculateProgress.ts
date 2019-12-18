@@ -10,7 +10,9 @@ export function calculateProgress(
   let total = 0;
 
   if (header) {
-    const contentLength = parseInt(header, 10);
+    const contentLength = Array.isArray(header)
+      ? parseInt(header[0], 10)
+      : parseInt(header, 10);
     if (!isNaN(contentLength)) {
       lengthComputable = true;
       total = contentLength;

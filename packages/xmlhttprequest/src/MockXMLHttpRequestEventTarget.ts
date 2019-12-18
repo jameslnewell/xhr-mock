@@ -1,10 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {MockEvent} from './MockEvent';
+
+const flattenOptions = (
+  options: undefined | boolean | AddEventListenerOptions,
+): {capture: boolean; passive: boolean; once: boolean} => {
+  return {
+    capture:
+      options === true ||
+      (typeof options === 'object' && options.capture) ||
+      false,
+    passive: (typeof options === 'object' && options.passive) || false,
+    once: (typeof options === 'object' && options.passive) || false,
+  };
+};
+
 export class MockXMLHttpRequestEventTarget
   implements XMLHttpRequestEventTarget {
   private listeners?: {
-    [type: string]: EventListenerOrEventListenerObject[];
+    [type: string]: {
+      listener: EventListenerOrEventListenerObject;
+      capture: boolean;
+      passive: boolean;
+      once: boolean;
+    }[];
   } = {};
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   public onabort:
     | ((this: XMLHttpRequest, ev: ProgressEvent) => any)
     | null = null;
@@ -26,7 +46,6 @@ export class MockXMLHttpRequestEventTarget
   public ontimeout:
     | ((this: XMLHttpRequest, ev: ProgressEvent) => any)
     | null = null;
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   addEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(
     type: K,
@@ -39,7 +58,6 @@ export class MockXMLHttpRequestEventTarget
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    // @ts-ignore
     options?: boolean | AddEventListenerOptions,
   ): void {
     this.listeners = this.listeners || {};
@@ -52,13 +70,12 @@ export class MockXMLHttpRequestEventTarget
       this.listeners[type] = [];
     }
 
-    //handleEvent
-    if (this.listeners[type].indexOf(listener) === -1) {
-      this.listeners[type].push(listener);
+    if (this.listeners[type].findIndex(l => l.listener === listener) === -1) {
+      this.listeners[type].push({
+        listener,
+        ...flattenOptions(options),
+      });
     }
-
-    // TODO: handle once
-    // TODO: handle passive
   }
 
   removeEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(
@@ -72,8 +89,7 @@ export class MockXMLHttpRequestEventTarget
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    // @ts-ignore
-    options?: boolean | EventListenerOptions,
+    options?: boolean | AddEventListenerOptions,
   ): void {
     this.listeners = this.listeners || {};
 
@@ -85,42 +101,50 @@ export class MockXMLHttpRequestEventTarget
       return;
     }
 
-    const index = this.listeners[type].indexOf(listener);
+    const {capture} = flattenOptions(options);
+    const index = this.listeners[type].findIndex(
+      l => l.listener === listener && l.capture === capture,
+    );
     if (index !== -1) {
       this.listeners[type].splice(index, 1);
     }
-
-    // TODO: handle once
-    // TODO: handle passive
   }
 
   public dispatchEvent(event: Event): boolean {
     this.listeners = this.listeners || {};
 
-    /* eslint-disable @typescript-eslint/no-explicit-any */
-    //set the event target
+    (event as any).eventPhase = MockEvent.AT_TARGET;
     (event as any).target = this;
     (event as any).currentTarget = this;
 
     //call any built-in listeners
     //FIXME: the listener should be added on set
     const method = (this as any)[`on${event.type}`];
-    /* eslint-enable @typescript-eslint/no-explicit-any */
     if (method) {
       method.call(this, event);
     }
 
-    if (!this.listeners[event.type]) {
+    const listeners = this.listeners[event.type];
+    if (!listeners) {
       return true;
     }
 
-    this.listeners[event.type].forEach(listener => {
-      if (typeof listener === 'function') {
-        listener.call(this, event);
-      } else {
-        listener.handleEvent.call(this, event);
+    listeners.forEach((l, index) => {
+      if (event.stopPropagation)
+        if (typeof l.listener === 'function') {
+          l.listener.call(this, event);
+        } else {
+          l.listener.handleEvent.call(this, event);
+        }
+      if (l.once) {
+        listeners.splice(index, 1);
       }
     });
-    return true; //TODO: return type based on .cancellable and .preventDefault()
+
+    (event as any).eventPhase = MockEvent.NONE;
+    (event as any).target = null;
+    (event as any).currentTarget = null;
+
+    return !event.defaultPrevented;
   }
 }
