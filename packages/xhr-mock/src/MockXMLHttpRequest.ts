@@ -14,6 +14,8 @@ const notImplementedError = new MockError(
   "This feature hasn't been implmented yet. Please submit an Issue or Pull Request on Github."
 );
 
+const InvalidStateError = new MockError('InvalidStateError: DOM Exception 11');
+
 // implemented according to https://xhr.spec.whatwg.org/
 
 const FORBIDDEN_METHODS = ['CONNECT', 'TRACE', 'TRACK'];
@@ -193,7 +195,17 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   get responseXML(): Document | null {
-    throw notImplementedError;
+    if (this.responseType === '' || this.responseType === 'document') {
+      if (
+        this.readyState === this.DONE &&
+        this.res.body() instanceof Document
+      ) {
+        return this.res.body();
+      }
+      return null;
+    }
+
+    throw InvalidStateError;
   }
 
   get status(): number {
