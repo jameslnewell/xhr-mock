@@ -234,7 +234,9 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
   }
 
   overrideMimeType(mime: string): void {
-    throw notImplementedError;
+    if (this.readyState === MockXMLHttpRequest.LOADING || this.readyState === MockXMLHttpRequest.DONE) {
+      throw new MockError('xhr must not be LOADING or DONE.');
+    }
   }
 
   open(
