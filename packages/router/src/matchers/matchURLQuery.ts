@@ -1,9 +1,9 @@
 import {Request} from '../types';
 
 export function matchURLQuery(
-  pattern: {[name: string]: string},
+  pattern: Record<string, string>,
   request: Request,
-): {} | undefined {
+): Record<string, string> | undefined {
   // get the request query
   const requestQuery = new URL(request.url).searchParams;
 

@@ -1,8 +1,8 @@
 import {MockEvent} from './MockEvent';
 import {MockXMLHttpRequestEventTarget} from './MockXMLHttpRequestEventTarget';
 
-const event1Type: 'loadstart' = 'loadstart';
-const event2Type: 'loadend' = 'loadend';
+const event1Type = 'loadstart' as const;
+const event2Type = 'loadend' as const;
 
 describe('MockXMLHttpRequestEventTarget', () => {
   test('should call the listener once when added once', () => {

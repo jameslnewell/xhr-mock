@@ -222,12 +222,12 @@ export class MockXMLHttpRequest
     method: string,
     url: string,
     async = true,
-    /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
+    /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
     // @ts-ignore
     username: string | null = null, // TODO:
     // @ts-ignore
     password: string | null = null, // TODO:
-    /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-ignore */
+    /* eslint-enable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
   ): void {
     // if method is not a method, then throw a "SyntaxError" DOMException
     // if method is a forbidden method, then throw a "SecurityError" DOMException

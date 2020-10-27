@@ -89,7 +89,13 @@ describe('axios', () => {
   });
 
   it('should time out', async () => {
-    mock.get('/', () => new Promise(() => {}));
+    mock.get(
+      '/',
+      () =>
+        new Promise(() => {
+          /* do nothing */
+        }),
+    );
 
     try {
       await axios.get('/', {timeout: 10});

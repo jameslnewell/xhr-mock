@@ -30,19 +30,13 @@
     "pretty-quick": "^3.1.0",
     "typescript": "^4.0.5"
   },
-  "scripts": {
-    "clean": "lerna exec -- rm -rf dist && lerna clean",
-    "format": "prettier --write .",
-    "type": "tsc --noEmit",
-    "lint": "eslint --config .eslintrc.js --ext .ts,.tsx --ignore-pattern node_modules --fix . ",
-    "build": "lerna run build",
-    "test": "jest",
-    "publish": "yarn run publish"
-  },
   "babel": {
     "presets": [
       "@jameslnewell/babel-preset"
     ]
+  },
+  "eslintConfig": {
+    "extends": "@jameslnewell/eslint-config"
   },
   "husky": {
     "hooks": {
@@ -57,5 +51,14 @@
       "<rootDir>/tests"
     ]
   },
-  "prettier": "@jameslnewell/prettier-config"
+  "prettier": "@jameslnewell/prettier-config",
+  "scripts": {
+    "clean": "lerna exec -- rm -rf dist && lerna clean",
+    "format": "prettier --write .",
+    "type": "tsc --noEmit",
+    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix . ",
+    "build": "lerna run build",
+    "test": "jest",
+    "publish": "yarn run publish"
+  }
 }

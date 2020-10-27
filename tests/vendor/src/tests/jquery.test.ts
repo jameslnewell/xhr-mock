@@ -108,7 +108,13 @@ describe('jquery', () => {
   });
 
   it('should time out', async () => {
-    mock.get('/', () => new Promise(() => {}));
+    mock.get(
+      '/',
+      () =>
+        new Promise(() => {
+          /* do nothing */
+        }),
+    );
     await $.ajax({
       url: '/',
       timeout: 10,

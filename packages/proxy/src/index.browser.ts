@@ -7,7 +7,7 @@ function setHeaders(req: Request, xhr: XMLHttpRequest): void {
   });
 }
 
-function parseHeaders(content: string): {} {
+function parseHeaders(content: string): Record<string, string> {
   const headers: {[name: string]: string} = {};
   const lines = content.split('\r\n');
   lines.forEach((line) => {
