@@ -9,13 +9,13 @@ module.exports = {
     axios: './axios/index.js',
     jquery: './native/index.js',
     superagent: './superagent/index.js',
-    proxy: './proxy/index.js'
+    proxy: './proxy/index.js',
   },
 
   output: {
     path: path.resolve('dist'),
-    filename: '[name]/index.js'
+    filename: '[name]/index.js',
   },
 
-  plugins: [new CopyWebpackPlugin([{from: '**/*.html'}])]
+  plugins: [new CopyWebpackPlugin([{from: '**/*.html'}])],
 };

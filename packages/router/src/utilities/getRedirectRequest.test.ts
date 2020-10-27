@@ -17,7 +17,7 @@ describe('getRedirectRequest()', () => {
     expect(getRedirectRequest(putFoobarRequest, response)).toBeUndefined();
   });
 
-  [301, 302, 307, 308].forEach(status => {
+  [301, 302, 307, 308].forEach((status) => {
     test(`returns a request with the modified URL when the response status is ${status} and has a location header set`, () => {
       const response = normaliseResponse({
         status,

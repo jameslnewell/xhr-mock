@@ -10,7 +10,7 @@ describe('matchMethod()', () => {
     ).toBeFalsy();
   });
   test('returns true when the request method does match the pattern', () => {
-    methods.forEach(method => {
+    methods.forEach((method) => {
       expect(
         matchMethod(method.toLowerCase(), normaliseRequest({method})),
       ).toBeTruthy();
@@ -20,7 +20,7 @@ describe('matchMethod()', () => {
     });
   });
   test('returns true when the request method matches the wildcard pattern', () => {
-    methods.forEach(method => {
+    methods.forEach((method) => {
       expect(matchMethod('*', normaliseRequest({method}))).toBeTruthy();
     });
   });

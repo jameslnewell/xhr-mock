@@ -5,7 +5,7 @@ describe('native', () => {
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
 
-  it('should receive a request containing a blob', done => {
+  it('should receive a request containing a blob', (done) => {
     const data = new Blob(['<h1>Hello World!</h1>'], {type: 'image/png'});
 
     mock.post('/files', (req, res) => {
@@ -22,7 +22,7 @@ describe('native', () => {
     req.send(data);
   });
 
-  it('should receive a request containing form data', done => {
+  it('should receive a request containing form data', (done) => {
     const data = new FormData();
     data.append('name', 'John Smith');
     data.append('email', 'john@smith.com');
@@ -44,7 +44,7 @@ describe('native', () => {
     req.send(data);
   });
 
-  it('should receive a request containing url data', done => {
+  it('should receive a request containing url data', (done) => {
     const data = new URLSearchParams();
     data.append('name', 'John Smith');
     data.append('email', 'john@smith.com');
@@ -66,7 +66,7 @@ describe('native', () => {
     req.send(data);
   });
 
-  it('should receive a request containing string data', done => {
+  it('should receive a request containing string data', (done) => {
     const data = 'Hello World!';
 
     mock.post('/echo', (req, res) => {
@@ -83,7 +83,7 @@ describe('native', () => {
     req.send(data);
   });
 
-  it('should send a response containing an array buffer', done => {
+  it('should send a response containing an array buffer', (done) => {
     mock.get('/myfile.png', {
       body: new ArrayBuffer(0),
     });

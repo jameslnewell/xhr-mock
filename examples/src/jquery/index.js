@@ -4,7 +4,7 @@ import mock from 'xhr-mock';
 mock.setup();
 
 mock.get('http://google.com/', {
-  body: '<h1>Google</h1>'
+  body: '<h1>Google</h1>',
 });
 
 // ---------

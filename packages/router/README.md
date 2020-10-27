@@ -15,7 +15,7 @@ import Router, {Mode} from '@xhr-mock/router';
 
 const router = new Router()
   .get('/', {status: 200, body: 'Hello World!'})
-  .use(req => ({
+  .use((req) => ({
     status: 200,
     body: JSON.stringify(req),
   }));
@@ -76,7 +76,7 @@ const response = router.routeSync(
 Matching requests based on query strings isn't supported out-of-the-box yet. You can implement it yourself like this:
 
 ```js
-mock.get('/search', req => {
+mock.get('/search', (req) => {
   const url = new URL(req.url);
   if (url.searchParams.get('q') === 'cats') {
     return {status: 200};

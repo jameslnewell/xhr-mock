@@ -59,7 +59,7 @@ describe('MockXMLHttpRequestEventTarget', () => {
     expect.assertions(1);
     const target = new MockXMLHttpRequestEventTarget();
 
-    target.addEventListener(event1Type, function() {
+    target.addEventListener(event1Type, function () {
       expect(this).toBe(target);
     });
 
@@ -70,7 +70,7 @@ describe('MockXMLHttpRequestEventTarget', () => {
     expect.assertions(2);
     const target = new MockXMLHttpRequestEventTarget();
 
-    target.addEventListener(event1Type, event => {
+    target.addEventListener(event1Type, (event) => {
       expect(event.target).toBe(target);
       expect(event.currentTarget).toBe(target);
     });
@@ -83,7 +83,7 @@ describe('MockXMLHttpRequestEventTarget', () => {
     const target = new MockXMLHttpRequestEventTarget();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target.onloadstart = function() {
+    target.onloadstart = function () {
       expect(this).toBe(target);
     };
 

@@ -22,10 +22,14 @@ const defaultResponse: Response = {
 const defaultContext: Context = asynchronousContext;
 
 describe('createMiddlewareHandler()', () => {
-  ['get', 'post', 'put', 'patch', 'delete'].forEach(method => {
+  ['get', 'post', 'put', 'patch', 'delete'].forEach((method) => {
     it(`should match * to ${method}`, () => {
       expect(
-        createMiddleware('*', '/foo/bar', defaultResponse)(
+        createMiddleware(
+          '*',
+          '/foo/bar',
+          defaultResponse,
+        )(
           {
             ...defaultRequest,
             method,
@@ -36,7 +40,11 @@ describe('createMiddlewareHandler()', () => {
     });
     it(`should match ${method} to ${method}`, () => {
       expect(
-        createMiddleware(method, '/foo/bar', defaultResponse)(
+        createMiddleware(
+          method,
+          '/foo/bar',
+          defaultResponse,
+        )(
           {
             ...defaultRequest,
             method,
@@ -49,7 +57,11 @@ describe('createMiddlewareHandler()', () => {
 
   it('should not match the method', () => {
     expect(
-      createMiddleware('get', '/foo/bar', defaultResponse)(
+      createMiddleware(
+        'get',
+        '/foo/bar',
+        defaultResponse,
+      )(
         {
           ...defaultRequest,
           method: 'post',
@@ -58,7 +70,11 @@ describe('createMiddlewareHandler()', () => {
       ),
     ).toBeUndefined();
     expect(
-      createMiddleware('post', '/foo/bar', defaultResponse)(
+      createMiddleware(
+        'post',
+        '/foo/bar',
+        defaultResponse,
+      )(
         {
           ...defaultRequest,
           method: 'put',
@@ -70,52 +86,59 @@ describe('createMiddlewareHandler()', () => {
 
   it('should match the path', () => {
     expect(
-      createMiddleware('get', '/foo/bar', defaultResponse)(
-        defaultRequest,
-        defaultContext,
-      ),
+      createMiddleware(
+        'get',
+        '/foo/bar',
+        defaultResponse,
+      )(defaultRequest, defaultContext),
     ).toEqual(defaultResponse);
     expect(
-      createMiddleware('get', '/foo/:bar', defaultResponse)(
-        defaultRequest,
-        defaultContext,
-      ),
+      createMiddleware(
+        'get',
+        '/foo/:bar',
+        defaultResponse,
+      )(defaultRequest, defaultContext),
     ).toEqual(defaultResponse);
     expect(
-      createMiddleware('get', /bar/i, defaultResponse)(
-        defaultRequest,
-        defaultContext,
-      ),
+      createMiddleware(
+        'get',
+        /bar/i,
+        defaultResponse,
+      )(defaultRequest, defaultContext),
     ).toEqual(defaultResponse);
   });
 
   it('should not match the path', () => {
     expect(
-      createMiddleware('get', '/foo/baz', defaultResponse)(
-        defaultRequest,
-        defaultContext,
-      ),
+      createMiddleware(
+        'get',
+        '/foo/baz',
+        defaultResponse,
+      )(defaultRequest, defaultContext),
     ).toBeUndefined();
     expect(
-      createMiddleware('get', '/bar/:foo', defaultResponse)(
-        defaultRequest,
-        defaultContext,
-      ),
+      createMiddleware(
+        'get',
+        '/bar/:foo',
+        defaultResponse,
+      )(defaultRequest, defaultContext),
     ).toBeUndefined();
     expect(
-      createMiddleware('get', /abc/i, defaultResponse)(
-        defaultRequest,
-        defaultContext,
-      ),
+      createMiddleware(
+        'get',
+        /abc/i,
+        defaultResponse,
+      )(defaultRequest, defaultContext),
     ).toBeUndefined();
   });
 
   it('should call the middleware', () => {
     const middleware = jest.fn(() => defaultResponse);
-    createMiddleware('get', '/foo/bar', middleware)(
-      defaultRequest,
-      defaultContext,
-    );
+    createMiddleware(
+      'get',
+      '/foo/bar',
+      middleware,
+    )(defaultRequest, defaultContext);
     expect(middleware).toHaveBeenCalledWith(
       {...defaultRequest, params: {}},
       defaultContext,
@@ -124,7 +147,7 @@ describe('createMiddlewareHandler()', () => {
 
   it('should populate the request with parameters from the path', () => {
     expect.assertions(1);
-    createMiddleware('get', '/foo/:thing', req => {
+    createMiddleware('get', '/foo/:thing', (req) => {
       expect(req).toEqual(
         expect.objectContaining({
           params: {

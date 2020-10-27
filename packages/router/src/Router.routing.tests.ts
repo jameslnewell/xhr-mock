@@ -20,7 +20,8 @@ const methods: (
   | 'post'
   | 'put'
   | 'patch'
-  | 'delete')[] = ['options', 'head', 'get', 'post', 'put', 'patch', 'delete'];
+  | 'delete'
+)[] = ['options', 'head', 'get', 'post', 'put', 'patch', 'delete'];
 
 const anyURLPattern = /.*/;
 
@@ -35,7 +36,7 @@ const redirectsWereNotPermittedErrorMessage =
 
 describe('Router', () => {
   describe('.use()', () => {
-    methods.forEach(method => {
+    methods.forEach((method) => {
       describe(method, () => {
         test(`resolves when the request matches the route method and the method is lowercase`, async () => {
           const router = createMockRouter();
@@ -92,7 +93,7 @@ describe('Router', () => {
     });
   });
 
-  methods.forEach(method => {
+  methods.forEach((method) => {
     describe(`.${method}()`, () => {
       test(`rejects when the request does not match the route method`, async () => {
         const router = createMockRouter();

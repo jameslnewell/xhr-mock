@@ -75,7 +75,7 @@ export class MockXMLHttpRequestEventTarget
       this.listeners[type] = [];
     }
 
-    if (this.listeners[type].findIndex(l => l.listener === listener) === -1) {
+    if (this.listeners[type].findIndex((l) => l.listener === listener) === -1) {
       this.listeners[type].push({
         listener,
         ...flattenOptions(options),
@@ -113,7 +113,7 @@ export class MockXMLHttpRequestEventTarget
 
     const {capture} = flattenOptions(options);
     const index = this.listeners[type].findIndex(
-      l => l.listener === listener && l.capture === capture,
+      (l) => l.listener === listener && l.capture === capture,
     );
     if (index !== -1) {
       this.listeners[type].splice(index, 1);

@@ -17,7 +17,8 @@ export enum ReadyState {
   DONE = 4,
 }
 
-export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
+export class MockXMLHttpRequest
+  extends MockXMLHttpRequestEventTarget
   implements XMLHttpRequest {
   public static router: Router;
 
@@ -190,7 +191,7 @@ export class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     // }
     const headers = this.res.headers;
     const result = Object.keys(headers)
-      .map(name => `${name}: ${headers[name]}\r\n`)
+      .map((name) => `${name}: ${headers[name]}\r\n`)
       .join('');
 
     return result;

@@ -3,7 +3,7 @@ import mock, {proxy} from 'xhr-mock';
 mock.setup();
 
 mock.get('http://localhost/api/speak', {
-  body: JSON.stringify({message: 'Hello World!'})
+  body: JSON.stringify({message: 'Hello World!'}),
 });
 
 mock.use(proxy);
@@ -15,11 +15,11 @@ function fetch(url) {
 
   xhr.open('GET', url);
 
-  xhr.onload = function() {
+  xhr.onload = function () {
     console.log(`loaded ${url}:`, this.responseText);
   };
 
-  xhr.onerror = function() {
+  xhr.onerror = function () {
     console.log(`error loading ${url}`);
   };
 

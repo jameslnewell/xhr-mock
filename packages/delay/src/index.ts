@@ -12,11 +12,13 @@ export default function delay(
     if (result === undefined) {
       return undefined;
     }
-    return Promise.resolve(result).then(response => {
+    return Promise.resolve(result).then((response) => {
       if (!response) {
         return undefined;
       } else {
-        return new Promise(resolve => setTimeout(() => resolve(response), ms));
+        return new Promise((resolve) =>
+          setTimeout(() => resolve(response), ms),
+        );
       }
     });
   };

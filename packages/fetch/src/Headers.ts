@@ -12,7 +12,7 @@ export class Headers implements Headers, Iterable<[string, string]> {
   public constructor(init?: Headers | string[][] | Record<string, string>) {
     this.headers = {};
     if (Array.isArray(init)) {
-      init.forEach(row => {
+      init.forEach((row) => {
         this.headers[row[0]] = row[1];
       });
     } else if (isObject(init)) {
@@ -53,7 +53,7 @@ export class Headers implements Headers, Iterable<[string, string]> {
     callbackfn: (value: string, key: string, parent: Headers) => void,
     thisArg?: any,
   ): void {
-    Object.keys(this.headers).forEach(key =>
+    Object.keys(this.headers).forEach((key) =>
       callbackfn.call(thisArg, this.headers[key], key, this),
     );
   }

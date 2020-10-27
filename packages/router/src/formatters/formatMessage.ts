@@ -5,7 +5,7 @@ import {convertResponseToString} from './convertResponseToString';
 function indentLines(content: string, indent: number): string {
   return content
     .split('\n')
-    .map(line => Array(indent + 1).join(' ') + line)
+    .map((line) => Array(indent + 1).join(' ') + line)
     .join('\n');
 }
 

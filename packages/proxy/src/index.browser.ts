@@ -1,7 +1,7 @@
 import {Request, Response, Middleware, Mode} from '@xhr-mock/router';
 
 function setHeaders(req: Request, xhr: XMLHttpRequest): void {
-  Object.keys(req.headers).forEach(name => {
+  Object.keys(req.headers).forEach((name) => {
     const value = req.headers[name];
     xhr.setRequestHeader(name, value);
   });
@@ -10,7 +10,7 @@ function setHeaders(req: Request, xhr: XMLHttpRequest): void {
 function parseHeaders(content: string): {} {
   const headers: {[name: string]: string} = {};
   const lines = content.split('\r\n');
-  lines.forEach(line => {
+  lines.forEach((line) => {
     const [name, value] = line.split(':', 2);
     if (name && value) {
       headers[name] = value.replace(/^\s*/g, '').replace(/\s*$/g, '');

@@ -27,10 +27,10 @@ export function proxy(req: Request, ctx: Context): Promise<Partial<Response>> {
     const createRequest =
       urlinfo.protocol === 'https:' ? https.request : http.request;
 
-    const proxyRequest = createRequest(options, proxyResponse => {
+    const proxyRequest = createRequest(options, (proxyResponse) => {
       let body = '';
       proxyResponse.setEncoding('utf8');
-      proxyResponse.on('data', chunk => {
+      proxyResponse.on('data', (chunk) => {
         body += chunk.toString();
       });
       proxyResponse.on('end', () => {

@@ -6,7 +6,7 @@ describe('rxjs', () => {
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
 
-  it('should return a JSON object', done => {
+  it('should return a JSON object', (done) => {
     mock.post('/some-url', {
       body: JSON.stringify({data: 'mockdata'}),
     });
@@ -20,7 +20,7 @@ describe('rxjs', () => {
       },
       responseType: 'json',
     }).subscribe({
-      next: response => {
+      next: (response) => {
         try {
           expect(response.response).to.be.deep.equal({
             data: 'mockdata',
@@ -29,7 +29,7 @@ describe('rxjs', () => {
           done(error);
         }
       },
-      error: error => done(error),
+      error: (error) => done(error),
       complete: () => done(),
     });
   });
