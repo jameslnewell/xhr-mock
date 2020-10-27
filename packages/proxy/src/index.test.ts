@@ -47,6 +47,9 @@ import {proxy} from '.';
 //   };
 // });
 
+const synchronousContext = {isAsynchronous: false};
+const asynchronousContext = {isAsynchronous: true};
+
 describe('proxy', () => {
   // beforeEach(() => {
   //   http.__reset();
@@ -63,7 +66,7 @@ describe('proxy', () => {
           headers: {},
           body: null,
         },
-        {sync: true},
+        synchronousContext,
       ),
     ).toThrow();
   });
@@ -80,7 +83,7 @@ describe('proxy', () => {
         },
         body: null,
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     const body = res.body || '';
@@ -106,7 +109,7 @@ describe('proxy', () => {
         },
         body: 'Hello World!',
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     const body = res.body || '';
@@ -132,7 +135,7 @@ describe('proxy', () => {
         },
         body: 'Hello World!',
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     const body = res.body || '';
@@ -153,7 +156,7 @@ describe('proxy', () => {
         headers: {},
         body: null,
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     const body = res.body || '';
@@ -174,7 +177,7 @@ describe('proxy', () => {
         headers: {},
         body: null,
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     expect(res.reason).toEqual('OK');
@@ -189,7 +192,7 @@ describe('proxy', () => {
         headers: {},
         body: null,
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     expect(res.headers).toEqual(
@@ -209,7 +212,7 @@ describe('proxy', () => {
         headers: {},
         body: null,
       },
-      {sync: false},
+      asynchronousContext,
     );
 
     expect(res.body).toBeDefined();
@@ -226,7 +229,7 @@ describe('proxy', () => {
           headers: {},
           body: null,
         },
-        {sync: false},
+        asynchronousContext,
       );
     } catch (error) {
       expect(error).not.toBeUndefined();

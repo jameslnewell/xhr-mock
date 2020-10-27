@@ -8,5 +8,6 @@
       "@xhr-mock/*": ["packages/*/src"]
     }
   },
-  "include": ["packages/*/src/**/*.ts"]
+  "include": ["packages/*/src/**/*.ts"],
+  "exclude": ["packages/proxy", "packages/fetch"]
 }

@@ -59,6 +59,11 @@ export class MockXMLHttpRequestEventTarget
     type: string,
     listener: EventListenerOrEventListenerObject,
     options?: boolean | AddEventListenerOptions,
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
   ): void {
     this.listeners = this.listeners || {};
 
@@ -85,6 +90,11 @@ export class MockXMLHttpRequestEventTarget
       ev: XMLHttpRequestEventTargetEventMap[K],
     ) => any,
     options?: boolean | EventListenerOptions,
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
@@ -130,6 +140,7 @@ export class MockXMLHttpRequestEventTarget
     }
 
     listeners.forEach((l, index) => {
+      // FIXME: handle event stopped
       if (event.stopPropagation)
         if (typeof l.listener === 'function') {
           l.listener.call(this, event);

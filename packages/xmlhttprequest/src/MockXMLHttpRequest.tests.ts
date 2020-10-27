@@ -36,7 +36,7 @@ const createXHR = () => {
   xhr.upload.addEventListener('loadend', pushUploadEvent);
 
   // record download events
-  const pushDownloadEvent = (event: ProgressEvent) => {
+  const pushDownloadEvent = (event: Event) => {
     events.push(
       `xhr:${event.type}${
         event.type === 'readystatechange' ? `[${xhr.readyState}]` : ''

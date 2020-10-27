@@ -1,21 +1,18 @@
-import * as url from 'url';
+import {URL} from 'url';
 import * as http from 'http';
 import * as https from 'https';
 import {MockError} from '../MockError';
-import {MockRequest, MockResponse, MockContextWithSync} from '../router';
+import {Request, Response, Context} from '@xhr-mock/router';
 
-export function proxy(
-  req: MockRequest,
-  ctx: MockContextWithSync,
-): Promise<Partial<MockResponse>> {
-  if (ctx.sync) {
+export function proxy(req: Request, ctx: Context): Promise<Partial<Response>> {
+  if (!ctx.isAsynchronous) {
     throw new MockError(
       'Synchronus requests are not supported by proxy() in NodeJS.',
     );
   }
 
   return new Promise((resolve, reject) => {
-    const urlinfo = url.parse(req.url);
+    const urlinfo = new URL(req.url);
 
     const options = {
       method: req.method,
@@ -23,7 +20,7 @@ export function proxy(
       hostname: urlinfo.host,
       port: urlinfo.port,
       auth: `${urlinfo.username} ${urlinfo.password}`,
-      path: urlinfo.path,
+      path: urlinfo.pathname,
       headers: req.headers,
     };
 
