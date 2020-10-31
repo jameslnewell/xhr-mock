@@ -162,7 +162,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
 
     if (this.responseType === 'blob' && typeof body === 'string') {
       try {
-        throw notImplementedError;
+        return new Blob([body], {type: 'text/plain'});
       } catch (error) {
         return null;
       }

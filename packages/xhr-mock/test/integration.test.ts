@@ -107,11 +107,13 @@ describe('integration', () => {
     expect(ret1).toEqual('Hello World!');
 
     const ret2 = await request('GET', 'https://reqres.in/api/users/2');
-    expect(JSON.parse(ret2)).toEqual({
-      data: expect.objectContaining({
-        id: 2,
-        first_name: 'Janet'
+    expect(JSON.parse(ret2)).toEqual(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          id: 2,
+          first_name: 'Janet'
+        })
       })
-    });
+    );
   });
 });

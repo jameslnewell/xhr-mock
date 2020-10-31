@@ -12,12 +12,14 @@ export default class MockEvent implements Event {
   readonly timeStamp: number;
   readonly type: string;
   readonly scoped: boolean;
+  readonly composed: boolean;
 
   readonly AT_TARGET: number;
   readonly BUBBLING_PHASE: number;
   readonly CAPTURING_PHASE: number;
+  readonly NONE: number;
 
-  constructor(type: string, eventInitDict?: EventInit) {
+  constructor(type: string, eventInitDict?: EventInit & {scoped?: boolean}) {
     this.type = type || '';
     if (eventInitDict) {
       const {
@@ -53,5 +55,9 @@ export default class MockEvent implements Event {
 
   deepPath(): EventTarget[] {
     throw new Error();
+  }
+
+  composedPath(): EventTarget[] {
+    throw new Error('Method not implemented.');
   }
 }
