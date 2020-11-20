@@ -3,7 +3,6 @@ import MockProgressEvent from './MockProgressEvent';
 import MockXMLHttpRequest from './MockXMLHttpRequest';
 import {MockRequest} from '.';
 import {MockError} from './MockError';
-import {isExportDeclaration} from 'typescript';
 
 function failOnEvent(done: jest.DoneCallback) {
   return function(event: MockProgressEvent) {
@@ -117,6 +116,36 @@ describe('MockXMLHttpRequest', () => {
 
     it('should return blob when type is blob, body is string, and the request is done', done => {
       MockXMLHttpRequest.addHandler((req, res) => res.body('Hello Blob!'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.open('get', '/');
+      xhr.send();
+      const blobAsText = (blob: Blob) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target && e.target.result);
+          reader.onerror = reject;
+          reader.readAsText(blob);
+        });
+
+      xhr.onload = () => {
+        try {
+          expect(xhr.response).toBeInstanceOf(Blob);
+          expect(xhr.response.type).toEqual('text/plain');
+          blobAsText(xhr.response)
+            .then(text => {
+              expect(text).toEqual('Hello Blob!');
+              done();
+            })
+            .catch(done.fail);
+        } catch (error) {
+          done.fail(error);
+        }
+      };
+    });
+
+    it('should return json blob when type is blob, body is an object, and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body({foo: 1}));
       const xhr = new MockXMLHttpRequest();
       xhr.responseType = 'blob';
       xhr.open('get', '/');

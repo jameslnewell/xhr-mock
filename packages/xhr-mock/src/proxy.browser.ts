@@ -21,7 +21,6 @@ export default function(
   return new Promise((resolve, reject) => {
     const xhr: XMLHttpRequest = new XHRMock.RealXMLHttpRequest();
 
-    // TODO: reject with the correct type of error
     xhr.onerror = (event: ProgressEvent<EventTarget> & {error?: any}) =>
       reject(event.error);
 
