@@ -198,6 +198,7 @@ export default class MockXMLHttpRequest extends MockXMLHttpRequestEventTarget
     if (this.responseType === '' || this.responseType === 'document') {
       if (
         this.readyState === this.DONE &&
+        typeof Document !== 'undefined' &&
         this.res.body() instanceof Document
       ) {
         return this.res.body();
