@@ -106,6 +106,74 @@ describe('MockXMLHttpRequest', () => {
       xhr.send();
     });
 
+    it('should return null when type is blob and the request is not done', () => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('Hello Blob!'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.open('get', '/');
+      expect(xhr.response).toEqual(null);
+    });
+
+    it('should return blob when type is blob, body is string, and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body('Hello Blob!'));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.open('get', '/');
+      xhr.send();
+      const blobAsText = (blob: Blob) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target && e.target.result);
+          reader.onerror = reject;
+          reader.readAsText(blob);
+        });
+
+      xhr.onload = () => {
+        try {
+          expect(xhr.response).toBeInstanceOf(Blob);
+          expect(xhr.response.type).toEqual('text/plain');
+          blobAsText(xhr.response)
+            .then(text => {
+              expect(text).toEqual('Hello Blob!');
+              done();
+            })
+            .catch(done.fail);
+        } catch (error) {
+          done.fail(error);
+        }
+      };
+    });
+
+    it('should return json blob when type is blob, body is an object, and the request is done', done => {
+      MockXMLHttpRequest.addHandler((req, res) => res.body({foo: 1}));
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.open('get', '/');
+      xhr.send();
+      const blobAsText = (blob: Blob) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target && e.target.result);
+          reader.onerror = reject;
+          reader.readAsText(blob);
+        });
+
+      xhr.onload = () => {
+        try {
+          expect(xhr.response).toBeInstanceOf(Blob);
+          expect(xhr.response.type).toEqual('text/plain');
+          blobAsText(xhr.response)
+            .then(text => {
+              expect(text).toEqual('Hello Blob!');
+              done();
+            })
+            .catch(done.fail);
+        } catch (error) {
+          done.fail(error);
+        }
+      };
+    });
+
     it('should return null when the type is other and the request is not done', () => {
       const fakeBuffer = {};
       MockXMLHttpRequest.addHandler((req, res) => res.body(fakeBuffer));
