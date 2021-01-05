@@ -350,6 +350,52 @@ describe('MockXMLHttpRequest', () => {
       xhr.send();
     });
   });
+
+  describe('responseXML', () => {
+    it('Should return null if status is not DONE', function() {
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = '';
+      xhr.open('get', '/');
+      expect(xhr.readyState).not.toBe(4);
+      expect(xhr.responseXML).toEqual(null);
+    });
+
+    it('Should return null if status is DONE and body type is not Document', function() {
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = '';
+
+      xhr.onload = () => {
+        expect(xhr.readyState).toEqual(4);
+        expect(xhr.responseXML).toBe(null);
+      };
+      xhr.open('get', '/');
+      xhr.send();
+    });
+
+    it('Should return the document response if status is DONE and body type is Document', function(done) {
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+      <root></root>`;
+
+      const parser = new window.DOMParser();
+      const xmlDoc = parser.parseFromString(xml, 'application/xml');
+
+      MockXMLHttpRequest.addHandler((req, res) => res.body(xmlDoc));
+
+      const xhr = new MockXMLHttpRequest();
+      xhr.responseType = '';
+
+      xhr.onload = () => {
+        try {
+          expect(xhr.responseXML).toEqual(xmlDoc);
+          done();
+        } catch (error) {
+          done.fail(error);
+        }
+      };
+      xhr.open('get', '/');
+      xhr.send();
+    });
+  });
   //TODO: check values of all events
 
   it('should set the request body when .send() is called with a body', done => {
