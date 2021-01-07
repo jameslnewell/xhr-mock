@@ -4,6 +4,10 @@ import MockRequest from './MockRequest';
 import MockResponse from './MockResponse';
 import {createResponseFromObject} from './createResponseFromObject';
 
+const URL_SLIPT_QUERY_REGEX = /^([^\?]+)?/g;
+
+const LAST_SLASH_URL_REGEX = /\/$/;
+
 export default function(
   method: string,
   url: string | RegExp,
@@ -22,7 +26,17 @@ export default function(
       return url.test(requestURL);
     }
 
-    return requestURL === url; //TODO: should we use .startsWith()???
+    const matchRequestUrl = requestURL.match(URL_SLIPT_QUERY_REGEX);
+
+    if (matchRequestUrl) {
+      const [splitUrl] = matchRequestUrl;
+      return (
+        splitUrl.replace(LAST_SLASH_URL_REGEX, '') ===
+        url.replace(LAST_SLASH_URL_REGEX, '')
+      );
+    }
+
+    return false;
   };
 
   return (req, res) => {
